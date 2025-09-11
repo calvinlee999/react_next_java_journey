@@ -145,6 +145,12 @@ export default function Home() {
           >
             🎯 View Rendering Examples
           </button>
+          <button
+            onClick={() => window.location.href = '/modern-react'}
+            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-green-600 text-white gap-2 hover:bg-green-700 font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
+          >
+            ⚛️ Modern React Demo
+          </button>
         </div>
       </main>
     </div>

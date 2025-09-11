@@ -13,11 +13,24 @@
   "dependencies": {
     "@headlessui/react": "^2.2.7",
     "@heroicons/react": "^2.2.0",
+    "@tanstack/react-query": "^5.61.3",
+    "@tanstack/react-virtual": "^3.10.9",
+    "@reduxjs/toolkit": "^2.5.0",
+    "react-redux": "^9.2.0",
+    "zustand": "^5.0.2",
+    "jotai": "^2.10.3",
+    "react-hook-form": "^7.54.0",
+    "zod": "^3.24.1",
+    "@hookform/resolvers": "^3.10.0",
     "framer-motion": "^12.23.12",
+    "react-intersection-observer": "^9.14.0",
     "next": "15.5.3",
     "next-seo": "^6.8.0",
     "react": "19.1.0",
-    "react-dom": "19.1.0"
+    "react-dom": "19.1.0",
+    "react-error-boundary": "^4.1.2",
+    "use-debounce": "^10.0.4",
+    "swr": "^2.3.0"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
@@ -25,6 +38,7 @@
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "@tanstack/react-query-devtools": "^5.61.3",
     "eslint": "^9",
     "eslint-config-next": "15.5.3",
     "tailwindcss": "^4",
