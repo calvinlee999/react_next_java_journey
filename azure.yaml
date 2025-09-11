@@ -1,0 +1,30 @@
+name: golden-path-fintech
+services:
+  frontend:
+    language: js
+    project: ./frontend
+    host: staticwebapp
+    hooks:
+      postdeploy:
+        run: echo "Frontend deployed to Azure Static Web Apps"
+        shell: sh
+  
+  backend:
+    language: java
+    project: ./backend
+    host: containerapp
+    hooks:
+      postdeploy:
+        run: echo "Backend deployed to Azure Container Apps"
+        shell: sh
+
+infra:
+  provider: bicep
+  
+hooks:
+  predeploy:
+    run: echo "Starting deployment of Golden Path application..."
+    shell: sh
+  postdeploy:
+    run: echo "Golden Path application deployed successfully!"
+    shell: sh
