@@ -22,6 +22,13 @@ export default function ExamplesPage() {
       path: '/examples/ssr',
       color: 'purple',
       features: ['Fresh data', 'Personalized content', 'SEO friendly', 'Server required']
+    },
+    {
+      title: 'Single Page Application (SPA)',
+      description: 'Complete SPA with semantic HTML5 and accessibility features',
+      path: '/examples/spa',
+      color: 'orange',
+      features: ['Client-side navigation', 'Semantic HTML5', 'ARIA accessibility', 'Form interactions']
     }
   ];
 
@@ -47,6 +54,13 @@ export default function ExamplesPage() {
         title: 'text-purple-800',
         button: 'bg-purple-500 hover:bg-purple-600',
         dot: 'bg-purple-500'
+      },
+      orange: {
+        bg: 'bg-orange-50',
+        border: 'border-orange-200',
+        title: 'text-orange-800',
+        button: 'bg-orange-500 hover:bg-orange-600',
+        dot: 'bg-orange-500'
       }
     };
     return classes[color as keyof typeof classes];
@@ -65,7 +79,7 @@ export default function ExamplesPage() {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
           {examples.map((example) => {
             const colors = getColorClasses(example.color);
             return (
