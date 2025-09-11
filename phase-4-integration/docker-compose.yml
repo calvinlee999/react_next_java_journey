@@ -1,0 +1,59 @@
+version: '3.8'
+
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:15
+    container_name: journey_postgres
+    environment:
+      POSTGRES_DB: journey_db
+      POSTGRES_USER: journey_user
+      POSTGRES_PASSWORD: journey_pass
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - journey_network
+
+  # Java Backend
+  backend:
+    build:
+      context: ../phase-3-java-backend
+      dockerfile: Dockerfile
+    container_name: journey_backend
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/journey_db
+      SPRING_DATASOURCE_USERNAME: journey_user
+      SPRING_DATASOURCE_PASSWORD: journey_pass
+    ports:
+      - "8080:8080"
+    depends_on:
+      - postgres
+    networks:
+      - journey_network
+
+  # Next.js Frontend (for development)
+  frontend:
+    build:
+      context: ../phase-2-nextjs-fullstack
+      dockerfile: Dockerfile.dev
+    container_name: journey_frontend
+    environment:
+      NEXT_PUBLIC_API_URL: http://localhost:8080/api
+    ports:
+      - "3000:3000"
+    volumes:
+      - ../phase-2-nextjs-fullstack:/app
+      - /app/node_modules
+    depends_on:
+      - backend
+    networks:
+      - journey_network
+
+volumes:
+  postgres_data:
+
+networks:
+  journey_network:
+    driver: bridge

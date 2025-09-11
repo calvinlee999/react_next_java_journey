@@ -1,0 +1,33 @@
+{
+  "name": "phase-2-nextjs-fullstack",
+  "version": "0.1.0",
+  "description": "Next.js full-stack learning phase",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "test": "jest --watch",
+    "test:ci": "jest"
+  },
+  "dependencies": {
+    "next": "13.5.4",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "@next/font": "13.5.4",
+    "next-auth": "^4.23.1",
+    "swr": "^2.2.4"
+  },
+  "devDependencies": {
+    "@types/node": "^20.6.0",
+    "@types/react": "^18.2.21",
+    "@types/react-dom": "^18.2.7",
+    "eslint": "^8.49.0",
+    "eslint-config-next": "13.5.4",
+    "typescript": "^5.2.2",
+    "jest": "^29.7.0",
+    "@testing-library/react": "^13.4.0",
+    "@testing-library/jest-dom": "^6.1.3"
+  }
+}
