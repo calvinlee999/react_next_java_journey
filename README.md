@@ -32,6 +32,7 @@ cd react_next_java_journey
 - 🏢 **Micro-Frontend Portal**: [http://localhost:3002](http://localhost:3002) 
 - 🔧 **Backend API**: [http://localhost:8080](http://localhost:8080)
 - 🎯 **Examples**: [http://localhost:3000/examples](http://localhost:3000/examples)
+- 🔗 **Webhook Demo**: [http://localhost:3000/webhooks](http://localhost:3000/webhooks)
 
 ### What Gets Installed Automatically
 
@@ -280,6 +281,14 @@ react_next_java_journey/
 - **🎯 Automatic Batching**: Optimized re-renders across async operations
 - **🧵 Concurrent Rendering**: Background rendering for better UX
 
+#### Event-Driven Architecture
+- **🔗 Webhook System**: Complete webhook receiver and processor with real-time UI
+- **📡 Real-time Updates**: Auto-refreshing webhook event display with 5-second intervals
+- **🔒 Signature Verification**: Security with X-Webhook-Signature validation
+- **🎯 Interactive Testing**: Built-in webhook testing interface with predefined examples
+- **📊 Event Analytics**: Statistics dashboard with source and event type tracking
+- **🔍 Event Inspection**: Detailed header and payload viewing capabilities
+
 ### 🏢 Micro-Frontend Architecture
 
 #### Module Federation Integration
@@ -345,6 +354,13 @@ Visit [localhost:3000/modern-react](http://localhost:3000/modern-react) to explo
    - Mobile-responsive menu with animations
    - Accessibility features testing
 
+4. **Event-Driven Communication**
+   - Real-time webhook receiver with auto-refresh
+   - Interactive webhook testing with predefined examples
+   - Event filtering by source (GitHub, Stripe, etc.)
+   - Detailed event inspection with headers and payloads
+   - Statistics dashboard with event analytics
+
 ### 🏢 Micro-Frontend Portal Demo
 Visit [localhost:3002](http://localhost:3002) to explore:
 
@@ -366,7 +382,9 @@ Visit [localhost:3002](http://localhost:3002) to explore:
 ## 📚 Architecture Documentation
 
 ### Comprehensive Guides
-- **[Sequence Diagrams](./SEQUENCE_DIAGRAMS.md)**: Complete architecture flow diagrams
+- **[Webhook System Diagrams](./docs/sequence-diagrams/webhook-system.md)**: Complete webhook architecture flow diagrams
+- **[Caching System Diagrams](./docs/sequence-diagrams/caching-system.md)**: Multi-layer caching strategy diagrams
+- **[State Management Diagrams](./docs/sequence-diagrams/state-management.md)**: Zustand and Redux flow patterns
 - **[Component Diagrams](./COMPONENT_DIAGRAMS.md)**: Component interaction patterns  
 - **[Micro-Frontend Architecture](./MICRO_FRONTEND_ARCHITECTURE.md)**: Detailed MF implementation
 - **[Modern React Guide](./MODERN_REACT_VIRTUAL_DOM_GUIDE.md)**: React optimization patterns
@@ -376,8 +394,10 @@ Visit [localhost:3002](http://localhost:3002) to explore:
 - **Virtual DOM**: Performance optimization techniques and monitoring
 - **Module Federation**: Webpack 5 configuration and best practices
 - **Error Handling**: Comprehensive error boundaries and recovery strategies
-- **Monitoring**: Application Insights
-- **Identity**: Azure Active Directory
+- **Webhook System**: Event-driven communication with signature verification and real-time UI
+- **Caching Architecture**: Multi-layer caching with memory, IndexedDB, and Service Worker
+- **Monitoring**: Application Insights and performance tracking
+- **Identity**: Azure Active Directory integration
 
 ## 🚀 Quick Start
 
@@ -421,6 +441,7 @@ cd frontend && npm install && npm run dev
 - 🌐 **Frontend**: <http://localhost:3000>
 - 🔧 **Backend API**: <http://localhost:8080>
 - 🎯 **Full-Stack Examples**: <http://localhost:3000/examples>
+- 🔗 **Webhook Demo**: <http://localhost:3000/webhooks>
 - 🏥 **Health Check**: <http://localhost:8080/actuator/health>
 
 ## 📁 Project Structure

@@ -5,6 +5,7 @@ import { StoreProvider } from "@/store/providers/store-provider";
 import { NavigationProgress } from "@/components/navigation/smart-navigation";
 import { NavigationMenu } from "@/components/navigation/navigation-menu";
 import { PerformanceMonitor } from "@/components/optimization/virtual-dom-optimizations";
+import { ServiceWorkerProvider } from "@/components/providers/service-worker-provider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -34,15 +35,17 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <StoreProvider>
-          <PerformanceMonitor>
-            <NavigationProgress />
-            <NavigationMenu />
-            <main>
-              {children}
-            </main>
-          </PerformanceMonitor>
-        </StoreProvider>
+        <ServiceWorkerProvider>
+          <StoreProvider>
+            <PerformanceMonitor>
+              <NavigationProgress />
+              <NavigationMenu />
+              <main>
+                {children}
+              </main>
+            </PerformanceMonitor>
+          </StoreProvider>
+        </ServiceWorkerProvider>
       </body>
     </html>
   );
