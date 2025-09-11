@@ -1,0 +1,168 @@
+# Default values for nextjs-app Helm chart
+# This is a YAML-formatted file.
+
+# Global configuration
+global:
+  cloudProvider: aws  # aws, azure, or local
+  environment: production
+
+# Application configuration
+app:
+  name: nextjs-app
+  version: "1.0.0"
+
+# Image configuration
+image:
+  repository: ""  # Will be set during deployment
+  tag: latest
+  pullPolicy: IfNotPresent
+  pullSecrets:
+    - name: ecr-registry-secret
+
+# Deployment configuration
+deployment:
+  replicaCount: 3
+  revisionHistoryLimit: 3
+  
+  # Rolling update strategy
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+
+# Container configuration
+container:
+  port: 3000
+  
+  # Environment variables
+  env:
+    NODE_ENV: production
+    PORT: "3000"
+  
+  # Resource requests and limits
+  resources:
+    requests:
+      memory: "256Mi"
+      cpu: "250m"
+      ephemeral-storage: "1Gi"
+    limits:
+      memory: "512Mi"
+      cpu: "500m"
+      ephemeral-storage: "2Gi"
+  
+  # Health checks
+  livenessProbe:
+    httpGet:
+      path: /api/health
+      port: 3000
+    initialDelaySeconds: 30
+    periodSeconds: 10
+    timeoutSeconds: 5
+    failureThreshold: 3
+  
+  readinessProbe:
+    httpGet:
+      path: /api/health
+      port: 3000
+    initialDelaySeconds: 5
+    periodSeconds: 5
+    timeoutSeconds: 3
+    failureThreshold: 3
+
+  # Security context
+  securityContext:
+    runAsNonRoot: true
+    runAsUser: 1001
+    runAsGroup: 1001
+    readOnlyRootFilesystem: false
+    allowPrivilegeEscalation: false
+    capabilities:
+      drop:
+        - ALL
+
+# Service configuration
+service:
+  type: ClusterIP
+  port: 80
+  targetPort: 3000
+
+# Service Account configuration
+serviceAccount:
+  create: true
+  name: nextjs-service-account
+  automountServiceAccountToken: false
+
+# RBAC configuration
+rbac:
+  create: true
+
+# Auto-scaling configuration
+autoscaling:
+  enabled: true
+  minReplicas: 2
+  maxReplicas: 10
+  targetCPUUtilizationPercentage: 70
+  targetMemoryUtilizationPercentage: 80
+
+# Pod Disruption Budget
+podDisruptionBudget:
+  enabled: true
+  minAvailable: 50%
+
+# Network Policy
+networkPolicy:
+  enabled: false  # Enable if needed for security
+
+# Ingress configuration (for direct access, not through ALB/LoadBalancer)
+ingress:
+  enabled: false
+  className: ""
+  annotations: {}
+  hosts: []
+  tls: []
+
+# ConfigMap data
+configMap:
+  data:
+    cloud-provider: aws
+    cdn-domain: ""
+    node-env: production
+
+# AWS specific configuration
+aws:
+  region: us-east-1
+  ecrRepository: ""
+  s3Bucket: ""
+  cloudFrontDomain: ""
+
+# Azure specific configuration
+azure:
+  region: eastus
+  acrRepository: ""
+  storageAccount: ""
+  cdnEndpoint: ""
+
+# Security settings
+podSecurityContext:
+  fsGroup: 1001
+
+# Node selector and tolerations
+nodeSelector: {}
+tolerations: []
+affinity: {}
+
+# Additional labels and annotations
+labels: {}
+annotations: {}
+
+# Monitoring and observability
+monitoring:
+  enabled: false
+  
+# Secrets (will be created separately)
+secrets: {}
+
+# Volume mounts (if needed for static assets)
+volumes: []
+volumeMounts: []

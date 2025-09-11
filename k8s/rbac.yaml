@@ -1,0 +1,40 @@
+# RBAC and Service Account for Next.js Application
+# Provides minimal required permissions
+
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: nextjs-service-account
+  namespace: default
+  labels:
+    app: nextjs-app
+automountServiceAccountToken: false
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  namespace: default
+  name: nextjs-role
+rules:
+- apiGroups: [""]
+  resources: ["configmaps"]
+  verbs: ["get", "list"]
+- apiGroups: [""]
+  resources: ["secrets"]
+  verbs: ["get", "list"]
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: nextjs-role-binding
+  namespace: default
+subjects:
+- kind: ServiceAccount
+  name: nextjs-service-account
+  namespace: default
+roleRef:
+  kind: Role
+  name: nextjs-role
+  apiGroup: rbac.authorization.k8s.io
