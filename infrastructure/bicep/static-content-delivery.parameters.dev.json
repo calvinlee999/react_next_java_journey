@@ -1,0 +1,34 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "environment": {
+      "value": "dev"
+    },
+    "location": {
+      "value": "East US"
+    },
+    "appName": {
+      "value": "reactjavajourney"
+    },
+    "enableFrontDoor": {
+      "value": true
+    },
+    "enableCDN": {
+      "value": true
+    },
+    "enableStaticWebsite": {
+      "value": true
+    },
+    "tags": {
+      "value": {
+        "Environment": "dev",
+        "Application": "ReactJavaJourney",
+        "ManagedBy": "Bicep",
+        "Purpose": "StaticContentDelivery",
+        "CostCenter": "Engineering",
+        "Owner": "DevOps Team"
+      }
+    }
+  }
+}

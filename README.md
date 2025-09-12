@@ -42,6 +42,139 @@ cd react_next_java_journey
 
 This Golden Path template demonstrates **Enterprise-Grade Full-Stack Architecture** with comprehensive **Azure Well-Architected Framework** compliance:
 
+### 📊 System Architecture Diagrams
+
+#### 🌐 Azure Level 1 Static Content Delivery Architecture
+
+```mermaid
+graph TB
+    subgraph "Global Users"
+        U1[User - Americas]
+        U2[User - Europe]
+        U3[User - Asia]
+    end
+    
+    subgraph "Azure Global Network"
+        subgraph "Azure Front Door"
+            AFD[Azure Front Door Service]
+            WAF[Web Application Firewall]
+            LB[Load Balancer]
+            SSL[SSL Termination]
+        end
+        
+        subgraph "Azure CDN"
+            CDN1[CDN Edge - Americas]
+            CDN2[CDN Edge - Europe]  
+            CDN3[CDN Edge - Asia]
+        end
+        
+        subgraph "Primary Region - East US"
+            subgraph "Storage Account"
+                BS[Azure Blob Storage]
+                WEB[$web Container]
+                ASSETS[assets Container]
+                MEDIA[media Container]
+            end
+            
+            subgraph "Monitoring"
+                AI[Application Insights]
+                MON[Azure Monitor]
+                LOG[Log Analytics]
+            end
+        end
+    end
+    
+    U1 --> AFD
+    U2 --> AFD  
+    U3 --> AFD
+    
+    AFD --> WAF
+    WAF --> LB
+    LB --> SSL
+    SSL --> CDN1
+    SSL --> CDN2
+    SSL --> CDN3
+    
+    CDN1 --> BS
+    CDN2 --> BS
+    CDN3 --> BS
+    
+    BS --> WEB
+    BS --> ASSETS
+    BS --> MEDIA
+    
+    BS --> AI
+    AI --> MON
+    MON --> LOG
+```
+
+#### 🏛️ Complete System Architecture
+
+```mermaid
+graph TB
+    subgraph "Frontend Layer"
+        subgraph "Static Content (Azure Level 1)"
+            AFD[Azure Front Door + WAF]
+            CDN[Azure CDN - Global]
+            BLOB[Azure Blob Storage]
+        end
+        
+        subgraph "React Applications"
+            MAIN[Main React App<br/>Next.js 15.5.3]
+            MF1[Micro-Frontend 1<br/>Portfolio Module]
+            MF2[Micro-Frontend 2<br/>Analytics Module]
+        end
+    end
+    
+    subgraph "API Gateway Layer"
+        APIM[Azure API Management<br/>Enterprise Gateway]
+        CACHE[Redis Cache]
+        RATE[Rate Limiting]
+        AUTH[Authentication<br/>OAuth 2.0 + JWT]
+    end
+    
+    subgraph "Backend Services"
+        JAVA[Java Spring Boot 3.2.0<br/>REST API Server]
+        WS[WebSocket Service<br/>Real-time Communication]
+        WH[Webhook Handler<br/>Event Processing]
+    end
+    
+    subgraph "Data Layer"
+        SQL[Azure SQL Database<br/>Primary Data Store]
+        REDIS[Redis Cache<br/>Session Management]
+        STORAGE[Azure Storage<br/>File Management]
+    end
+    
+    subgraph "Monitoring & Security"
+        INSIGHTS[Application Insights<br/>APM & Analytics]
+        MONITOR[Azure Monitor<br/>Infrastructure Monitoring]
+        VAULT[Azure Key Vault<br/>Secrets Management]
+    end
+    
+    AFD --> CDN
+    CDN --> BLOB
+    MAIN --> APIM
+    MF1 --> APIM
+    MF2 --> APIM
+    
+    APIM --> CACHE
+    APIM --> RATE
+    APIM --> AUTH
+    APIM --> JAVA
+    APIM --> WS
+    APIM --> WH
+    
+    JAVA --> SQL
+    JAVA --> REDIS
+    JAVA --> STORAGE
+    
+    JAVA --> INSIGHTS
+    APIM --> MONITOR
+    AUTH --> VAULT
+```
+
+**📋 Complete Architecture Documentation**: [Architecture Summary](./docs/azure/AZURE_LEVEL1_ARCHITECTURE_SUMMARY.md)
+
 ### 🏛️ Azure Well-Architected Framework Implementation
 
 Our architecture follows Microsoft's **Five Pillars of Architectural Excellence** with **Level 1 Azure Well-Architected Framework** compliance:
@@ -295,6 +428,29 @@ azd up
 - **📊 Monitoring & Analytics**: Application Insights integration, real-time metrics, compliance logging
 - **🏗️ Infrastructure as Code**: Complete Bicep templates with automated deployment
 - **🌐 Multi-Environment**: Dev/staging/prod configurations with auto-scaling
+
+#### 🌐 Azure Level 1 Static Content Delivery - NEW!
+
+**Global Static Content Distribution** with Azure Front Door, CDN, and Blob Storage:
+
+- **🚀 Azure Front Door**: Global load balancer with WAF protection and SSL termination
+- **🌍 Azure CDN**: 200+ edge locations with intelligent caching (85-95% hit ratio)
+- **💾 Azure Blob Storage**: Static website hosting with lifecycle management
+- **🛡️ Enterprise Security**: WAF rules, DDoS protection, HTTPS-only enforcement
+- **⚡ Performance**: 50-80% latency reduction with global edge caching
+- **📊 Monitoring**: Application Insights integration with real-time metrics
+- **🛠️ Management Tools**: React UI, CLI tools, and automated deployment scripts
+
+**🎯 Static Content Delivery Features**:
+
+- **📦 Complete Infrastructure as Code**: Bicep templates for all Azure services
+- **🚀 One-Command Deployment**: Cross-platform scripts (Bash/PowerShell)
+- **📤 Smart Upload Tools**: Node.js CLI with batch processing and cache purging
+- **💻 React Management UI**: Interactive file upload and deployment monitoring
+- **🔄 Multi-Environment Support**: Separate dev/staging/prod configurations
+- **📚 Comprehensive Documentation**: Architecture guides and quick start instructions
+
+**📋 Documentation**: [Azure Level 1 Static Content Delivery](./docs/azure/AZURE_LEVEL1_STATIC_CONTENT_DELIVERY.md)
 
 **🎯 API Management Features**:
 
@@ -610,6 +766,26 @@ cd backend && ./mvnw spring-boot:run
 
 # Frontend
 cd frontend && npm run dev
+```
+
+### Azure Level 1 Static Content Delivery
+
+```bash
+# Deploy Azure infrastructure for static content delivery
+./infrastructure/scripts/deploy-static-content-delivery.sh \
+  -s "your-subscription-id" \
+  -g "rg-static-content-prod" \
+  -n "staticcontentprod" \
+  -l "eastus" \
+  -e "prod"
+
+# Upload static content to Azure Blob Storage
+cd infrastructure/tools && npm install
+node azure-static-upload.js \
+  --storage-account "staticcontentprod" \
+  --source-dir "../../frontend/public" \
+  --container "\$web" \
+  --purge-cdn
 ```
 
 ### Azure Production Deployment
