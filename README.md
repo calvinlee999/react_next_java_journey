@@ -1,4 +1,42 @@
-# Golden Path Template -- 🎯 **Examples**: <http://localhost:3000/examples>
+# Golden Path Template - Enterprise Full-Stack Testing Framework 
+
+🚀 **Production-Ready React + Java + Azure Architecture with Comprehensive Testing**  
+🧪 **Advanced Testing**: Jest + React Testing Library + Playwright + JUnit + Spring Boot Test + Testcontainers  
+🎯 **Examples**: <http://localhost:3000/examples>
+
+## 🧪 Testing Framework Overview
+
+### Frontend Testing Stack
+- **Jest**: JavaScript testing framework with custom configuration for Next.js
+- **React Testing Library**: Component testing with best practices for user interactions  
+- **Playwright**: Cross-browser E2E testing (Chromium, Firefox, WebKit)
+- **Coverage Reports**: Code coverage analysis with configurable thresholds
+- **API Testing**: Mocked HTTP requests with comprehensive error handling
+
+### Backend Testing Stack  
+- **JUnit 5**: Modern Java testing framework with Spring Boot integration
+- **Spring Boot Test**: Full application context testing with auto-configuration
+- **MockMvc**: Controller layer testing with HTTP request simulation
+- **TestRestTemplate**: Integration testing with real HTTP server
+- **Testcontainers**: Database testing with containerized environments
+- **WireMock**: HTTP service mocking for external API testing
+- **Datafaker**: Test data generation for realistic scenarios
+
+### Testing Commands
+```bash
+# Frontend Tests
+npm test                    # Run Jest unit tests
+npm run test:e2e           # Run Playwright E2E tests  
+npm run test:coverage      # Generate coverage reports
+
+# Backend Tests
+./mvnw test                # Run all backend tests
+./mvnw test -Dtest=HealthControllerTest  # Run specific test class
+./mvnw test -Dspring.profiles.active=test  # Run with test profile
+
+# Full Test Suite
+npm run test:all           # Run all frontend and backend tests
+```
 
 ## 💻 Cross-Machine Development Setup
 

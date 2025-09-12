@@ -27,7 +27,7 @@ public class SecurityConfig {
             .csrf(csrf -> csrf.disable())
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(authz -> authz
-                .requestMatchers("/health/**", "/hello", "/actuator/**", "/h2-console/**", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
+                .requestMatchers("/api/health", "/api/status", "/api/info", "/api/ping", "/health/**", "/hello", "/actuator/**", "/h2-console/**", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
                 .requestMatchers("/hello/secure").authenticated()
                 .anyRequest().authenticated()
             )

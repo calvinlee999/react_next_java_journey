@@ -8,17 +8,41 @@ import java.util.HashMap;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/health")
-@CrossOrigin(origins = "${app.cors.allowed-origins}")
+@RequestMapping("/api")
+@CrossOrigin(origins = "${app.cors.allowed-origins:http://localhost:3000}")
 public class HealthController {
 
-    @GetMapping
+    @GetMapping("/health")
     public ResponseEntity<Map<String, Object>> health() {
         Map<String, Object> response = new HashMap<>();
         response.put("status", "UP");
         response.put("service", "Golden Path Backend Service");
         response.put("timestamp", LocalDateTime.now());
         response.put("environment", "development");
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/status")
+    public ResponseEntity<Map<String, Object>> status() {
+        Map<String, Object> response = new HashMap<>();
+        response.put("status", "UP");
+        response.put("service", "Golden Path Backend Service");
+        response.put("version", "1.0.0");
+        response.put("timestamp", LocalDateTime.now());
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/info")
+    public ResponseEntity<Map<String, Object>> info() {
+        Map<String, Object> response = new HashMap<>();
+        response.put("name", "Golden Path Template");
+        response.put("description", "Enterprise-grade full-stack application template");
+        response.put("version", "1.0.0");
+        response.put("build", Map.of(
+            "time", LocalDateTime.now().toString(),
+            "version", "1.0.0",
+            "javaVersion", System.getProperty("java.version")
+        ));
         return ResponseEntity.ok(response);
     }
 
