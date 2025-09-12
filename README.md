@@ -75,6 +75,7 @@ cd react_next_java_journey
 - 🔧 **Backend API**: [http://localhost:8080](http://localhost:8080)
 - 🎯 **Examples**: [http://localhost:3000/examples](http://localhost:3000/examples)
 - 🔗 **Webhook Demo**: [http://localhost:3000/webhooks](http://localhost:3000/webhooks)
+- 💬 **WebSocket Demo**: [http://localhost:3000/websockets](http://localhost:3000/websockets)
 
 ### What Gets Installed Automatically
 
@@ -325,9 +326,13 @@ react_next_java_journey/
 
 #### Event-Driven Architecture
 - **🔗 Webhook System**: Complete webhook receiver and processor with real-time UI
-- **📡 Real-time Updates**: Auto-refreshing webhook event display with 5-second intervals
+- **� WebSocket System**: Real-time bidirectional communication with chat, gaming, and collaboration
+- **�📡 Real-time Updates**: Auto-refreshing webhook event display with 5-second intervals
+- **🔄 Live Communication**: Persistent WebSocket connections with automatic reconnection and HTTP fallback
 - **🔒 Signature Verification**: Security with X-Webhook-Signature validation
 - **🎯 Interactive Testing**: Built-in webhook testing interface with predefined examples
+- **🎮 Real-time Gaming**: Multi-user Tic-tac-toe with synchronized game state
+- **📝 Collaborative Editing**: Live document editing with real-time synchronization
 - **📊 Event Analytics**: Statistics dashboard with source and event type tracking
 - **🔍 Event Inspection**: Detailed header and payload viewing capabilities
 
@@ -399,6 +404,10 @@ Visit [localhost:3000/modern-react](http://localhost:3000/modern-react) to explo
 4. **Event-Driven Communication**
    - Real-time webhook receiver with auto-refresh
    - Interactive webhook testing with predefined examples
+   - WebSocket-powered real-time chat system
+   - Multi-user real-time gaming (Tic-tac-toe)
+   - Collaborative document editing with live synchronization
+   - Push notification broadcasting system
    - Event filtering by source (GitHub, Stripe, etc.)
    - Detailed event inspection with headers and payloads
    - Statistics dashboard with event analytics
@@ -424,6 +433,8 @@ Visit [localhost:3002](http://localhost:3002) to explore:
 ## 📚 Architecture Documentation
 
 ### Comprehensive Guides
+- **[Azure Cloud Architecture](./docs/architecture/azure-cloud-architecture.md)**: Complete enterprise Azure architecture with microservices, security, and global distribution
+- **[WebSocket System Diagrams](./docs/sequence-diagrams/websocket-system.md)**: Real-time communication architecture with sequence diagrams for chat, gaming, and collaboration
 - **[Webhook System Diagrams](./docs/sequence-diagrams/webhook-system.md)**: Complete webhook architecture flow diagrams
 - **[Caching System Diagrams](./docs/sequence-diagrams/caching-system.md)**: Multi-layer caching strategy diagrams
 - **[State Management Diagrams](./docs/sequence-diagrams/state-management.md)**: Zustand and Redux flow patterns
@@ -436,7 +447,9 @@ Visit [localhost:3002](http://localhost:3002) to explore:
 - **Virtual DOM**: Performance optimization techniques and monitoring
 - **Module Federation**: Webpack 5 configuration and best practices
 - **Error Handling**: Comprehensive error boundaries and recovery strategies
+- **WebSocket System**: Real-time bidirectional communication with chat, gaming, and collaboration
 - **Webhook System**: Event-driven communication with signature verification and real-time UI
+- **Azure Architecture**: Enterprise-grade cloud infrastructure with microservices and global distribution
 - **Caching Architecture**: Multi-layer caching with memory, IndexedDB, and Service Worker
 - **Monitoring**: Application Insights and performance tracking
 - **Identity**: Azure Active Directory integration
@@ -484,6 +497,7 @@ cd frontend && npm install && npm run dev
 - 🔧 **Backend API**: <http://localhost:8080>
 - 🎯 **Full-Stack Examples**: <http://localhost:3000/examples>
 - 🔗 **Webhook Demo**: <http://localhost:3000/webhooks>
+- 💬 **WebSocket Demo**: <http://localhost:3000/websockets>
 - 🏥 **Health Check**: <http://localhost:8080/actuator/health>
 
 ## 📁 Project Structure

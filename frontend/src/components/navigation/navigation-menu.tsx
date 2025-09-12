@@ -6,7 +6,6 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronDownIcon, HomeIcon, CogIcon } from '@heroicons/react/24/outline';
 import { SmartLink } from './smart-navigation';
 import { useThemeStore } from '@/store/zustand/theme-store';
-import { useNavigationStore } from '@/store/zustand/navigation-store';
 
 // Navigation Menu Item Type
 interface NavigationItem {
@@ -51,6 +50,11 @@ const navigationItems: NavigationItem[] = [
         id: 'webhooks',
         label: 'Webhook Demo',
         href: '/webhooks'
+      },
+      {
+        id: 'websockets',
+        label: 'WebSocket Demo',
+        href: '/websockets'
       }
     ]
   },
@@ -227,7 +231,6 @@ function NavigationItemComponent({ item, pathname }: NavigationItemComponentProp
 // Main Navigation Component
 export function NavigationMenu() {
   const pathname = usePathname();
-  const { currentRoute } = useNavigationStore();
 
   return (
     <nav className="bg-white border-b border-gray-200 sticky top-0 z-40">
