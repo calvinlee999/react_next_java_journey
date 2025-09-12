@@ -52,6 +52,11 @@ const navigationItems: NavigationItem[] = [
         href: '/webhooks'
       },
       {
+        id: 'event-comparison',
+        label: 'WebHook vs Kafka',
+        href: '/event-comparison'
+      },
+      {
         id: 'websockets',
         label: 'WebSocket Demo',
         href: '/websockets'

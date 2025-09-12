@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useCallback } from 'react';
+import Link from 'next/link';
 
 /**
  * Webhook Management and Demo Page
@@ -195,9 +196,20 @@ const WebhookDemo: React.FC = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="bg-white overflow-hidden shadow rounded-lg">
           <div className="px-4 py-5 sm:p-6">
-            <h1 className="text-3xl font-bold text-gray-900 mb-8">
-              Webhook Management & Demo
-            </h1>
+            <div className="flex items-center justify-between mb-8">
+              <h1 className="text-3xl font-bold text-gray-900">
+                Webhook Management & Demo
+              </h1>
+              
+              <div className="flex gap-4">
+                <Link 
+                  href="/event-comparison"
+                  className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                >
+                  ⚡ Compare with Kafka
+                </Link>
+              </div>
+            </div>
 
             {/* Webhook Statistics */}
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">

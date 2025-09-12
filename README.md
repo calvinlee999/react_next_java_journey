@@ -35,6 +35,7 @@ cd react_next_java_journey
 - 🔧 **Backend API**: [http://localhost:8080](http://localhost:8080)
 - 🎯 **Examples**: [http://localhost:3000/examples](http://localhost:3000/examples)
 - 🔗 **Webhook Demo**: [http://localhost:3000/webhooks](http://localhost:3000/webhooks)
+- ⚡ **Event-Driven Architecture Comparison**: [http://localhost:3000/event-comparison](http://localhost:3000/event-comparison)
 - 💬 **WebSocket Demo**: [http://localhost:3000/websockets](http://localhost:3000/websockets)
 - **🚀 NEW: API Gateway Demo**: [http://localhost:3000/api-gateway-demo](http://localhost:3000/api-gateway-demo)
 
