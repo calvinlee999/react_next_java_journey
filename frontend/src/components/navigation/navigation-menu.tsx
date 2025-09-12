@@ -46,6 +46,11 @@ const navigationItems: NavigationItem[] = [
         id: 'virtual-dom',
         label: 'Virtual DOM Performance',
         href: '/virtual-dom-demo'
+      },
+      {
+        id: 'webhooks',
+        label: 'Webhook Demo',
+        href: '/webhooks'
       }
     ]
   },
