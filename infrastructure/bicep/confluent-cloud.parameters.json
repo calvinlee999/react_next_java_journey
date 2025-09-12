@@ -1,0 +1,26 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "confluentOrganizationName": {
+      "value": "azure-level-1-event-org"
+    },
+    "confluentClusterName": {
+      "value": "event-streaming-cluster"
+    },
+    "location": {
+      "value": "eastus"
+    },
+    "environment": {
+      "value": "development"
+    },
+    "tags": {
+      "value": {
+        "project": "azure-level-1",
+        "component": "confluent-cloud",
+        "architecture": "event-driven",
+        "deployment": "automated"
+      }
+    }
+  }
+}

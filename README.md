@@ -40,7 +40,7 @@ cd react_next_java_journey
 
 ## 🏗️ Architecture Overview
 
-This Golden Path template demonstrates **Enterprise-Grade Full-Stack Architecture** with comprehensive **Azure Well-Architected Framework** compliance:
+This Golden Path template demonstrates **Enterprise-Grade Full-Stack Architecture** with comprehensive **Azure Well-Architected Framework** compliance and **Event-Driven Architecture** capabilities:
 
 ### 📊 System Architecture Diagrams
 
@@ -106,6 +106,65 @@ graph TB
     BS --> AI
     AI --> MON
     MON --> LOG
+```
+
+#### 🚀 Confluent Cloud Event-Driven Architecture
+
+```mermaid
+graph TB
+    subgraph "Event Producers"
+        REACT[React Frontend Apps]
+        JAVA[Java Spring Boot APIs]
+        EXT[External Systems]
+    end
+    
+    subgraph "Confluent Cloud on Azure Marketplace"
+        subgraph "Apache Kafka Cluster"
+            TOPIC1[user-events Topic]
+            TOPIC2[order-events Topic]  
+            TOPIC3[payment-events Topic]
+            TOPIC4[notification-events Topic]
+        end
+        
+        subgraph "Stream Processing"
+            FLINK[Apache Flink Jobs]
+            KSQL[ksqlDB Streams]
+            SCHEMA[Schema Registry]
+        end
+    end
+    
+    subgraph "Event Consumers"
+        ANALYTICS[Analytics Service]
+        NOTIFICATIONS[Notification Service]
+        AUDIT[Audit Logger]
+        REALTIME[Real-time Dashboard]
+    end
+    
+    subgraph "Azure Integration"
+        APIM[API Management<br/>AsyncAPI Gateway]
+        EVENTHUB[Event Hubs<br/>Hybrid Bridge]
+        FUNCTIONS[Azure Functions<br/>Event Processors]
+        STORAGE[Blob Storage<br/>Event Archive]
+    end
+    
+    REACT --> TOPIC1
+    JAVA --> TOPIC2
+    EXT --> TOPIC3
+    
+    TOPIC1 --> FLINK
+    TOPIC2 --> KSQL
+    TOPIC3 --> SCHEMA
+    
+    FLINK --> ANALYTICS
+    KSQL --> NOTIFICATIONS
+    TOPIC4 --> AUDIT
+    
+    KAFKA --> APIM
+    APIM --> EVENTHUB
+    EVENTHUB --> FUNCTIONS
+    FUNCTIONS --> STORAGE
+    
+    ANALYTICS --> REALTIME
 ```
 
 #### 🏛️ Complete System Architecture
@@ -451,6 +510,36 @@ azd up
 - **📚 Comprehensive Documentation**: Architecture guides and quick start instructions
 
 **📋 Documentation**: [Azure Level 1 Static Content Delivery](./docs/azure/AZURE_LEVEL1_STATIC_CONTENT_DELIVERY.md)
+
+#### 🚀 Confluent Cloud Event-Driven Architecture - NEW!
+
+**Enterprise Event Streaming** with Apache Kafka, Apache Flink, and AsyncAPI:
+
+- **☁️ Confluent Cloud**: Fully managed Apache Kafka on Azure Marketplace
+- **⚡ Apache Flink**: Real-time stream processing with sub-millisecond latency
+- **💾 ksqlDB**: Streaming SQL for real-time analytics and transformations
+- **📝 Schema Registry**: Centralized schema management with evolution support
+- **🔄 AsyncAPI Integration**: Event-driven API documentation and governance
+- **🛡️ Enterprise Security**: SASL/SSL, OAuth, ACLs, and audit logging
+- **📊 Kafka vs WebHooks**: Comprehensive comparison and recommendation guide
+
+**🎯 Event-Driven Architecture Features**:
+
+- **🌊 High-Throughput Streaming**: Millions of events per second with guaranteed delivery
+- **🔄 Event Replay**: Time-travel capabilities with complete message history
+- **🧮 Stream Processing**: Real-time analytics with Apache Flink and ksqlDB
+- **📡 Multiple Integration Patterns**: Kafka topics, Event Hubs bridge, AsyncAPI gateway
+- **💻 React Management UI**: Interactive Kafka cluster management and monitoring
+- **🔧 Production-Ready SDK**: TypeScript client libraries for all Confluent services
+- **📚 Architectural Guidance**: Event-driven patterns vs traditional WebHook approaches
+
+**📋 Documentation**:
+
+- [Event-Driven Architecture Comparison](./docs/event-driven-architecture-comparison.md)
+- [Confluent Cloud Infrastructure](./infrastructure/bicep/confluent-cloud-azure-clean.bicep)
+- [TypeScript SDK](./frontend/src/lib/confluent-cloud-sdk.ts)
+- [React Management Component](./frontend/src/components/ConfluentCloudAsyncAPIComponent.tsx)
+- [Deployment Guide](./scripts/deploy-confluent-cloud.sh)
 
 **🎯 API Management Features**:
 
