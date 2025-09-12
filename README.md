@@ -1,11 +1,12 @@
 # 🚀 Golden Path Template - Enterprise React + Next.js + Java + Azure
 
-> **🎯 Complete Enterprise-Grade Full-Stack Architecture with Azure Well-Architected Framework**
+> **🎯 Complete Enterprise-Grade Full-Stack Architecture with Azure API Management Gateway Integration**
 
 [![Next.js](https://img.shields.io/badge/Next.js-15.5.3-black?logo=next.js)](https://nextjs.org/)
 [![React](https://img.shields.io/badge/React-19.1.0-blue?logo=react)](https://react.dev/)
 [![Spring Boot](https://img.shields.io/badge/Spring_Boot-3.2.0-green?logo=spring)](https://spring.io/projects/spring-boot)
 [![Azure](https://img.shields.io/badge/Azure-Cloud_Ready-blue?logo=microsoft-azure)](https://azure.microsoft.com/)
+[![Azure API Management](https://img.shields.io/badge/Azure_API_Management-Enterprise-orange?logo=microsoft-azure)](https://azure.microsoft.com/en-us/products/api-management)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue?logo=typescript)](https://www.typescriptlang.org/)
 
 ## 🚀 Quick Start (2-Minute Setup)
@@ -35,6 +36,7 @@ cd react_next_java_journey
 - 🎯 **Examples**: [http://localhost:3000/examples](http://localhost:3000/examples)
 - 🔗 **Webhook Demo**: [http://localhost:3000/webhooks](http://localhost:3000/webhooks)
 - 💬 **WebSocket Demo**: [http://localhost:3000/websockets](http://localhost:3000/websockets)
+- **🚀 NEW: API Gateway Demo**: [http://localhost:3000/api-gateway-demo](http://localhost:3000/api-gateway-demo)
 
 ## 🏗️ Architecture Overview
 
@@ -42,7 +44,73 @@ This Golden Path template demonstrates **Enterprise-Grade Full-Stack Architectur
 
 ### 🏛️ Azure Well-Architected Framework Implementation
 
-Our architecture follows Microsoft's **Five Pillars of Architectural Excellence**:
+Our architecture follows Microsoft's **Five Pillars of Architectural Excellence** with **Level 1 Azure Well-Architected Framework** compliance:
+
+- **🛡️ Reliability**: 99.9% uptime with zone-redundant deployments and automated failover
+- **🔒 Security**: Zero Trust architecture with defense-in-depth security layers
+- **💰 Cost Optimization**: Intelligent resource management with auto-scaling and right-sizing
+- **⚙️ Operational Excellence**: Infrastructure as Code with comprehensive observability
+- **⚡ Performance Efficiency**: Horizontal scaling with multi-layer caching and optimization
+
+### 🔗 Azure API Management - Central API Gateway
+
+**Level 1 Well-Architected Implementation** featuring Azure's native API Management service as the single entry point for all API communications:
+
+#### 🛡️ Enterprise Security Features
+- **Multi-layer Authentication**: OAuth 2.0, Azure AD, JWT validation, API keys
+- **Policy-based Access Control**: Rate limiting, IP filtering, request validation
+- **Zero Trust Architecture**: Verify every request regardless of source
+- **Comprehensive Audit Trails**: Complete request/response logging for compliance
+
+#### ⚡ Performance & Reliability
+- **Intelligent Caching**: Multi-tier response caching with configurable policies
+- **Circuit Breaker Patterns**: Automatic failure detection and graceful degradation
+- **Load Balancing**: Health-aware traffic distribution across backend services
+- **Global Distribution**: Multi-region deployment with edge optimization
+
+#### 👨‍💻 Developer Experience Excellence
+- **Interactive Developer Portal**: Self-service API access with documentation
+- **SDK Auto-generation**: Ready-to-use client libraries in multiple languages
+- **Built-in Testing Console**: API testing interface with authentication
+- **Real-time Analytics**: Usage insights and performance monitoring
+
+## 🌐 Azure API Management Gateway Integration
+
+### 🚀 **NEW: Enterprise API Gateway Features**
+
+This template now includes **comprehensive Azure API Management Gateway integration** for all communication types:
+
+#### � **Enhanced Communication Channels**
+- **🌐 REST API**: Full CRUD operations through API Management with caching, rate limiting, and JWT validation
+- **⚡ WebSocket**: Real-time communication routing with connection management and enterprise messaging
+- **🪝 WebHook**: Provider-specific webhook handling (GitHub, Stripe, Generic) with signature validation
+
+#### 🛡️ **Enterprise Security Features**
+
+- **Multi-layer Authentication**: OAuth 2.0, Azure AD, JWT validation, API keys
+- **Rate Limiting & Throttling**: Configurable request limits per client/subscription
+- **Signature Validation**: WebHook security with provider-specific verification
+- **IP Filtering**: Access control with allowlists and geographic restrictions
+
+#### ⚡ **Performance & Reliability**
+
+- **Intelligent Caching**: Multi-tier response caching with configurable policies
+- **Auto-Retry Logic**: Exponential backoff for failed requests with circuit breakers
+- **Load Balancing**: Automatic traffic distribution across backend instances
+- **Health Monitoring**: Real-time service health checks and failover mechanisms
+
+#### 👨‍💻 **Developer Experience Excellence**
+
+- **Interactive Developer Portal**: Self-service API access with documentation
+- **Request/Response Logging**: Comprehensive observability and debugging
+- **TypeScript Integration**: Fully typed client libraries with IntelliSense
+- **Live Demo Component**: Interactive testing interface for all API features
+
+**📋 Complete Documentation**: [Azure API Management Integration Guide](./AZURE_API_MANAGEMENT_INTEGRATION.md)
+
+### 🏛️ Azure Well-Architected Framework Implementation
+
+Our architecture follows Microsoft's **Five Pillars of Architectural Excellence** with **Level 1 Azure Well-Architected Framework** compliance:
 
 - **🛡️ Reliability**: 99.9% uptime with zone-redundant deployments and automated failover
 - **🔒 Security**: Zero Trust architecture with defense-in-depth security layers
@@ -217,9 +285,44 @@ azd up
 - **🔄 Hybrid Deployment**: Mixed static/dynamic deployment per route
 - **🚀 Auto-Scaling**: Azure-managed scaling based on demand
 
+#### 🚪 Azure API Management - Level 1 Well-Architected Framework
+
+**Enterprise API Gateway** with comprehensive security, performance, and developer experience:
+
+- **🔐 Enterprise Security**: Managed Identity, Key Vault integration, OAuth 2.0/JWT validation
+- **⚡ Performance & Reliability**: Intelligent caching, circuit breakers, zone redundancy (99.95% SLA)  
+- **👨‍💻 Developer Experience**: Self-service portal, interactive documentation, multi-language SDKs
+- **📊 Monitoring & Analytics**: Application Insights integration, real-time metrics, compliance logging
+- **🏗️ Infrastructure as Code**: Complete Bicep templates with automated deployment
+- **🌐 Multi-Environment**: Dev/staging/prod configurations with auto-scaling
+
+**🎯 API Management Features**:
+
+- ✅ **REST API Gateway**: Full CRUD operations with OpenAPI specifications
+- ✅ **WebSocket Integration**: Real-time communication through API Management  
+- ✅ **WebHook Processing**: GitHub, Stripe, and generic webhook handling
+- ✅ **Enterprise Security**: JWT validation, subscription keys, rate limiting
+- ✅ **Performance Optimization**: Response caching, connection pooling, retry logic
+- ✅ **Developer Tools**: Interactive demo component, health monitoring, metrics
+
+**📋 Documentation**:
+
+- [Implementation Guide](./AZURE_API_MANAGEMENT_INTEGRATION.md) - Complete setup and usage
+- [Bicep Template](./infrastructure/bicep/api-management.bicep) - Infrastructure as Code
+- [Client Libraries](./frontend/src/lib/api-gateway.ts) - TypeScript integration
+- ✅ Zero-credential security with Managed Identity
+- ✅ Production-ready monitoring and analytics
+- ✅ Self-service developer portal reduces support overhead
+
+**📋 Documentation**: 
+- [Implementation Summary](./docs/AZURE_API_MANAGEMENT_IMPLEMENTATION.md)
+- [Architecture Diagrams](./docs/architecture/azure-cloud-architecture.md)
+- [Sequence Diagrams](./docs/sequence-diagrams/azure-api-management-flow.md)
+- [Infrastructure Guide](./infrastructure/bicep/README.md)
+
 #### Infrastructure as Code
 
-- **🏗️ Bicep Templates**: Azure resource provisioning
+- **🏗️ Bicep Templates**: Azure resource provisioning with API Management
 - **🔧 Terraform**: Multi-cloud infrastructure management
 - **☸️ Kubernetes**: Container orchestration with Helm charts
 - **📊 Monitoring**: Application Insights and Azure Monitor integration
@@ -334,6 +437,7 @@ react_next_java_journey/
 │   └── sequence-diagrams/
 │       ├── websocket-system.md         # WebSocket architecture
 │       ├── webhook-system.md           # Webhook system flow
+│       ├── azure-api-management-flow.md # Azure API Management flows
 │       ├── caching-system.md          # Multi-layer caching
 │       └── state-management.md        # State management patterns
 │
@@ -349,6 +453,7 @@ react_next_java_journey/
 ### Comprehensive Guides
 
 - **[Azure Cloud Architecture](./docs/architecture/azure-cloud-architecture.md)**: Complete enterprise Azure architecture with Azure Well-Architected Framework implementation
+- **[Azure API Management Flow Diagrams](./docs/sequence-diagrams/azure-api-management-flow.md)**: Complete API gateway implementation with security, performance, and developer experience flows
 - **[WebSocket System Diagrams](./docs/sequence-diagrams/websocket-system.md)**: Real-time communication architecture with sequence diagrams for chat, gaming, and collaboration
 - **[Webhook System Diagrams](./docs/sequence-diagrams/webhook-system.md)**: Complete webhook architecture flow diagrams
 - **[Caching System Diagrams](./docs/sequence-diagrams/caching-system.md)**: Multi-layer caching strategy diagrams
@@ -356,6 +461,7 @@ react_next_java_journey/
 
 ### Implementation Details
 
+- **Azure API Management**: Enterprise API gateway with security, caching, monitoring, and developer portal
 - **Real-Time Systems**: Complete WebSocket and Webhook implementations with real-time UI
 - **State Management**: Multi-pattern approach with Redux, Zustand, Jotai, React Query
 - **Virtual DOM**: Performance optimization techniques and monitoring

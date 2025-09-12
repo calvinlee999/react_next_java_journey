@@ -110,11 +110,23 @@ graph TB
         CDN[Azure CDN]
     end
 
+    subgraph "Azure API Management"
+        APIM[🔗 API Management Gateway]
+        subgraph "API Gateway Features"
+            Security[🔒 Security Enforcement]
+            Policies[📋 Policy Application]
+            Analytics[📊 Analytics & Monitoring]
+            Cache[💾 Response Caching]
+            Transform[🔄 Request/Response Transform]
+            RateLimit[⚡ Rate Limiting]
+        end
+        DevPortal[👨‍💻 Developer Portal]
+    end
+
     subgraph "Azure App Service Environment"
         ASE[App Service Environment]
         subgraph "Frontend Apps"
             WebApp[React/Next.js Web App]
-            API[API Gateway]
         end
         subgraph "Backend Services"
             SpringApp[Spring Boot App]
@@ -161,7 +173,7 @@ graph TB
 
     %% User flows
     User --> AFD
-    Dev --> GitHub
+    Dev --> DevPortal
     Admin --> Monitor
 
     %% Frontend flow
@@ -169,11 +181,19 @@ graph TB
     CDN --> AppGateway
     AppGateway --> ASE
     ASE --> WebApp
-    ASE --> API
 
-    %% Backend flow
-    API --> SpringApp
-    SpringApp --> AKS
+    %% API Gateway flow (All API calls go through APIM)
+    WebApp --> APIM
+    APIM --> Security
+    APIM --> Policies
+    APIM --> Analytics
+    APIM --> Cache
+    APIM --> Transform
+    APIM --> RateLimit
+
+    %% Backend routing through APIM
+    APIM --> SpringApp
+    APIM --> AKS
     AKS --> UserMS
     AKS --> PaymentMS
     AKS --> WebSocketMS
@@ -292,89 +312,426 @@ graph TB
     AppInsights_FE --> Performance
 ```
 
-## ⚙️ Backend Architecture (Azure Kubernetes Service + App Service)
+## ⚙️ Backend Architecture (Azure API Management + AKS + App Service)
 
 ```mermaid
 graph TB
-    subgraph "API Gateway"
-        APIM[Azure API Management]
-        Gateway[Spring Cloud Gateway]
-        LoadBalancer[Azure Load Balancer]
-    end
-
-    subgraph "Azure App Service"
-        SpringApp[Spring Boot Monolith]
-        subgraph "App Features"
-            REST_API[REST API]
-            Security[Spring Security]
-            Actuator[Health Endpoints]
+    subgraph "Azure API Management"
+        APIM[🔗 API Management Gateway]
+        subgraph "Gateway Features"
+            AuthZ[🔐 Authorization]
+            APIKey[🗝️ API Key Management]
+            JWT_Val[🎫 JWT Validation]
+            Throttle[⚡ Rate Limiting & Throttling]
+            Transform[🔄 Request/Response Transformation]
+            Cache_Policy[💾 Caching Policies]
+            Monitor_API[📊 API Analytics]
+            MockAPI[🎭 API Mocking]
+        end
+        subgraph "Developer Experience"
+            DevPortal[👨‍💻 Developer Portal]
+            APIDoc[📚 Interactive API Documentation]
+            SDKGen[⚙️ SDK Generation]
+            Testing[🧪 API Testing Console]
+        end
+        subgraph "Management Plane"
+            Publisher[📝 API Publisher Portal]
+            Policies[📋 Policy Management]
+            Products[📦 Product Catalog]
+            Subscriptions[🎫 Subscription Management]
         end
     end
 
-    subgraph "Azure Kubernetes Service"
-        AKS[AKS Cluster]
-        subgraph "Microservices"
-            UserService[User Management Service]
-            PaymentService[Payment Processing Service]
-            NotificationService[Notification Service]
-            WebSocketService[Real-time Communication Service]
-            AuthService[Authentication Service]
+    subgraph "Backend Services Layer"
+        LoadBalancer[⚖️ Azure Load Balancer]
+        
+        subgraph "Azure App Service"
+            SpringApp[🌱 Spring Boot Monolith]
+            subgraph "App Features"
+                REST_API[🌐 REST API Endpoints]
+                Security[🔒 Spring Security]
+                Actuator[💊 Health & Metrics Endpoints]
+                WebSocket_Svc[🔌 WebSocket Service]
+            end
+            AppScale[📈 Auto Scaling]
+            Slots[🔄 Deployment Slots]
         end
-        subgraph "Support Services"
-            ConfigServer[Config Server]
-            ServiceDiscovery[Service Discovery]
-            MessageBroker[Message Broker]
+
+        subgraph "Azure Kubernetes Service"
+            AKS[☸️ AKS Cluster]
+            subgraph "Microservices"
+                UserService[👤 User Management Service]
+                PaymentService[💳 Payment Processing Service]
+                NotificationService[📢 Notification Service]
+                WebSocketService[💬 Real-time Communication Service]
+                AuthService[🔐 Authentication Service]
+                IntegrationService[🔗 External Integration Service]
+            end
+            subgraph "Infrastructure Services"
+                ConfigServer[⚙️ Config Server]
+                ServiceRegistry[📋 Service Discovery]
+                MessageBroker[📨 Message Broker (RabbitMQ)]
+                EventStore[📝 Event Store]
+            end
+            subgraph "Cross-Cutting Services"
+                LoggingService[📋 Centralized Logging]
+                MetricsService[📊 Metrics Collection]
+                TracingService[🔍 Distributed Tracing]
+            end
         end
     end
 
-    subgraph "Container Registry"
-        ACR[Azure Container Registry]
-        Images[Docker Images]
-        Vulnerability[Vulnerability Scanning]
+    subgraph "Container & Image Management"
+        ACR[📦 Azure Container Registry]
+        Images[🐳 Docker Images]
+        Vulnerability[🛡️ Vulnerability Scanning]
+        Compliance[✅ Compliance Scanning]
     end
 
-    subgraph "Service Mesh"
-        Istio[Istio Service Mesh]
-        Envoy[Envoy Proxy]
-        TLS[mTLS Communication]
+    subgraph "Service Mesh & Networking"
+        Istio[🕸️ Istio Service Mesh]
+        Envoy[🔄 Envoy Proxy]
+        mTLS[🔐 Mutual TLS]
+        TrafficMgmt[🚦 Traffic Management]
     end
 
-    %% API flow
-    APIM --> Gateway
-    Gateway --> LoadBalancer
+    %% API Gateway flow - All requests go through APIM first
+    APIM --> AuthZ
+    APIM --> APIKey  
+    APIM --> JWT_Val
+    APIM --> Throttle
+    APIM --> Transform
+    APIM --> Cache_Policy
+    APIM --> Monitor_API
+    
+    %% Developer Experience
+    APIM --> DevPortal
+    DevPortal --> APIDoc
+    DevPortal --> SDKGen
+    DevPortal --> Testing
+    
+    %% Management
+    APIM --> Publisher
+    Publisher --> Policies
+    Publisher --> Products
+    Publisher --> Subscriptions
+
+    %% Backend routing through load balancer
+    APIM --> LoadBalancer
     LoadBalancer --> SpringApp
     LoadBalancer --> AKS
 
-    %% Monolith features
+    %% Spring Boot App features
     SpringApp --> REST_API
     SpringApp --> Security
     SpringApp --> Actuator
+    SpringApp --> WebSocket_Svc
+    SpringApp --> AppScale
+    SpringApp --> Slots
 
-    %% Microservices
+    %% Microservices in AKS
     AKS --> UserService
     AKS --> PaymentService
     AKS --> NotificationService
     AKS --> WebSocketService
     AKS --> AuthService
+    AKS --> IntegrationService
 
-    %% Support services
+    %% Infrastructure services
     AKS --> ConfigServer
-    AKS --> ServiceDiscovery
+    AKS --> ServiceRegistry
     AKS --> MessageBroker
+    AKS --> EventStore
+
+    %% Cross-cutting concerns
+    AKS --> LoggingService
+    AKS --> MetricsService
+    AKS --> TracingService
 
     %% Container management
     ACR --> Images
-    Images --> AKS
     Images --> SpringApp
+    Images --> AKS
     ACR --> Vulnerability
+    ACR --> Compliance
 
     %% Service mesh
     Istio --> AKS
     Istio --> Envoy
-    Istio --> TLS
+    Istio --> mTLS
+    Istio --> TrafficMgmt
 ```
 
-## 💾 Data Architecture (Multi-Database Strategy)
+## � Azure API Management - Level 1 Well-Architected Implementation
+
+Azure API Management serves as the **central API gateway** providing enterprise-grade capabilities that align with Azure Well-Architected Framework Level 1 requirements. This native Azure service acts as the **single entry point** for all API communications between frontend and backend services.
+
+### 🏗️ API Management Architecture
+
+```mermaid
+graph TB
+    subgraph "Client Applications"
+        WebApp[🌐 React/Next.js Frontend]
+        Mobile[📱 Mobile Applications]
+        Partners[🤝 Partner Integrations]
+        Developers[👨‍💻 Third-party Developers]
+    end
+
+    subgraph "Azure API Management"
+        subgraph "Gateway Layer"
+            Gateway[🔗 API Gateway]
+            Cache[💾 Response Cache]
+            Transform[🔄 Transformation Engine]
+        end
+        
+        subgraph "Security Layer"
+            AuthGW[🔐 Authentication Gateway]
+            OAuth[🎫 OAuth 2.0 / OpenID Connect]
+            APIKeys[🗝️ API Key Validation]
+            IPFilter[🛡️ IP Filtering]
+            WAF_APIM[🔥 Web Application Firewall]
+        end
+        
+        subgraph "Policy Engine"
+            RateLimit[⚡ Rate Limiting]
+            Quota[📊 Usage Quotas]
+            Throttling[🚦 Request Throttling]
+            Validation[✅ Request/Response Validation]
+            CORS_Policy[🌐 CORS Policies]
+        end
+        
+        subgraph "Developer Experience"
+            DevPortal[👨‍💻 Developer Portal]
+            Documentation[📚 Interactive API Docs]
+            TryItOut[🧪 API Testing Console]
+            SDKGen[⚙️ SDK Generation]
+            Samples[📝 Code Samples]
+        end
+        
+        subgraph "Management & Analytics"
+            Publisher[📝 Publisher Portal]
+            Analytics[📊 API Analytics]
+            Monitoring[📈 Real-time Monitoring]
+            Alerting[🚨 Alert Management]
+            Reporting[📋 Usage Reports]
+        end
+    end
+
+    subgraph "Backend Services"
+        SpringBoot[🌱 Spring Boot App Service]
+        Microservices[☸️ AKS Microservices]
+        External[🌍 External APIs]
+        Legacy[🏛️ Legacy Systems]
+    end
+
+    subgraph "Supporting Services"
+        KeyVault[🔑 Azure Key Vault]
+        AppInsights[📊 Application Insights]
+        LogAnalytics[📝 Log Analytics]
+        EventGrid[📡 Event Grid]
+    end
+
+    %% Client to API Management
+    WebApp --> Gateway
+    Mobile --> Gateway
+    Partners --> Gateway
+    Developers --> DevPortal
+
+    %% Gateway processing
+    Gateway --> AuthGW
+    Gateway --> Cache
+    Gateway --> Transform
+    
+    %% Security flow
+    AuthGW --> OAuth
+    AuthGW --> APIKeys
+    AuthGW --> IPFilter
+    AuthGW --> WAF_APIM
+
+    %% Policy enforcement
+    Gateway --> RateLimit
+    Gateway --> Quota
+    Gateway --> Throttling
+    Gateway --> Validation
+    Gateway --> CORS_Policy
+
+    %% Developer experience
+    DevPortal --> Documentation
+    DevPortal --> TryItOut
+    DevPortal --> SDKGen
+    DevPortal --> Samples
+
+    %% Management
+    Publisher --> Analytics
+    Publisher --> Monitoring
+    Publisher --> Alerting
+    Publisher --> Reporting
+
+    %% Backend routing
+    Gateway --> SpringBoot
+    Gateway --> Microservices
+    Gateway --> External
+    Gateway --> Legacy
+
+    %% Supporting services
+    AuthGW --> KeyVault
+    Analytics --> AppInsights
+    Monitoring --> LogAnalytics
+    Gateway --> EventGrid
+```
+
+### 🛡️ Security Enforcement Features
+
+#### Authentication & Authorization
+- **Multi-protocol Support**: OAuth 2.0, OpenID Connect, Azure AD integration
+- **API Key Management**: Subscription-based access control with multiple tiers
+- **JWT Token Validation**: Stateless token verification with configurable claims
+- **Certificate Authentication**: Mutual TLS for high-security scenarios
+- **IP Whitelisting/Blacklisting**: Network-level access control
+
+#### Policy-based Security
+```xml
+<!-- Example: JWT Validation Policy -->
+<validate-jwt header-name="Authorization" failed-validation-httpcode="401">
+    <openid-config url="https://login.microsoftonline.com/{tenant}/.well-known/openid_configuration" />
+    <required-claims>
+        <claim name="aud" match="all">
+            <value>api://your-api-id</value>
+        </claim>
+    </required-claims>
+</validate-jwt>
+
+<!-- Example: Rate Limiting Policy -->
+<rate-limit-by-key calls="100" renewal-period="60" counter-key="@(context.User.Identity.Name)" />
+```
+
+### ⚡ Performance & Reliability Features
+
+#### Caching Strategy
+- **Response Caching**: Configurable cache duration per endpoint
+- **Cache Key Customization**: Dynamic cache keys based on request parameters
+- **Cache Invalidation**: Automatic and manual cache refresh mechanisms
+- **Distributed Caching**: Redis integration for scaled-out scenarios
+
+#### Load Management
+- **Rate Limiting**: Per-subscription, per-IP, or custom key-based limiting
+- **Request Throttling**: Smooth traffic flow with queuing mechanisms
+- **Circuit Breaker**: Automatic failure detection and recovery
+- **Backend Pool Management**: Health checks and failover routing
+
+### 📊 Monitoring & Analytics
+
+#### Real-time Monitoring
+- **Request/Response Tracking**: Complete API call lifecycle monitoring
+- **Performance Metrics**: Latency, throughput, and error rate tracking
+- **Custom Metrics**: Business-specific KPI collection
+- **Live Diagnostics**: Real-time request tracing and debugging
+
+#### Analytics Dashboard
+```javascript
+// Example: Custom Analytics Policy
+<log-to-eventhub logger-id="analytics-logger">
+{
+    "timestamp": "@(DateTime.UtcNow.ToString())",
+    "api": "@(context.Api.Name)",
+    "operation": "@(context.Operation.Name)",
+    "responseTime": "@(context.Response.StatusCode)",
+    "clientIP": "@(context.Request.IpAddress)",
+    "userAgent": "@(context.Request.Headers.GetValueOrDefault('User-Agent',''))"
+}
+</log-to-eventhub>
+```
+
+### 🔄 Request/Response Transformation
+
+#### Data Transformation
+- **JSON/XML Conversion**: Seamless format transformation
+- **Header Manipulation**: Add, remove, or modify HTTP headers
+- **Query Parameter Processing**: Parameter validation and transformation
+- **Request/Response Filtering**: Remove sensitive data or add metadata
+
+#### Protocol Translation
+- **REST to SOAP**: Legacy system integration capabilities
+- **GraphQL Gateway**: GraphQL endpoint exposure over REST backends
+- **WebSocket Proxying**: Real-time communication support
+
+### 👨‍💻 Developer Experience
+
+#### Developer Portal Features
+- **Interactive Documentation**: Swagger/OpenAPI-based documentation
+- **API Testing Console**: Built-in testing interface with authentication
+- **SDK Generation**: Auto-generated client libraries in multiple languages
+- **Code Samples**: Ready-to-use integration examples
+- **Subscription Management**: Self-service API access provisioning
+
+#### API Versioning
+- **Multiple Versioning Strategies**: Header, query parameter, or path-based versioning
+- **Backward Compatibility**: Gradual migration support between API versions
+- **Deprecation Management**: Controlled sunset process for legacy versions
+
+### 🏭 Production-Ready Configuration
+
+#### Multi-Environment Setup
+```yaml
+# Example: Environment-specific Configuration
+environments:
+  development:
+    tier: "Developer"
+    capacity: 1
+    custom_domains: ["api-dev.yourcompany.com"]
+  
+  staging:
+    tier: "Standard"
+    capacity: 2
+    custom_domains: ["api-staging.yourcompany.com"]
+  
+  production:
+    tier: "Premium"
+    capacity: 4
+    custom_domains: ["api.yourcompany.com"]
+    availability_zones: true
+    backup_enabled: true
+```
+
+#### Disaster Recovery
+- **Multi-region Deployment**: Active-passive and active-active configurations
+- **Configuration Backup**: Automated policy and configuration backup
+- **Health Monitoring**: Continuous availability monitoring
+- **Automatic Failover**: DNS-based traffic redirection during outages
+
+### 🎯 Well-Architected Framework Alignment
+
+#### Reliability
+- **High Availability**: 99.9% SLA with zone-redundant deployment
+- **Auto-scaling**: Capacity adjustment based on traffic patterns
+- **Health Checks**: Continuous backend service monitoring
+- **Graceful Degradation**: Circuit breaker patterns for service failures
+
+#### Security
+- **Defense in Depth**: Multiple security layers with comprehensive policies
+- **Zero Trust Model**: Verify every request regardless of source
+- **Compliance**: Built-in support for GDPR, HIPAA, and other standards
+- **Audit Logging**: Complete request/response logging for compliance
+
+#### Cost Optimization
+- **Tiered Pricing**: Choose appropriate tier based on requirements
+- **Usage-based Billing**: Pay only for actual API calls
+- **Caching Optimization**: Reduce backend load and improve response times
+- **Resource Right-sizing**: Monitor and adjust capacity based on usage
+
+#### Operational Excellence
+- **Infrastructure as Code**: ARM/Bicep templates for repeatable deployments
+- **Automated Deployment**: CI/CD integration with Azure DevOps
+- **Configuration Management**: Version-controlled policy management
+- **Monitoring Integration**: Seamless integration with Azure Monitor
+
+#### Performance Efficiency
+- **Global Distribution**: Multi-region deployment for optimal performance
+- **Edge Caching**: CDN integration for static content acceleration
+- **Connection Pooling**: Efficient backend connection management
+- **Compression**: Automatic response compression for bandwidth optimization
+
+## �💾 Data Architecture (Multi-Database Strategy)
 
 ```mermaid
 graph TB
