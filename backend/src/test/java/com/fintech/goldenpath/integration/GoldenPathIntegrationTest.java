@@ -40,7 +40,7 @@ class GoldenPathIntegrationTest {
     @Test
     @DisplayName("Health endpoint should be accessible")
     void healthEndpoint_ShouldBeAccessible() {
-        String url = "http://localhost:" + port + "/api/api/health";
+        String url = "http://localhost:" + port + "/api/health";
         ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
         
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -51,7 +51,7 @@ class GoldenPathIntegrationTest {
     @Test
     @DisplayName("Actuator health endpoint should be accessible")
     void actuatorHealthEndpoint_ShouldBeAccessible() {
-        String url = "http://localhost:" + port + "/api/actuator/health";
+        String url = "http://localhost:" + port + "/actuator/health";
         ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
         
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -61,7 +61,7 @@ class GoldenPathIntegrationTest {
     @Test
     @DisplayName("Info endpoint should return application information")
     void infoEndpoint_ShouldReturnAppInfo() {
-        String url = "http://localhost:" + port + "/api/api/info";
+        String url = "http://localhost:" + port + "/api/info";
         ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
         
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -72,7 +72,7 @@ class GoldenPathIntegrationTest {
     @Test
     @DisplayName("Actuator info endpoint should be accessible")
     void actuatorInfoEndpoint_ShouldBeAccessible() {
-        String url = "http://localhost:" + port + "/api/actuator/info";
+        String url = "http://localhost:" + port + "/actuator/info";
         ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
         
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -81,7 +81,7 @@ class GoldenPathIntegrationTest {
     @Test
     @DisplayName("Non-existent endpoint should return 404")
     void nonExistentEndpoint_ShouldReturn404() {
-        String url = "http://localhost:" + port + "/api/api/nonexistent";
+        String url = "http://localhost:" + port + "/api/nonexistent";
         ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
         
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
@@ -90,7 +90,7 @@ class GoldenPathIntegrationTest {
     @Test
     @DisplayName("CORS should be properly configured")
     void cors_ShouldBeProperlyConfigured() {
-        String url = "http://localhost:" + port + "/api/api/health";
+        String url = "http://localhost:" + port + "/api/health";
         
         // Create headers with Origin
         org.springframework.http.HttpHeaders headers = new org.springframework.http.HttpHeaders();

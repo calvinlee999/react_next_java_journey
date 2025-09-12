@@ -1,24 +1,21 @@
 package com.fintech.goldenpath.controller;
 
 import com.fintech.goldenpath.BackendServiceApplication;
-import com.fintech.goldenpath.config.TestSecurityConfig;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.DisplayName;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 
-import static org.hamcrest.Matchers.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.hamcrest.Matchers.*;
 
 @SpringBootTest(classes = BackendServiceApplication.class)
 @AutoConfigureMockMvc
-@Import(TestSecurityConfig.class)
 @ActiveProfiles("test")
 @DisplayName("Health Controller Tests")
 class HealthControllerTest {
