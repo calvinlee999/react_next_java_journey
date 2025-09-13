@@ -60,6 +60,11 @@ const navigationItems: NavigationItem[] = [
         id: 'websockets',
         label: 'WebSocket Demo',
         href: '/websockets'
+      },
+      {
+        id: 'ai-inference',
+        label: 'AI Inference Demo',
+        href: '/ai-inference-demo'
       }
     ]
   },
