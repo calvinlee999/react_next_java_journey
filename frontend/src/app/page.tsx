@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import BigDataPlatformDashboard from '@/components/BigDataPlatformDashboard';
 
 interface ApiResponse {
   message: string;
@@ -151,6 +152,18 @@ export default function Home() {
           >
             ⚛️ Modern React Demo
           </button>
+        </div>
+
+        {/* Big Data Platform Dashboard Section */}
+        <div className="w-full">
+          <div className="bg-gradient-to-r from-blue-50 to-purple-50 border border-blue-200 rounded-lg p-6">
+            <h2 className="text-2xl font-bold text-gray-900 mb-2">🚀 Big Data Platform Integration</h2>
+            <p className="text-gray-600 mb-4">
+              Explore our modern big data platform with unified event-driven architecture, 
+              AI-powered governance, data quality controls, and Azure Databricks integration.
+            </p>
+            <BigDataPlatformDashboard />
+          </div>
         </div>
       </main>
     </div>

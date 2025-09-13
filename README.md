@@ -72,6 +72,10 @@ cd react_next_java_journey
 - 🎯 **Journey Orchestrator Demo**: [http://localhost:3000/event-comparison](http://localhost:3000/event-comparison) (Three-way Comparison)
 - 💬 **WebSocket Demo**: [http://localhost:3000/websockets](http://localhost:3000/websockets)
 - **🚀 NEW: API Gateway Demo**: [http://localhost:3000/api-gateway-demo](http://localhost:3000/api-gateway-demo)
+- **📊 NEW: Big Data Platform Dashboard**: [http://localhost:3000/big-data-dashboard](http://localhost:3000/big-data-dashboard)
+- **🔍 NEW: Data Governance Console**: [http://localhost:3000/governance-console](http://localhost:3000/governance-console)
+- **⚡ NEW: Quality Monitoring**: [http://localhost:3000/quality-dashboard](http://localhost:3000/quality-dashboard)
+- **🔍 NEW: Lineage Visualization**: [http://localhost:3000/lineage-explorer](http://localhost:3000/lineage-explorer)
 
 ## 🏗️ Architecture Overview
 
@@ -178,6 +182,103 @@ Experience all three inference modes in action:
 - **📈 Analytics Dashboard**: Live performance monitoring and cost analysis
 
 **🔗 Live Demo**: [Event-Driven Architecture Comparison](http://localhost:3000/event-comparison)
+
+## 🎯 **NEW: Modern Big Data Platform Integration**
+
+### 🏗️ **Unified Event-Driven Data Architecture**
+
+This template now includes a **comprehensive big data platform** that transforms our architecture from reactive to **proactive, automated data governance** with real-time quality controls at every stage.
+
+#### 📊 **Big Data Platform Overview**
+
+Our big data platform implements a **modern, event-driven architecture** that ensures accurate data through unified governance and quality controls:
+
+```
+┌───────────────────────────────────────────────────────────────────────────────────────┐
+│                        MODERN BIG DATA PLATFORM ARCHITECTURE                           │
+├───────────────────────────────────────────────────────────────────────────────────────┤
+│                                                                                       │
+│  🌊 EVENT-DRIVEN BACKBONE          📊 AZURE DATABRICKS            🔍 GOVERNANCE       │
+│  ┌─────────────────────┐           ┌─────────────────────┐        ┌─────────────────┐ │
+│  │   Apache Kafka      │           │  Unified Analytics  │        │ AI-Powered      │ │
+│  │   Confluent Cloud   │◄──────────┤                     │────────►│ Data Governance │ │
+│  │                     │           │ • Real-time Stream  │        │                 │ │
+│  │ • Exactly-Once      │           │ • Near-time Micro   │        │ • Auto Classification│
+│  │ • Immutable Log     │           │ • Batch Processing  │        │ • PII Detection │ │
+│  │ • Schema Registry   │           │ • Delta Lake        │        │ • Compliance    │ │
+│  │ • Audit Trail      │           │ • MLflow Models     │        │ • Quality Gates │ │
+│  └─────────────────────┘           └─────────────────────┘        └─────────────────┘ │
+│                                                                                       │
+│  ⚡ QUALITY FRAMEWORK               🔍 LINEAGE TRACKING             📈 MONITORING      │
+│  ┌─────────────────────┐           ┌─────────────────────┐        ┌─────────────────┐ │
+│  │ Apache Spark        │           │ Complete Audit      │        │ Real-time       │ │
+│  │ Real-time Validation│◄──────────┤                     │────────►│ Dashboards      │ │
+│  │                     │           │ • Data Lineage      │        │                 │ │
+│  │ • 4-Dimensional     │           │ • Provenance        │        │ • Quality Metrics│
+│  │ • Business Rules    │           │ • Checksums         │        │ • Lineage Graphs │ │
+│  │ • Anomaly Detection │           │ • Error Recovery    │        │ • Alert System  │ │
+│  │ • Auto Quarantine   │           │ • Compliance Logs   │        │ • Performance   │ │
+│  └─────────────────────┘           └─────────────────────┘        └─────────────────┘ │
+│                                                                                       │
+└───────────────────────────────────────────────────────────────────────────────────────┘
+```
+
+#### 🔧 **Platform Components**
+
+| Component | Technology | Purpose | Performance |
+|-----------|------------|---------|-------------|
+| **🌊 Event Backbone** | Apache Kafka, Confluent Cloud | Unified message bus with exactly-once semantics | 1M+ events/sec |
+| **📊 Unified Analytics** | Azure Databricks, Delta Lake | Real-time, near-time, batch processing | Sub-second to hours |
+| **🔍 AI Governance** | Python, Kafka Streams | Automated classification, PII detection | Real-time tagging |
+| **⚡ Quality Engine** | Apache Spark, Scala | 4-dimensional quality validation | 500K+ records/sec |
+| **🔍 Lineage Tracking** | Delta Lake, Python | Complete data provenance | End-to-end traceability |
+| **🤖 ML Integration** | MLflow, Azure ML | Model lifecycle management | A/B testing ready |
+
+#### 📖 **Comprehensive Documentation**
+
+Explore our detailed big data platform documentation:
+
+- 📊 **[Big Data Platform Architecture](./docs/big-data-platform-architecture.md)** - Complete architecture overview with technology stack
+- 🔍 **[AI-Powered Data Governance](./docs/ai-governance-framework.md)** - Automated classification and compliance framework  
+- ⚡ **[Data Quality Framework](./docs/data-quality-framework.md)** - Real-time quality validation with Apache Spark
+- 🔍 **[Data Lineage & Tracking](./docs/data-lineage-tracking.md)** - Exactly-once processing and audit trails
+- 📊 **[Azure Databricks Integration](./docs/azure-databricks-integration.md)** - Unified processing platform with MLflow
+
+#### 🎯 **Key Platform Benefits**
+
+##### ✅ **Proactive vs Reactive Approach**
+
+| Traditional Approach | Our Big Data Platform |
+|---------------------|----------------------|
+| ❌ Reactive data quality checks | ✅ **Proactive quality gates** at every stage |
+| ❌ Post-mortem error analysis | ✅ **Real-time anomaly detection** and auto-quarantine |
+| ❌ Manual compliance auditing | ✅ **Automated governance** with AI-powered classification |
+| ❌ Data loss discovery after fact | ✅ **Exactly-once processing** with complete audit trails |
+| ❌ Siloed processing systems | ✅ **Unified event-driven architecture** |
+
+##### 🚀 **Enterprise-Grade Features**
+
+- **📊 Unified Processing**: Real-time, near-time, and batch in one platform
+- **🔍 AI-Powered Governance**: Automated data classification and PII detection
+- **⚡ Quality Assurance**: 4-dimensional quality scoring with business rules
+- **🔍 Complete Lineage**: Cryptographic checksums and provenance tracking
+- **🤖 ML Integration**: MLflow model management with A/B testing
+- **📈 Real-time Monitoring**: Comprehensive dashboards and alerting
+- **☁️ Azure Native**: Seamless integration with Azure ecosystem
+
+##### 💰 **Cost Optimization**
+
+- **🎯 Smart Routing**: Automatic workload distribution based on processing requirements
+- **📊 Resource Optimization**: Auto-scaling clusters with scheduled batch jobs
+- **🔍 Quality Gates**: Prevent downstream processing of bad data (cost savings)
+- **⚡ Efficient Storage**: Delta Lake with automatic optimization and compression
+
+##### 🔐 **Enterprise Security & Compliance**
+
+- **🔍 Automated Compliance**: SOX, FINRA, GDPR compliance tagging
+- **🔒 Data Encryption**: End-to-end encryption with Azure Key Vault
+- **📊 Audit Trails**: Complete data lineage for regulatory requirements
+- **👥 Role-Based Access**: Fine-grained permissions with Azure AD integration
 
 #### 🏛️ **Event-Driven Architecture Patterns**
 

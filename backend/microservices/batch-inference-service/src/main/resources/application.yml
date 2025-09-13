@@ -1,6 +1,7 @@
 # Batch Inference Service Configuration
+# Enhanced with Near Real-Time Streaming Capabilities
 server:
-  port: 8085
+  port: 8086
   servlet:
     context-path: /batch-inference
 
@@ -8,14 +9,19 @@ management:
   endpoints:
     web:
       exposure:
-        include: health,info,metrics,prometheus
+        include: health,info,metrics,prometheus,streaming
   endpoint:
     health:
       show-details: always
+    streaming:
+      enabled: true
   metrics:
     export:
       prometheus:
         enabled: true
+    tags:
+      service: batch-inference-service
+      mode: hybrid-streaming
   info:
     env:
       enabled: true
@@ -28,27 +34,59 @@ spring:
   task:
     execution:
       pool:
-        core-size: 4
-        max-size: 8
-        queue-capacity: 100
+        core-size: 8
+        max-size: 16
+        queue-capacity: 200
     scheduling:
       pool:
-        size: 2
+        size: 4
 
+# Kafka Configuration for Both Batch and Streaming
 kafka:
   bootstrap:
     servers: localhost:9092
+  # Batch processing configuration  
   consumer:
     group-id: batch-inference-consumer
     auto-offset-reset: earliest
     enable-auto-commit: false
     max-poll-records: 10000
+    fetch-max-wait: 5000
+    session-timeout: 300000
   producer:
     retries: 3
     batch-size: 65536
-    linger-ms: 10
+    linger-ms: 100
     compression-type: snappy
+    buffer-memory: 67108864
+  # Streaming processing configuration
+  streaming:
+    consumer:
+      group-id: streaming-inference-consumer
+      auto-offset-reset: latest
+      enable-auto-commit: false
+      max-poll-records: 1000
+      fetch-max-wait: 100
+      session-timeout: 30000
+    producer:
+      retries: 1
+      batch-size: 16384
+      linger-ms: 1
+      compression-type: lz4
+      buffer-memory: 33554432
+  topics:
+    batch:
+      input: batch-inference-input
+      output: batch-inference-output
+      errors: batch-inference-errors
+      metrics: batch-inference-metrics
+    streaming:
+      input: realtime-inference-input
+      output: realtime-inference-output
+      priority: priority-inference
+      metrics: realtime-metrics
 
+# Hybrid Spark Configuration for Batch and Streaming
 spark:
   app:
     name: batch-inference-service
@@ -61,14 +99,29 @@ spark:
         enabled: true
       skewJoin:
         enabled: true
+    streaming:
+      # Near real-time micro-batch settings
+      trigger:
+        intervalMs: 500
+      checkpointLocation: /tmp/spark-checkpoints/streaming-inference
+      watermark:
+        delayThreshold: 2s
+      forceDeleteTempCheckpointLocation: true
   dynamicAllocation:
     enabled: false
   executor:
     memory: 2g
     cores: 2
+    instances: 2
   driver:
     memory: 1g
     maxResultSize: 1g
+  streaming:
+    kafka:
+      maxOffsetsPerTrigger: 10000
+    stopGracefullyOnShutdown: true
+    backpressure:
+      enabled: true
 
 azure:
   storage:
@@ -114,6 +167,14 @@ model:
     refresh:
       interval:
         minutes: 15
+  # In-Memory Model Service Configuration  
+  service:
+    inmemory:
+      enabled: true
+      cacheSize: 10
+      preloadModels: true
+      warmupRequests: 10
+      performanceMetrics: true
 
 batch:
   inference:
@@ -131,11 +192,35 @@ batch:
       delay:
         seconds: 30
 
+# Streaming Inference Configuration
+streaming:
+  inference:
+    enabled: true
+    # Micro-batch processing settings
+    trigger:
+      intervalMs: 500
+    processing:
+      timeout: 10
+      maxRetries: 3
+    model:
+      cache:
+        enabled: true
+        size: 10
+        ttlMinutes: 30
+        warmupEnabled: true
+    metrics:
+      enabled: true
+      reportingIntervalSeconds: 30
+    watermark:
+      # Allow up to 2 seconds for late arriving data
+      delayThreshold: 2s
+
 logging:
   level:
-    com.fintech.batch: INFO
-    org.apache.spark: WARN
-    org.apache.kafka: WARN
+    '[com.fintech.batch]': INFO
+    '[org.apache.spark]': WARN
+    '[org.apache.kafka]': WARN
+    '[com.fintech.streaming]': DEBUG
   pattern:
     console: "%d{yyyy-MM-dd HH:mm:ss} - %msg%n"
     file: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"

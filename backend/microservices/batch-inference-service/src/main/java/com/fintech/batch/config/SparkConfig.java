@@ -59,7 +59,17 @@ public class SparkConfig {
                 .set("spark.driver.memory", "2g")
                 .set("spark.executor.cores", "2")
                 // Kafka integration
-                .set("spark.sql.streaming.checkpointLocation", "target/checkpoints");
+                .set("spark.sql.streaming.checkpointLocation", "target/checkpoints")
+                // Streaming optimizations for micro-batch processing
+                .set("spark.sql.streaming.metricsEnabled", "true")
+                .set("spark.sql.streaming.ui.enabled", "true")
+                .set("spark.sql.streaming.stateStore.maintenanceInterval", "60s")
+                .set("spark.sql.streaming.maxBatchesToRetainInMemory", "100")
+                // Micro-batch performance tuning
+                .set("spark.sql.streaming.numRecentProgressUpdates", "100")
+                .set("spark.sql.streaming.minBatchesToRetain", "50")
+                .set("spark.sql.adaptive.enabled", "true")
+                .set("spark.sql.adaptive.coalescePartitions.enabled", "true");
 
         return SparkSession.builder()
                 .config(sparkConf)
@@ -99,7 +109,20 @@ public class SparkConfig {
                 .set("spark.dynamicAllocation.maxExecutors", "20")
                 .set("spark.dynamicAllocation.initialExecutors", "2")
                 // Checkpointing for fault tolerance
-                .set("spark.sql.streaming.checkpointLocation", "/mnt/delta/checkpoints");
+                .set("spark.sql.streaming.checkpointLocation", "/mnt/delta/checkpoints")
+                // Streaming optimizations for production micro-batch processing
+                .set("spark.sql.streaming.metricsEnabled", "true")
+                .set("spark.sql.streaming.ui.enabled", "true")
+                .set("spark.sql.streaming.stateStore.maintenanceInterval", "30s")
+                .set("spark.sql.streaming.maxBatchesToRetainInMemory", "200")
+                // Production micro-batch performance tuning
+                .set("spark.sql.streaming.numRecentProgressUpdates", "200")
+                .set("spark.sql.streaming.minBatchesToRetain", "100")
+                // Near real-time processing optimizations
+                .set("spark.sql.streaming.continuous.executorIdleTimeout", "60s")
+                .set("spark.sql.streaming.stopGracefullyOnShutdown", "true")
+                .set("spark.sql.streaming.kafka.consumer.cache.capacity", "128")
+                .set("spark.sql.streaming.kafka.consumer.pollTimeoutMs", "120000");
 
         return SparkSession.builder()
                 .config(sparkConf)
