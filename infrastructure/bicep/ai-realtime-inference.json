@@ -1,0 +1,668 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "metadata": {
+    "_generator": {
+      "name": "bicep",
+      "version": "0.37.4.10188",
+      "templateHash": "3207691451449071722"
+    }
+  },
+  "parameters": {
+    "location": {
+      "type": "string",
+      "defaultValue": "[resourceGroup().location]",
+      "metadata": {
+        "description": "Real-time AI Inference with Azure ML, AI Foundry, Personalizer and Confluent Kafka/Flink integration"
+      }
+    },
+    "environmentName": {
+      "type": "string",
+      "defaultValue": "dev"
+    },
+    "projectName": {
+      "type": "string",
+      "defaultValue": "ai-realtime-inference"
+    },
+    "aiFoundryResourceName": {
+      "type": "string",
+      "defaultValue": "[format('aif-{0}-{1}', parameters('projectName'), parameters('environmentName'))]"
+    },
+    "machineLearningWorkspaceName": {
+      "type": "string",
+      "defaultValue": "[format('mlw-{0}-{1}', parameters('projectName'), parameters('environmentName'))]"
+    },
+    "personalizerName": {
+      "type": "string",
+      "defaultValue": "[format('personalizer-{0}-{1}', parameters('projectName'), parameters('environmentName'))]"
+    },
+    "confluentServiceName": {
+      "type": "string",
+      "defaultValue": "[format('confluent-{0}-{1}', parameters('projectName'), parameters('environmentName'))]"
+    },
+    "apiManagementName": {
+      "type": "string",
+      "defaultValue": "[format('apim-{0}-{1}', parameters('projectName'), parameters('environmentName'))]"
+    },
+    "storageAccountName": {
+      "type": "string",
+      "defaultValue": "[format('st{0}{1}001', parameters('projectName'), parameters('environmentName'))]"
+    },
+    "keyVaultName": {
+      "type": "string",
+      "defaultValue": "[format('kv-{0}-{1}', parameters('projectName'), parameters('environmentName'))]"
+    },
+    "applicationInsightsName": {
+      "type": "string",
+      "defaultValue": "[format('ai-{0}-{1}', parameters('projectName'), parameters('environmentName'))]"
+    },
+    "logAnalyticsWorkspaceName": {
+      "type": "string",
+      "defaultValue": "[format('law-{0}-{1}', parameters('projectName'), parameters('environmentName'))]"
+    },
+    "aiModelDeployments": {
+      "type": "array",
+      "defaultValue": [
+        {
+          "name": "gpt-4o-mini",
+          "modelName": "gpt-4o-mini",
+          "modelVersion": "latest",
+          "capacity": 20,
+          "purpose": "text-generation"
+        },
+        {
+          "name": "gpt-5-mini",
+          "modelName": "gpt-5-mini",
+          "modelVersion": "latest",
+          "capacity": 30,
+          "purpose": "text-generation-advanced"
+        },
+        {
+          "name": "text-embedding-ada-002",
+          "modelName": "text-embedding-ada-002",
+          "modelVersion": "latest",
+          "capacity": 10,
+          "purpose": "embeddings"
+        },
+        {
+          "name": "phi-3-5-vision-instruct",
+          "modelName": "Phi-3.5-vision-instruct",
+          "modelVersion": "2",
+          "capacity": 5,
+          "purpose": "vision-language"
+        }
+      ]
+    },
+    "kafkaTopics": {
+      "type": "array",
+      "defaultValue": [
+        {
+          "name": "user-events",
+          "partitions": 6,
+          "retentionMs": 604800000
+        },
+        {
+          "name": "ai-inference-requests",
+          "partitions": 12,
+          "retentionMs": 259200000
+        },
+        {
+          "name": "ai-inference-responses",
+          "partitions": 12,
+          "retentionMs": 259200000
+        },
+        {
+          "name": "personalization-events",
+          "partitions": 6,
+          "retentionMs": 2592000000
+        },
+        {
+          "name": "real-time-features",
+          "partitions": 6,
+          "retentionMs": 86400000
+        }
+      ]
+    }
+  },
+  "variables": {
+    "commonTags": {
+      "Environment": "[parameters('environmentName')]",
+      "Project": "[parameters('projectName')]",
+      "Purpose": "Real-Time-AI-Inference",
+      "CreatedBy": "Bicep-Template",
+      "AICapabilities": "ML-Foundry-Personalizer-Kafka"
+    }
+  },
+  "resources": [
+    {
+      "type": "Microsoft.OperationalInsights/workspaces",
+      "apiVersion": "2023-09-01",
+      "name": "[parameters('logAnalyticsWorkspaceName')]",
+      "location": "[parameters('location')]",
+      "tags": "[variables('commonTags')]",
+      "properties": {
+        "sku": {
+          "name": "PerGB2018"
+        },
+        "retentionInDays": 90,
+        "features": {
+          "searchVersion": 1,
+          "legacy": 0,
+          "enableLogAccessUsingOnlyResourcePermissions": true
+        }
+      }
+    },
+    {
+      "type": "Microsoft.Insights/components",
+      "apiVersion": "2020-02-02",
+      "name": "[parameters('applicationInsightsName')]",
+      "location": "[parameters('location')]",
+      "tags": "[variables('commonTags')]",
+      "kind": "web",
+      "properties": {
+        "Application_Type": "web",
+        "WorkspaceResourceId": "[resourceId('Microsoft.OperationalInsights/workspaces', parameters('logAnalyticsWorkspaceName'))]",
+        "IngestionMode": "LogAnalytics",
+        "publicNetworkAccessForIngestion": "Enabled",
+        "publicNetworkAccessForQuery": "Enabled"
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.OperationalInsights/workspaces', parameters('logAnalyticsWorkspaceName'))]"
+      ]
+    },
+    {
+      "type": "Microsoft.KeyVault/vaults",
+      "apiVersion": "2023-07-01",
+      "name": "[parameters('keyVaultName')]",
+      "location": "[parameters('location')]",
+      "tags": "[variables('commonTags')]",
+      "properties": {
+        "sku": {
+          "family": "A",
+          "name": "standard"
+        },
+        "tenantId": "[tenant().tenantId]",
+        "accessPolicies": [],
+        "enabledForDeployment": false,
+        "enabledForDiskEncryption": false,
+        "enabledForTemplateDeployment": true,
+        "enableSoftDelete": true,
+        "softDeleteRetentionInDays": 90,
+        "enableRbacAuthorization": true,
+        "publicNetworkAccess": "Enabled",
+        "networkAcls": {
+          "bypass": "AzureServices",
+          "defaultAction": "Allow"
+        }
+      }
+    },
+    {
+      "type": "Microsoft.Storage/storageAccounts",
+      "apiVersion": "2023-01-01",
+      "name": "[parameters('storageAccountName')]",
+      "location": "[parameters('location')]",
+      "tags": "[variables('commonTags')]",
+      "sku": {
+        "name": "Standard_LRS"
+      },
+      "kind": "StorageV2",
+      "properties": {
+        "defaultToOAuthAuthentication": false,
+        "allowCrossTenantReplication": false,
+        "minimumTlsVersion": "TLS1_2",
+        "allowBlobPublicAccess": false,
+        "allowSharedKeyAccess": true,
+        "networkAcls": {
+          "bypass": "AzureServices",
+          "defaultAction": "Allow"
+        },
+        "supportsHttpsTrafficOnly": true,
+        "encryption": {
+          "services": {
+            "file": {
+              "keyType": "Account",
+              "enabled": true
+            },
+            "blob": {
+              "keyType": "Account",
+              "enabled": true
+            }
+          },
+          "keySource": "Microsoft.Storage"
+        },
+        "accessTier": "Hot"
+      }
+    },
+    {
+      "type": "Microsoft.Storage/storageAccounts/blobServices",
+      "apiVersion": "2023-01-01",
+      "name": "[format('{0}/{1}', parameters('storageAccountName'), 'default')]",
+      "properties": {
+        "cors": {
+          "corsRules": []
+        },
+        "deleteRetentionPolicy": {
+          "enabled": true,
+          "days": 7
+        }
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName'))]"
+      ]
+    },
+    {
+      "type": "Microsoft.Storage/storageAccounts/blobServices/containers",
+      "apiVersion": "2023-01-01",
+      "name": "[format('{0}/{1}/{2}', parameters('storageAccountName'), 'default', 'ml-artifacts')]",
+      "properties": {
+        "publicAccess": "None"
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Storage/storageAccounts/blobServices', parameters('storageAccountName'), 'default')]"
+      ]
+    },
+    {
+      "type": "Microsoft.Storage/storageAccounts/blobServices/containers",
+      "apiVersion": "2023-01-01",
+      "name": "[format('{0}/{1}/{2}', parameters('storageAccountName'), 'default', 'training-data')]",
+      "properties": {
+        "publicAccess": "None"
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Storage/storageAccounts/blobServices', parameters('storageAccountName'), 'default')]"
+      ]
+    },
+    {
+      "type": "Microsoft.MachineLearningServices/workspaces",
+      "apiVersion": "2024-04-01",
+      "name": "[parameters('machineLearningWorkspaceName')]",
+      "location": "[parameters('location')]",
+      "tags": "[variables('commonTags')]",
+      "identity": {
+        "type": "SystemAssigned"
+      },
+      "properties": {
+        "friendlyName": "Real-time AI Inference Workspace",
+        "description": "Azure ML workspace for real-time AI inference with Kafka integration",
+        "storageAccount": "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName'))]",
+        "keyVault": "[resourceId('Microsoft.KeyVault/vaults', parameters('keyVaultName'))]",
+        "applicationInsights": "[resourceId('Microsoft.Insights/components', parameters('applicationInsightsName'))]",
+        "hbiWorkspace": false,
+        "managedNetwork": {
+          "isolationMode": "Disabled"
+        },
+        "publicNetworkAccess": "Enabled",
+        "discoveryUrl": "[format('https://{0}.api.azureml.ms/discovery', parameters('location'))]"
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Insights/components', parameters('applicationInsightsName'))]",
+        "[resourceId('Microsoft.KeyVault/vaults', parameters('keyVaultName'))]",
+        "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName'))]"
+      ]
+    },
+    {
+      "type": "Microsoft.CognitiveServices/accounts",
+      "apiVersion": "2024-06-01-preview",
+      "name": "[parameters('aiFoundryResourceName')]",
+      "location": "[parameters('location')]",
+      "tags": "[variables('commonTags')]",
+      "sku": {
+        "name": "S0"
+      },
+      "kind": "AIServices",
+      "identity": {
+        "type": "SystemAssigned"
+      },
+      "properties": {
+        "apiProperties": {
+          "statisticsEnabled": false
+        },
+        "customSubDomainName": "[parameters('aiFoundryResourceName')]",
+        "publicNetworkAccess": "Enabled",
+        "networkAcls": {
+          "defaultAction": "Allow",
+          "virtualNetworkRules": [],
+          "ipRules": []
+        },
+        "disableLocalAuth": false
+      }
+    },
+    {
+      "copy": {
+        "name": "aiModelDeployment",
+        "count": "[length(parameters('aiModelDeployments'))]"
+      },
+      "type": "Microsoft.CognitiveServices/accounts/deployments",
+      "apiVersion": "2024-06-01-preview",
+      "name": "[format('{0}/{1}', parameters('aiFoundryResourceName'), parameters('aiModelDeployments')[copyIndex()].name)]",
+      "properties": {
+        "model": {
+          "format": "OpenAI",
+          "name": "[parameters('aiModelDeployments')[copyIndex()].modelName]",
+          "version": "[parameters('aiModelDeployments')[copyIndex()].modelVersion]"
+        },
+        "raiPolicyName": "Microsoft.DefaultV2",
+        "versionUpgradeOption": "OnceCurrentVersionExpired"
+      },
+      "sku": {
+        "name": "Standard",
+        "capacity": "[parameters('aiModelDeployments')[copyIndex()].capacity]"
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.CognitiveServices/accounts', parameters('aiFoundryResourceName'))]"
+      ]
+    },
+    {
+      "type": "Microsoft.CognitiveServices/accounts",
+      "apiVersion": "2024-06-01-preview",
+      "name": "[parameters('personalizerName')]",
+      "location": "[parameters('location')]",
+      "tags": "[variables('commonTags')]",
+      "sku": {
+        "name": "S0"
+      },
+      "kind": "Personalizer",
+      "identity": {
+        "type": "SystemAssigned"
+      },
+      "properties": {
+        "customSubDomainName": "[parameters('personalizerName')]",
+        "publicNetworkAccess": "Enabled",
+        "networkAcls": {
+          "defaultAction": "Allow",
+          "virtualNetworkRules": [],
+          "ipRules": []
+        }
+      }
+    },
+    {
+      "type": "Microsoft.Confluent/organizations",
+      "apiVersion": "2024-02-13",
+      "name": "[parameters('confluentServiceName')]",
+      "location": "[parameters('location')]",
+      "tags": "[variables('commonTags')]",
+      "properties": {
+        "offerDetail": {
+          "publisherId": "confluentinc",
+          "id": "confluent-cloud-azure-prod",
+          "planId": "confluent-cloud-azure-payg-prod",
+          "planName": "Confluent Cloud - Pay as you Go",
+          "termUnit": "P1M"
+        },
+        "userDetail": {
+          "firstName": "Azure",
+          "lastName": "Admin",
+          "emailAddress": "admin@company.com"
+        }
+      }
+    },
+    {
+      "type": "Microsoft.ApiManagement/service",
+      "apiVersion": "2023-05-01-preview",
+      "name": "[parameters('apiManagementName')]",
+      "location": "[parameters('location')]",
+      "tags": "[variables('commonTags')]",
+      "sku": {
+        "name": "Developer",
+        "capacity": 1
+      },
+      "identity": {
+        "type": "SystemAssigned"
+      },
+      "properties": {
+        "publisherEmail": "admin@company.com",
+        "publisherName": "AI Inference Gateway",
+        "notificationSenderEmail": "apimgmt-noreply@mail.windowsazure.com",
+        "hostnameConfigurations": [
+          {
+            "type": "Proxy",
+            "hostName": "[format('{0}.azure-api.net', parameters('apiManagementName'))]",
+            "negotiateClientCertificate": false,
+            "defaultSslBinding": true,
+            "certificateSource": "BuiltIn"
+          }
+        ],
+        "customProperties": {
+          "Microsoft.WindowsAzure.ApiManagement.Gateway.Security.Protocols.Tls10": "False",
+          "Microsoft.WindowsAzure.ApiManagement.Gateway.Security.Protocols.Tls11": "False",
+          "Microsoft.WindowsAzure.ApiManagement.Gateway.Security.Protocols.Ssl30": "False",
+          "Microsoft.WindowsAzure.ApiManagement.Gateway.Security.Ciphers.TripleDes168": "False",
+          "Microsoft.WindowsAzure.ApiManagement.Gateway.Security.Backend.Protocols.Tls10": "False",
+          "Microsoft.WindowsAzure.ApiManagement.Gateway.Security.Backend.Protocols.Tls11": "False",
+          "Microsoft.WindowsAzure.ApiManagement.Gateway.Security.Backend.Protocols.Ssl30": "False"
+        },
+        "virtualNetworkType": "None",
+        "disableGateway": false,
+        "apiVersionConstraint": {},
+        "publicNetworkAccess": "Enabled"
+      }
+    },
+    {
+      "type": "Microsoft.KeyVault/vaults/secrets",
+      "apiVersion": "2023-07-01",
+      "name": "[format('{0}/{1}', parameters('keyVaultName'), 'ai-foundry-key')]",
+      "properties": {
+        "value": "[listKeys(resourceId('Microsoft.CognitiveServices/accounts', parameters('aiFoundryResourceName')), '2024-06-01-preview').key1]",
+        "contentType": "text/plain"
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.CognitiveServices/accounts', parameters('aiFoundryResourceName'))]",
+        "[resourceId('Microsoft.KeyVault/vaults', parameters('keyVaultName'))]"
+      ]
+    },
+    {
+      "type": "Microsoft.KeyVault/vaults/secrets",
+      "apiVersion": "2023-07-01",
+      "name": "[format('{0}/{1}', parameters('keyVaultName'), 'personalizer-key')]",
+      "properties": {
+        "value": "[listKeys(resourceId('Microsoft.CognitiveServices/accounts', parameters('personalizerName')), '2024-06-01-preview').key1]",
+        "contentType": "text/plain"
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.KeyVault/vaults', parameters('keyVaultName'))]",
+        "[resourceId('Microsoft.CognitiveServices/accounts', parameters('personalizerName'))]"
+      ]
+    },
+    {
+      "type": "Microsoft.KeyVault/vaults/secrets",
+      "apiVersion": "2023-07-01",
+      "name": "[format('{0}/{1}', parameters('keyVaultName'), 'storage-connection-string')]",
+      "properties": {
+        "value": "[format('DefaultEndpointsProtocol=https;AccountName={0};AccountKey={1};EndpointSuffix=core.windows.net', parameters('storageAccountName'), listKeys(resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName')), '2023-01-01').keys[0].value)]",
+        "contentType": "text/plain"
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.KeyVault/vaults', parameters('keyVaultName'))]",
+        "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName'))]"
+      ]
+    },
+    {
+      "type": "Microsoft.Authorization/roleAssignments",
+      "apiVersion": "2022-04-01",
+      "scope": "[format('Microsoft.Storage/storageAccounts/{0}', parameters('storageAccountName'))]",
+      "name": "[guid(resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName')), resourceId('Microsoft.MachineLearningServices/workspaces', parameters('machineLearningWorkspaceName')), 'StorageBlobDataContributor')]",
+      "properties": {
+        "roleDefinitionId": "[subscriptionResourceId('Microsoft.Authorization/roleDefinitions', 'ba92f5b4-2d11-453d-a403-e96b0029c9fe')]",
+        "principalId": "[reference(resourceId('Microsoft.MachineLearningServices/workspaces', parameters('machineLearningWorkspaceName')), '2024-04-01', 'full').identity.principalId]",
+        "principalType": "ServicePrincipal"
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.MachineLearningServices/workspaces', parameters('machineLearningWorkspaceName'))]",
+        "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName'))]"
+      ]
+    },
+    {
+      "type": "Microsoft.Authorization/roleAssignments",
+      "apiVersion": "2022-04-01",
+      "scope": "[format('Microsoft.KeyVault/vaults/{0}', parameters('keyVaultName'))]",
+      "name": "[guid(resourceId('Microsoft.KeyVault/vaults', parameters('keyVaultName')), resourceId('Microsoft.CognitiveServices/accounts', parameters('aiFoundryResourceName')), 'KeyVaultSecretsUser')]",
+      "properties": {
+        "roleDefinitionId": "[subscriptionResourceId('Microsoft.Authorization/roleDefinitions', '4633458b-17de-408a-b874-0445c86b69e6')]",
+        "principalId": "[reference(resourceId('Microsoft.CognitiveServices/accounts', parameters('aiFoundryResourceName')), '2024-06-01-preview', 'full').identity.principalId]",
+        "principalType": "ServicePrincipal"
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.CognitiveServices/accounts', parameters('aiFoundryResourceName'))]",
+        "[resourceId('Microsoft.KeyVault/vaults', parameters('keyVaultName'))]"
+      ]
+    },
+    {
+      "type": "Microsoft.Authorization/roleAssignments",
+      "apiVersion": "2022-04-01",
+      "scope": "[format('Microsoft.KeyVault/vaults/{0}', parameters('keyVaultName'))]",
+      "name": "[guid(resourceId('Microsoft.KeyVault/vaults', parameters('keyVaultName')), resourceId('Microsoft.CognitiveServices/accounts', parameters('personalizerName')), 'KeyVaultSecretsUser')]",
+      "properties": {
+        "roleDefinitionId": "[subscriptionResourceId('Microsoft.Authorization/roleDefinitions', '4633458b-17de-408a-b874-0445c86b69e6')]",
+        "principalId": "[reference(resourceId('Microsoft.CognitiveServices/accounts', parameters('personalizerName')), '2024-06-01-preview', 'full').identity.principalId]",
+        "principalType": "ServicePrincipal"
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.KeyVault/vaults', parameters('keyVaultName'))]",
+        "[resourceId('Microsoft.CognitiveServices/accounts', parameters('personalizerName'))]"
+      ]
+    }
+  ],
+  "outputs": {
+    "aiFoundryEndpoint": {
+      "type": "string",
+      "value": "[reference(resourceId('Microsoft.CognitiveServices/accounts', parameters('aiFoundryResourceName')), '2024-06-01-preview').endpoint]"
+    },
+    "aiFoundryResourceId": {
+      "type": "string",
+      "value": "[resourceId('Microsoft.CognitiveServices/accounts', parameters('aiFoundryResourceName'))]"
+    },
+    "machineLearningWorkspaceId": {
+      "type": "string",
+      "value": "[resourceId('Microsoft.MachineLearningServices/workspaces', parameters('machineLearningWorkspaceName'))]"
+    },
+    "machineLearningWorkspaceName": {
+      "type": "string",
+      "value": "[parameters('machineLearningWorkspaceName')]"
+    },
+    "personalizerEndpoint": {
+      "type": "string",
+      "value": "[reference(resourceId('Microsoft.CognitiveServices/accounts', parameters('personalizerName')), '2024-06-01-preview').endpoint]"
+    },
+    "personalizerResourceId": {
+      "type": "string",
+      "value": "[resourceId('Microsoft.CognitiveServices/accounts', parameters('personalizerName'))]"
+    },
+    "confluentOrganizationId": {
+      "type": "string",
+      "value": "[resourceId('Microsoft.Confluent/organizations', parameters('confluentServiceName'))]"
+    },
+    "confluentResourceName": {
+      "type": "string",
+      "value": "[parameters('confluentServiceName')]"
+    },
+    "apiManagementGatewayUrl": {
+      "type": "string",
+      "value": "[format('https://{0}', reference(resourceId('Microsoft.ApiManagement/service', parameters('apiManagementName')), '2023-05-01-preview').gatewayUrl)]"
+    },
+    "apiManagementResourceId": {
+      "type": "string",
+      "value": "[resourceId('Microsoft.ApiManagement/service', parameters('apiManagementName'))]"
+    },
+    "keyVaultUri": {
+      "type": "string",
+      "value": "[reference(resourceId('Microsoft.KeyVault/vaults', parameters('keyVaultName')), '2023-07-01').vaultUri]"
+    },
+    "keyVaultResourceId": {
+      "type": "string",
+      "value": "[resourceId('Microsoft.KeyVault/vaults', parameters('keyVaultName'))]"
+    },
+    "storageAccountName": {
+      "type": "string",
+      "value": "[parameters('storageAccountName')]"
+    },
+    "storageAccountId": {
+      "type": "string",
+      "value": "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName'))]"
+    },
+    "applicationInsightsConnectionString": {
+      "type": "string",
+      "value": "[reference(resourceId('Microsoft.Insights/components', parameters('applicationInsightsName')), '2020-02-02').ConnectionString]"
+    },
+    "applicationInsightsInstrumentationKey": {
+      "type": "string",
+      "value": "[reference(resourceId('Microsoft.Insights/components', parameters('applicationInsightsName')), '2020-02-02').InstrumentationKey]"
+    },
+    "logAnalyticsWorkspaceId": {
+      "type": "string",
+      "value": "[reference(resourceId('Microsoft.OperationalInsights/workspaces', parameters('logAnalyticsWorkspaceName')), '2023-09-01').customerId]"
+    },
+    "logAnalyticsResourceId": {
+      "type": "string",
+      "value": "[resourceId('Microsoft.OperationalInsights/workspaces', parameters('logAnalyticsWorkspaceName'))]"
+    },
+    "aiInferenceConfig": {
+      "type": "object",
+      "value": {
+        "aiFoundry": {
+          "endpoint": "[reference(resourceId('Microsoft.CognitiveServices/accounts', parameters('aiFoundryResourceName')), '2024-06-01-preview').endpoint]",
+          "resourceId": "[resourceId('Microsoft.CognitiveServices/accounts', parameters('aiFoundryResourceName'))]",
+          "modelDeployments": {
+            "gpt-4o-mini": {
+              "name": "gpt-4o-mini",
+              "purpose": "text-generation",
+              "endpoint": "[format('{0}models', reference(resourceId('Microsoft.CognitiveServices/accounts', parameters('aiFoundryResourceName')), '2024-06-01-preview').endpoint)]"
+            },
+            "gpt-5-mini": {
+              "name": "gpt-5-mini",
+              "purpose": "text-generation-advanced",
+              "endpoint": "[format('{0}models', reference(resourceId('Microsoft.CognitiveServices/accounts', parameters('aiFoundryResourceName')), '2024-06-01-preview').endpoint)]"
+            },
+            "text-embedding-ada-002": {
+              "name": "text-embedding-ada-002",
+              "purpose": "embeddings",
+              "endpoint": "[format('{0}models', reference(resourceId('Microsoft.CognitiveServices/accounts', parameters('aiFoundryResourceName')), '2024-06-01-preview').endpoint)]"
+            },
+            "phi-3-5-vision-instruct": {
+              "name": "phi-3-5-vision-instruct",
+              "purpose": "vision-language",
+              "endpoint": "[format('{0}models', reference(resourceId('Microsoft.CognitiveServices/accounts', parameters('aiFoundryResourceName')), '2024-06-01-preview').endpoint)]"
+            }
+          }
+        },
+        "machineLearning": {
+          "workspaceId": "[resourceId('Microsoft.MachineLearningServices/workspaces', parameters('machineLearningWorkspaceName'))]",
+          "workspaceName": "[parameters('machineLearningWorkspaceName')]",
+          "endpoint": "[format('https://{0}.api.azureml.ms', parameters('location'))]"
+        },
+        "personalizer": {
+          "endpoint": "[reference(resourceId('Microsoft.CognitiveServices/accounts', parameters('personalizerName')), '2024-06-01-preview').endpoint]",
+          "resourceId": "[resourceId('Microsoft.CognitiveServices/accounts', parameters('personalizerName'))]"
+        },
+        "confluent": {
+          "organizationId": "[resourceId('Microsoft.Confluent/organizations', parameters('confluentServiceName'))]",
+          "topics": "[parameters('kafkaTopics')]"
+        },
+        "apiManagement": {
+          "gatewayUrl": "[reference(resourceId('Microsoft.ApiManagement/service', parameters('apiManagementName')), '2023-05-01-preview').gatewayUrl]",
+          "resourceId": "[resourceId('Microsoft.ApiManagement/service', parameters('apiManagementName'))]"
+        },
+        "monitoring": {
+          "applicationInsights": {
+            "connectionString": "[reference(resourceId('Microsoft.Insights/components', parameters('applicationInsightsName')), '2020-02-02').ConnectionString]",
+            "instrumentationKey": "[reference(resourceId('Microsoft.Insights/components', parameters('applicationInsightsName')), '2020-02-02').InstrumentationKey]"
+          },
+          "logAnalytics": {
+            "workspaceId": "[reference(resourceId('Microsoft.OperationalInsights/workspaces', parameters('logAnalyticsWorkspaceName')), '2023-09-01').customerId]",
+            "resourceId": "[resourceId('Microsoft.OperationalInsights/workspaces', parameters('logAnalyticsWorkspaceName'))]"
+          }
+        },
+        "storage": {
+          "accountName": "[parameters('storageAccountName')]",
+          "containers": {
+            "mlArtifacts": "ml-artifacts",
+            "trainingData": "training-data"
+          }
+        },
+        "keyVault": {
+          "uri": "[reference(resourceId('Microsoft.KeyVault/vaults', parameters('keyVaultName')), '2023-07-01').vaultUri]",
+          "resourceId": "[resourceId('Microsoft.KeyVault/vaults', parameters('keyVaultName'))]"
+        }
+      }
+    }
+  }
+}
