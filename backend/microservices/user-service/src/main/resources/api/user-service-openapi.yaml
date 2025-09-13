@@ -1,0 +1,515 @@
+openapi: 3.0.3
+info:
+  title: User Service API
+  description: |
+    User Management Service for FinTech Application
+    
+    This service provides comprehensive user management capabilities including:
+    - User registration and profile management
+    - Authentication and authorization support
+    - User verification (email/phone)
+    - Two-factor authentication management
+    - Event-driven architecture integration
+    
+    ## Event-Driven Architecture
+    This service publishes events to Kafka topics:
+    - `user.events` - User lifecycle events (created, updated, deleted)
+    - `user.notifications` - User notification events
+    
+    ## Security
+    All endpoints require JWT authentication except for health checks and documentation.
+  version: 1.0.0
+  contact:
+    name: FinTech Development Team
+    email: dev@fintech-demo.com
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+
+servers:
+  - url: http://users.fintech-local.com
+    description: Local development server
+  - url: https://api.fintech-demo.com/users
+    description: Production server
+
+security:
+  - bearerAuth: []
+
+tags:
+  - name: users
+    description: User management operations
+  - name: verification
+    description: User verification operations
+  - name: security
+    description: Security and authentication operations
+
+paths:
+  /api/v1/users:
+    get:
+      tags: [users]
+      summary: Get all users
+      description: Retrieve a paginated list of all users
+      parameters:
+        - name: page
+          in: query
+          description: Page number (0-based)
+          schema:
+            type: integer
+            default: 0
+            minimum: 0
+        - name: size
+          in: query
+          description: Number of items per page
+          schema:
+            type: integer
+            default: 20
+            minimum: 1
+            maximum: 100
+        - name: sort
+          in: query
+          description: Sort criteria (field,direction)
+          schema:
+            type: string
+            default: "createdAt,desc"
+      responses:
+        '200':
+          description: Users retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PagedUserResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+    post:
+      tags: [users]
+      summary: Create a new user
+      description: Register a new user in the system
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateUserRequest'
+      responses:
+        '201':
+          description: User created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '409':
+          description: User already exists
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api/v1/users/{userId}:
+    get:
+      tags: [users]
+      summary: Get user by ID
+      description: Retrieve a specific user by their ID
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          description: Unique identifier of the user
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: User found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserResponse'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    put:
+      tags: [users]
+      summary: Update user
+      description: Update an existing user's information
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateUserRequest'
+      responses:
+        '200':
+          description: User updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserResponse'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    delete:
+      tags: [users]
+      summary: Delete user
+      description: Soft delete a user (sets status to INACTIVE)
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '204':
+          description: User deleted successfully
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /api/v1/users/search:
+    get:
+      tags: [users]
+      summary: Search users
+      description: Search users by various criteria
+      parameters:
+        - name: email
+          in: query
+          description: Email filter
+          schema:
+            type: string
+        - name: username
+          in: query
+          description: Username filter
+          schema:
+            type: string
+        - name: firstName
+          in: query
+          description: First name filter
+          schema:
+            type: string
+        - name: lastName
+          in: query
+          description: Last name filter
+          schema:
+            type: string
+        - name: status
+          in: query
+          description: User status filter
+          schema:
+            $ref: '#/components/schemas/UserStatus'
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 0
+        - name: size
+          in: query
+          schema:
+            type: integer
+            default: 20
+      responses:
+        '200':
+          description: Search results
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PagedUserResponse'
+
+  /api/v1/users/{userId}/verify-email:
+    post:
+      tags: [verification]
+      summary: Verify user email
+      description: Mark user's email as verified
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Email verified successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserResponse'
+
+  /api/v1/users/{userId}/verify-phone:
+    post:
+      tags: [verification]
+      summary: Verify user phone
+      description: Mark user's phone as verified
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Phone verified successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserResponse'
+
+  /api/v1/users/{userId}/2fa/enable:
+    post:
+      tags: [security]
+      summary: Enable two-factor authentication
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: 2FA enabled successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserResponse'
+
+  /api/v1/users/{userId}/2fa/disable:
+    post:
+      tags: [security]
+      summary: Disable two-factor authentication
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: 2FA disabled successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserResponse'
+
+  /actuator/health:
+    get:
+      tags: [health]
+      summary: Health check
+      description: Service health status
+      security: []
+      responses:
+        '200':
+          description: Service is healthy
+          content:
+            application/json:
+              schema:
+                type: object
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    UserResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: Unique identifier
+        username:
+          type: string
+          description: Username
+        email:
+          type: string
+          format: email
+          description: Email address
+        firstName:
+          type: string
+          description: First name
+        lastName:
+          type: string
+          description: Last name
+        phoneNumber:
+          type: string
+          description: Phone number in international format
+        status:
+          $ref: '#/components/schemas/UserStatus'
+        role:
+          $ref: '#/components/schemas/UserRole'
+        profileImageUrl:
+          type: string
+          format: uri
+          description: Profile image URL
+        lastLoginAt:
+          type: string
+          format: date-time
+          description: Last login timestamp
+        createdAt:
+          type: string
+          format: date-time
+          description: Creation timestamp
+        updatedAt:
+          type: string
+          format: date-time
+          description: Last update timestamp
+        emailVerified:
+          type: boolean
+          description: Email verification status
+        phoneVerified:
+          type: boolean
+          description: Phone verification status
+        twoFactorEnabled:
+          type: boolean
+          description: Two-factor authentication status
+
+    CreateUserRequest:
+      type: object
+      required:
+        - username
+        - email
+        - firstName
+        - lastName
+      properties:
+        username:
+          type: string
+          minLength: 3
+          maxLength: 50
+          pattern: '^\\w+$'
+          description: Username (letters, numbers, underscores only)
+        email:
+          type: string
+          format: email
+          description: Email address
+        firstName:
+          type: string
+          maxLength: 100
+          description: First name
+        lastName:
+          type: string
+          maxLength: 100
+          description: Last name
+        phoneNumber:
+          type: string
+          pattern: '^\\+[1-9]\\d{1,14}$'
+          description: Phone number in international format
+        profileImageUrl:
+          type: string
+          format: uri
+          description: Profile image URL
+
+    PagedUserResponse:
+      type: object
+      properties:
+        content:
+          type: array
+          items:
+            $ref: '#/components/schemas/UserResponse'
+        pageable:
+          $ref: '#/components/schemas/Pageable'
+        totalElements:
+          type: integer
+          format: int64
+        totalPages:
+          type: integer
+        size:
+          type: integer
+        number:
+          type: integer
+
+    Pageable:
+      type: object
+      properties:
+        sort:
+          $ref: '#/components/schemas/Sort'
+        pageNumber:
+          type: integer
+        pageSize:
+          type: integer
+
+    Sort:
+      type: object
+      properties:
+        sorted:
+          type: boolean
+        unsorted:
+          type: boolean
+
+    UserStatus:
+      type: string
+      enum:
+        - ACTIVE
+        - SUSPENDED
+        - INACTIVE
+        - BANNED
+        - PENDING_VERIFICATION
+      description: User account status
+
+    UserRole:
+      type: string
+      enum:
+        - USER
+        - PREMIUM_USER
+        - ADMIN
+        - SUPER_ADMIN
+        - SUPPORT
+        - AUDITOR
+      description: User role in the system
+
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: string
+          description: Error type
+        message:
+          type: string
+          description: Error message
+        timestamp:
+          type: string
+          format: date-time
+          description: Error timestamp
+        status:
+          type: integer
+          description: HTTP status code
+
+  responses:
+    BadRequest:
+      description: Bad request
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    
+    Unauthorized:
+      description: Unauthorized access
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    
+    Forbidden:
+      description: Access forbidden
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    
+    NotFound:
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'

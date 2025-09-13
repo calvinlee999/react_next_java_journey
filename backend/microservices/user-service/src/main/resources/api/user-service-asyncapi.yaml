@@ -1,0 +1,460 @@
+asyncapi: 3.0.0
+info:
+  title: User Service Events
+  version: 1.0.0
+  description: |
+    Event-driven architecture for User Service
+    
+    This specification defines the events published and consumed by the User Service
+    in the FinTech application's event-driven architecture.
+    
+    ## Event Flow
+    - User lifecycle events are published to `user.events` topic
+    - Notification events are published to `user.notifications` topic
+    - Events are consumed by other microservices for integration
+  contact:
+    name: FinTech Development Team
+    email: dev@fintech-demo.com
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+
+servers:
+  development:
+    host: localhost:9092
+    protocol: kafka
+    description: Local Kafka development server
+  production:
+    host: kafka.fintech-demo.com:9092
+    protocol: kafka
+    description: Production Kafka cluster
+
+defaultContentType: application/json
+
+channels:
+  user.events:
+    description: User lifecycle events channel
+    messages:
+      userCreated:
+        $ref: '#/components/messages/UserCreated'
+      userUpdated:
+        $ref: '#/components/messages/UserUpdated'
+      userDeleted:
+        $ref: '#/components/messages/UserDeleted'
+      userStatusChanged:
+        $ref: '#/components/messages/UserStatusChanged'
+      userVerified:
+        $ref: '#/components/messages/UserVerified'
+  
+  user.notifications:
+    description: User notification events channel
+    messages:
+      welcomeNotification:
+        $ref: '#/components/messages/WelcomeNotification'
+      verificationNotification:
+        $ref: '#/components/messages/VerificationNotification'
+      securityNotification:
+        $ref: '#/components/messages/SecurityNotification'
+
+operations:
+  publishUserCreated:
+    action: send
+    channel:
+      $ref: '#/channels/user.events'
+    messages:
+      - $ref: '#/components/messages/UserCreated'
+    description: Published when a new user is created
+  
+  publishUserUpdated:
+    action: send
+    channel:
+      $ref: '#/channels/user.events'
+    messages:
+      - $ref: '#/components/messages/UserUpdated'
+    description: Published when user information is updated
+  
+  publishUserDeleted:
+    action: send
+    channel:
+      $ref: '#/channels/user.events'
+    messages:
+      - $ref: '#/components/messages/UserDeleted'
+    description: Published when a user is deleted (soft delete)
+  
+  publishUserStatusChanged:
+    action: send
+    channel:
+      $ref: '#/channels/user.events'
+    messages:
+      - $ref: '#/components/messages/UserStatusChanged'
+    description: Published when user status changes
+  
+  publishUserVerified:
+    action: send
+    channel:
+      $ref: '#/channels/user.events'
+    messages:
+      - $ref: '#/components/messages/UserVerified'
+    description: Published when user completes verification
+  
+  publishWelcomeNotification:
+    action: send
+    channel:
+      $ref: '#/channels/user.notifications'
+    messages:
+      - $ref: '#/components/messages/WelcomeNotification'
+    description: Published to trigger welcome notification
+  
+  publishVerificationNotification:
+    action: send
+    channel:
+      $ref: '#/channels/user.notifications'
+    messages:
+      - $ref: '#/components/messages/VerificationNotification'
+    description: Published to trigger verification notification
+  
+  publishSecurityNotification:
+    action: send
+    channel:
+      $ref: '#/channels/user.notifications'
+    messages:
+      - $ref: '#/components/messages/SecurityNotification'
+    description: Published to trigger security-related notification
+
+components:
+  messages:
+    UserCreated:
+      name: UserCreated
+      title: User Created Event
+      summary: A new user has been created in the system
+      contentType: application/json
+      payload:
+        $ref: '#/components/schemas/UserCreatedEvent'
+    
+    UserUpdated:
+      name: UserUpdated
+      title: User Updated Event
+      summary: User information has been updated
+      contentType: application/json
+      payload:
+        $ref: '#/components/schemas/UserUpdatedEvent'
+    
+    UserDeleted:
+      name: UserDeleted
+      title: User Deleted Event
+      summary: User has been deleted (soft delete)
+      contentType: application/json
+      payload:
+        $ref: '#/components/schemas/UserDeletedEvent'
+    
+    UserStatusChanged:
+      name: UserStatusChanged
+      title: User Status Changed Event
+      summary: User status has been modified
+      contentType: application/json
+      payload:
+        $ref: '#/components/schemas/UserStatusChangedEvent'
+    
+    UserVerified:
+      name: UserVerified
+      title: User Verified Event
+      summary: User has completed verification process
+      contentType: application/json
+      payload:
+        $ref: '#/components/schemas/UserVerifiedEvent'
+    
+    WelcomeNotification:
+      name: WelcomeNotification
+      title: Welcome Notification Event
+      summary: Trigger welcome notification for new user
+      contentType: application/json
+      payload:
+        $ref: '#/components/schemas/WelcomeNotificationEvent'
+    
+    VerificationNotification:
+      name: VerificationNotification
+      title: Verification Notification Event
+      summary: Trigger verification notification
+      contentType: application/json
+      payload:
+        $ref: '#/components/schemas/VerificationNotificationEvent'
+    
+    SecurityNotification:
+      name: SecurityNotification
+      title: Security Notification Event
+      summary: Trigger security-related notification
+      contentType: application/json
+      payload:
+        $ref: '#/components/schemas/SecurityNotificationEvent'
+
+  schemas:
+    UserCreatedEvent:
+      type: object
+      required:
+        - eventId
+        - eventType
+        - eventTimestamp
+        - userId
+        - username
+        - email
+      properties:
+        eventId:
+          type: string
+          format: uuid
+          description: Unique event identifier
+        eventType:
+          type: string
+          const: "user.created"
+          description: Event type identifier
+        eventTimestamp:
+          type: string
+          format: date-time
+          description: Event occurrence timestamp
+        userId:
+          type: string
+          format: uuid
+          description: User unique identifier
+        username:
+          type: string
+          description: Username
+        email:
+          type: string
+          format: email
+          description: User email address
+        firstName:
+          type: string
+          description: User first name
+        lastName:
+          type: string
+          description: User last name
+        phoneNumber:
+          type: string
+          description: User phone number
+        status:
+          type: string
+          enum: [ACTIVE, SUSPENDED, INACTIVE, BANNED, PENDING_VERIFICATION]
+          description: User status
+        role:
+          type: string
+          enum: [USER, PREMIUM_USER, ADMIN, SUPER_ADMIN, SUPPORT, AUDITOR]
+          description: User role
+    
+    UserUpdatedEvent:
+      type: object
+      required:
+        - eventId
+        - eventType
+        - eventTimestamp
+        - userId
+      properties:
+        eventId:
+          type: string
+          format: uuid
+        eventType:
+          type: string
+          const: "user.updated"
+        eventTimestamp:
+          type: string
+          format: date-time
+        userId:
+          type: string
+          format: uuid
+        changes:
+          type: object
+          description: Fields that were updated
+    
+    UserDeletedEvent:
+      type: object
+      required:
+        - eventId
+        - eventType
+        - eventTimestamp
+        - userId
+      properties:
+        eventId:
+          type: string
+          format: uuid
+        eventType:
+          type: string
+          const: "user.deleted"
+        eventTimestamp:
+          type: string
+          format: date-time
+        userId:
+          type: string
+          format: uuid
+        username:
+          type: string
+        email:
+          type: string
+          format: email
+        deletionReason:
+          type: string
+          description: Reason for deletion
+    
+    UserStatusChangedEvent:
+      type: object
+      required:
+        - eventId
+        - eventType
+        - eventTimestamp
+        - userId
+        - previousStatus
+        - newStatus
+      properties:
+        eventId:
+          type: string
+          format: uuid
+        eventType:
+          type: string
+          const: "user.status.changed"
+        eventTimestamp:
+          type: string
+          format: date-time
+        userId:
+          type: string
+          format: uuid
+        username:
+          type: string
+        email:
+          type: string
+          format: email
+        previousStatus:
+          type: string
+          enum: [ACTIVE, SUSPENDED, INACTIVE, BANNED, PENDING_VERIFICATION]
+        newStatus:
+          type: string
+          enum: [ACTIVE, SUSPENDED, INACTIVE, BANNED, PENDING_VERIFICATION]
+        reason:
+          type: string
+          description: Reason for status change
+    
+    UserVerifiedEvent:
+      type: object
+      required:
+        - eventId
+        - eventType
+        - eventTimestamp
+        - userId
+        - verificationType
+      properties:
+        eventId:
+          type: string
+          format: uuid
+        eventType:
+          type: string
+          const: "user.verified"
+        eventTimestamp:
+          type: string
+          format: date-time
+        userId:
+          type: string
+          format: uuid
+        username:
+          type: string
+        email:
+          type: string
+          format: email
+        verificationType:
+          type: string
+          enum: [EMAIL, PHONE, BOTH]
+          description: Type of verification completed
+    
+    WelcomeNotificationEvent:
+      type: object
+      required:
+        - eventId
+        - eventType
+        - eventTimestamp
+        - userId
+      properties:
+        eventId:
+          type: string
+          format: uuid
+        eventType:
+          type: string
+          const: "notification.welcome"
+        eventTimestamp:
+          type: string
+          format: date-time
+        userId:
+          type: string
+          format: uuid
+        username:
+          type: string
+        email:
+          type: string
+          format: email
+        firstName:
+          type: string
+        lastName:
+          type: string
+    
+    VerificationNotificationEvent:
+      type: object
+      required:
+        - eventId
+        - eventType
+        - eventTimestamp
+        - userId
+        - verificationType
+      properties:
+        eventId:
+          type: string
+          format: uuid
+        eventType:
+          type: string
+          const: "notification.verification"
+        eventTimestamp:
+          type: string
+          format: date-time
+        userId:
+          type: string
+          format: uuid
+        username:
+          type: string
+        email:
+          type: string
+          format: email
+        verificationType:
+          type: string
+          enum: [EMAIL, PHONE]
+        verificationCode:
+          type: string
+          description: Verification code (if applicable)
+    
+    SecurityNotificationEvent:
+      type: object
+      required:
+        - eventId
+        - eventType
+        - eventTimestamp
+        - userId
+        - securityEventType
+      properties:
+        eventId:
+          type: string
+          format: uuid
+        eventType:
+          type: string
+          const: "notification.security"
+        eventTimestamp:
+          type: string
+          format: date-time
+        userId:
+          type: string
+          format: uuid
+        username:
+          type: string
+        email:
+          type: string
+          format: email
+        securityEventType:
+          type: string
+          enum: [LOGIN_ATTEMPT, PASSWORD_CHANGE, 2FA_ENABLED, 2FA_DISABLED, ACCOUNT_LOCKED]
+        ipAddress:
+          type: string
+          description: IP address of the security event
+        userAgent:
+          type: string
+          description: User agent string

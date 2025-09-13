@@ -1,0 +1,134 @@
+spring:
+  application:
+    name: journey-orchestrator
+  
+  # Kafka Configuration
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
+    consumer:
+      group-id: journey-orchestrator-group
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        '[spring.json.trusted.packages]': "com.fintech.journey.events"
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      acks: all
+      retries: 3
+      properties:
+        '[enable.idempotence]': true
+        '[max.in.flight.requests.per.connection]': 1
+
+  # Service Discovery
+  cloud:
+    consul:
+      host: ${CONSUL_HOST:localhost}
+      port: ${CONSUL_PORT:8500}
+      discovery:
+        enabled: true
+        service-name: ${spring.application.name}
+        health-check-path: /actuator/health
+        health-check-interval: 10s
+        instance-id: ${spring.application.name}:${random.value}
+        tags:
+          - journey
+          - orchestrator
+          - event-driven
+
+# Server Configuration
+server:
+  port: ${SERVER_PORT:8084}
+
+# Management & Monitoring
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus,env
+  endpoint:
+    health:
+      show-details: always
+    metrics:
+      enabled: true
+  metrics:
+    export:
+      prometheus:
+        enabled: true
+    tags:
+      service: ${spring.application.name}
+      environment: ${ENVIRONMENT:local}
+
+# Logging Configuration
+logging:
+  level:
+    '[com.fintech.journey]': DEBUG
+    '[org.springframework.kafka]': INFO
+    '[org.apache.kafka]': WARN
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level [%X{traceId},%X{spanId}] %logger{36} - %msg%n"
+
+# Journey Orchestrator Specific Configuration
+journey:
+  orchestrator:
+    # Event processing configuration
+    events:
+      retry:
+        max-attempts: 3
+        backoff-delay: 1000
+      timeout: 30000
+    
+    # Business rules configuration
+    business-rules:
+      credit-check:
+        default-provider: EXPERIAN
+        timeout-minutes: 5
+      contract-generation:
+        template-version: v2.0
+        auto-generate: true
+      notification:
+        channels:
+          - EMAIL
+          - SMS
+        retry-attempts: 3
+
+# Environment-specific overrides
+---
+spring:
+  config:
+    activate:
+      on-profile: docker
+  kafka:
+    bootstrap-servers: kafka:9092
+  cloud:
+    consul:
+      host: consul
+      port: 8500
+
+---
+spring:
+  config:
+    activate:
+      on-profile: production
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS}
+    producer:
+      acks: all
+      retries: 5
+      properties:
+        enable.idempotence: true
+        max.in.flight.requests.per.connection: 1
+        batch.size: 16384
+        linger.ms: 5
+        buffer.memory: 33554432
+    consumer:
+      properties:
+        max.poll.records: 10
+        session.timeout.ms: 30000
+        heartbeat.interval.ms: 3000
+
+logging:
+  level:
+    com.fintech.journey: INFO
+    org.springframework.kafka: WARN

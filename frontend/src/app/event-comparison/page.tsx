@@ -36,6 +36,18 @@ interface KafkaEvent {
   headers?: Record<string, string>;
 }
 
+interface JourneyEvent {
+  id: string;
+  journeyId: string;
+  eventType: string;
+  userId: string;
+  source: string;
+  timestamp: number;
+  data: unknown;
+  nextStep?: string;
+  orchestrationState: 'initiated' | 'processing' | 'completed' | 'failed';
+}
+
 interface ComparisonMetrics {
   throughput: number;
   latency: number;
@@ -68,9 +80,21 @@ const EventDrivenComparisonDemo: React.FC = () => {
     replay: true
   });
 
+  // Journey orchestrator state
+  const [journeyEvents, setJourneyEvents] = useState<JourneyEvent[]>([]);
+  const [journeyMetrics, setJourneyMetrics] = useState<ComparisonMetrics>({
+    throughput: 15000,
+    latency: 5,
+    reliability: 99.5,
+    deliveryGuarantee: 'Event-driven with saga patterns',
+    ordering: 'Business process ordering',
+    replay: true
+  });
+
   // Demo control state
   const [isWebhookRunning, setIsWebhookRunning] = useState(false);
   const [isKafkaRunning, setIsKafkaRunning] = useState(false);
+  const [isJourneyRunning, setIsJourneyRunning] = useState(false);
 
   // Test event data
   const [testEventData, setTestEventData] = useState({
@@ -159,10 +183,57 @@ const EventDrivenComparisonDemo: React.FC = () => {
     }));
   }, [testEventData]);
 
+  // Journey orchestrator simulation
+  const simulateJourneyEvent = useCallback(() => {
+    const journeyTypes = [
+      { type: 'loan.application.submitted', next: 'credit.check.initiated' },
+      { type: 'credit.check.initiated', next: 'credit.decision.made' },
+      { type: 'credit.decision.made', next: 'contract.generation.requested' },
+      { type: 'contract.generated', next: 'contract.signature.requested' },
+      { type: 'contract.signed', next: 'funds.disbursement.initiated' },
+      { type: 'funds.disbursed', next: 'journey.completed' }
+    ];
+    
+    const sources = ['journey-orchestrator', 'credit-service', 'contract-service', 'payment-service'];
+    const selectedJourney = journeyTypes[Math.floor(Math.random() * journeyTypes.length)];
+    
+    const orchestrationStates: ('initiated' | 'processing' | 'completed' | 'failed')[] = 
+      ['initiated', 'processing', 'completed', 'failed'];
+    const state = orchestrationStates[Math.floor(Math.random() * 4)];
+    
+    const newEvent: JourneyEvent = {
+      id: `journey_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`,
+      journeyId: `journey_${Math.floor(Math.random() * 1000)}`,
+      eventType: selectedJourney.type,
+      userId: `user_${Math.floor(Math.random() * 1000)}`,
+      source: sources[Math.floor(Math.random() * sources.length)],
+      timestamp: Date.now(),
+      data: {
+        ...testEventData,
+        loanAmount: Math.floor(Math.random() * 50000) + 10000,
+        creditScore: Math.floor(Math.random() * 300) + 500,
+        riskCategory: ['LOW', 'MEDIUM', 'HIGH'][Math.floor(Math.random() * 3)]
+      },
+      nextStep: selectedJourney.next,
+      orchestrationState: state
+    };
+
+    setJourneyEvents(prev => [newEvent, ...prev.slice(0, 49)]);
+    
+    // Update metrics
+    setJourneyMetrics(prev => ({
+      ...prev,
+      throughput: prev.throughput + Math.floor(Math.random() * 500) - 250,
+      latency: Math.max(2, prev.latency + Math.random() * 3 - 1.5),
+      reliability: Math.max(99, Math.min(99.9, prev.reliability + Math.random() * 0.2 - 0.1))
+    }));
+  }, [testEventData]);
+
   // Start/stop simulations
   useEffect(() => {
     let webhookInterval: NodeJS.Timeout;
     let kafkaInterval: NodeJS.Timeout;
+    let journeyInterval: NodeJS.Timeout;
 
     if (isWebhookRunning) {
       webhookInterval = setInterval(simulateWebhookEvent, 2000); // Every 2 seconds
@@ -172,17 +243,24 @@ const EventDrivenComparisonDemo: React.FC = () => {
       kafkaInterval = setInterval(simulateKafkaEvent, 500); // Every 0.5 seconds
     }
 
+    if (isJourneyRunning) {
+      journeyInterval = setInterval(simulateJourneyEvent, 1500); // Every 1.5 seconds
+    }
+
     return () => {
       if (webhookInterval) clearInterval(webhookInterval);
       if (kafkaInterval) clearInterval(kafkaInterval);
+      if (journeyInterval) clearInterval(journeyInterval);
     };
-  }, [isWebhookRunning, isKafkaRunning, simulateWebhookEvent, simulateKafkaEvent]);
+  }, [isWebhookRunning, isKafkaRunning, isJourneyRunning, simulateWebhookEvent, simulateKafkaEvent, simulateJourneyEvent]);
 
-  const sendTestEvent = async (type: 'webhook' | 'kafka') => {
+  const sendTestEvent = async (type: 'webhook' | 'kafka' | 'journey') => {
     if (type === 'webhook') {
       simulateWebhookEvent();
-    } else {
+    } else if (type === 'kafka') {
       simulateKafkaEvent();
+    } else {
+      simulateJourneyEvent();
     }
   };
 
@@ -214,7 +292,7 @@ const EventDrivenComparisonDemo: React.FC = () => {
       </div>
 
       {/* High-level comparison metrics */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
@@ -232,12 +310,20 @@ const EventDrivenComparisonDemo: React.FC = () => {
                 <Badge variant="default">{kafkaMetrics.throughput.toLocaleString()}/sec</Badge>
               </div>
               <div className="flex justify-between">
+                <span>Journey Throughput:</span>
+                <Badge variant="outline">{journeyMetrics.throughput.toLocaleString()}/sec</Badge>
+              </div>
+              <div className="flex justify-between">
                 <span>WebHook Latency:</span>
                 <Badge variant="secondary">{webhookMetrics.latency}ms</Badge>
               </div>
               <div className="flex justify-between">
                 <span>Kafka Latency:</span>
                 <Badge variant="default">{kafkaMetrics.latency}ms</Badge>
+              </div>
+              <div className="flex justify-between">
+                <span>Journey Latency:</span>
+                <Badge variant="outline">{journeyMetrics.latency}ms</Badge>
               </div>
             </div>
           </CardContent>
@@ -259,9 +345,14 @@ const EventDrivenComparisonDemo: React.FC = () => {
                 <span>Kafka Reliability:</span>
                 <Badge variant="default">{kafkaMetrics.reliability.toFixed(2)}%</Badge>
               </div>
+              <div className="flex justify-between">
+                <span>Journey Reliability:</span>
+                <Badge variant="outline">{journeyMetrics.reliability.toFixed(2)}%</Badge>
+              </div>
               <div className="text-sm text-gray-600">
                 <div>WebHook: {webhookMetrics.deliveryGuarantee}</div>
                 <div>Kafka: {kafkaMetrics.deliveryGuarantee}</div>
+                <div>Journey: {journeyMetrics.deliveryGuarantee}</div>
               </div>
             </div>
           </CardContent>
@@ -280,21 +371,52 @@ const EventDrivenComparisonDemo: React.FC = () => {
                 <div className="text-right text-sm">
                   <div>WebHook: ❌ None</div>
                   <div>Kafka: ✅ Partition-level</div>
+                  <div>Journey: ✅ Business process</div>
                 </div>
               </div>
               <div className="flex justify-between">
-                <span>Message Replay:</span>
+                <span>Orchestration:</span>
+                <div className="text-right text-sm">
+                  <div>WebHook: ❌ Manual</div>
+                  <div>Kafka: ⚠️ Consumer logic</div>
+                  <div>Journey: ✅ Automated</div>
+                </div>
+              </div>
+              <div className="flex justify-between">
+                <span>Business Logic:</span>
+                <div className="text-right text-sm">
+                  <div>WebHook: ⚠️ Scattered</div>
+                  <div>Kafka: ⚠️ Consumer-based</div>
+                  <div>Journey: ✅ Centralized</div>
+                </div>
+              </div>
+              <div className="flex justify-between">
+                <span>Saga Patterns:</span>
                 <div className="text-right text-sm">
                   <div>WebHook: ❌ No</div>
-                  <div>Kafka: ✅ Yes</div>
+                  <div>Kafka: ⚠️ Manual</div>
+                  <div>Journey: ✅ Built-in</div>
                 </div>
               </div>
-              <div className="flex justify-between">
-                <span>Schema Evolution:</span>
-                <div className="text-right text-sm">
-                  <div>WebHook: ⚠️ Manual</div>
-                  <div>Kafka: ✅ Registry</div>
-                </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              🔄 Journey Orchestration
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-3">
+              <div className="text-sm space-y-2">
+                <div className="font-semibold">User Journey Events:</div>
+                <div>• Loan Application → Credit Check</div>
+                <div>• Credit Decision → Contract Gen</div>
+                <div>• Contract Signed → Funds Disbursed</div>
+                <div>• Automatic compensation handling</div>
+                <div>• End-to-end audit trail</div>
               </div>
             </div>
           </CardContent>
@@ -307,7 +429,7 @@ const EventDrivenComparisonDemo: React.FC = () => {
           <CardTitle>Live Demo Controls</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div className="space-y-4">
               <h3 className="text-lg font-semibold">WebHook Simulation</h3>
               <div className="flex gap-2">
@@ -343,6 +465,24 @@ const EventDrivenComparisonDemo: React.FC = () => {
                 </Button>
               </div>
             </div>
+
+            <div className="space-y-4">
+              <h3 className="text-lg font-semibold">Journey Orchestration</h3>
+              <div className="flex gap-2">
+                <Button
+                  onClick={() => setIsJourneyRunning(!isJourneyRunning)}
+                  variant={isJourneyRunning ? "destructive" : "outline"}
+                >
+                  {isJourneyRunning ? 'Stop Journey Sim' : 'Start Journey Sim'}
+                </Button>
+                <Button
+                  variant="outline"
+                  onClick={() => sendTestEvent('journey')}
+                >
+                  Send Journey Event
+                </Button>
+              </div>
+            </div>
           </div>
 
           <div className="mt-6">
@@ -365,7 +505,7 @@ const EventDrivenComparisonDemo: React.FC = () => {
       </Card>
 
       {/* Side-by-side event streams */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* WebHook Events */}
         <Card>
           <CardHeader>
@@ -445,6 +585,51 @@ const EventDrivenComparisonDemo: React.FC = () => {
             </div>
           </CardContent>
         </Card>
+
+        {/* Journey Orchestrator Events */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              🎯 Journey Events
+              <Badge variant="outline">{journeyEvents.length}</Badge>
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-3 max-h-96 overflow-y-auto">
+              {journeyEvents.map((event) => (
+                <div key={event.id} className="p-3 border rounded-lg bg-green-50">
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="flex items-center gap-2">
+                      <Badge variant="outline">{event.source}</Badge>
+                      <Badge className={getStatusColor(event.orchestrationState)}>
+                        {event.orchestrationState}
+                      </Badge>
+                    </div>
+                    <span className="text-xs text-gray-500">
+                      Journey: {event.journeyId.split('_')[1]}
+                    </span>
+                  </div>
+                  <div className="text-sm font-medium mb-1">{event.eventType}</div>
+                  <div className="text-xs text-blue-600 mb-2">
+                    Next: {event.nextStep}
+                  </div>
+                  <pre className="text-xs bg-white p-2 rounded overflow-x-auto">
+                    {JSON.stringify(event.data, null, 2)}
+                  </pre>
+                  <div className="text-xs text-gray-500 mt-1">
+                    {new Date(event.timestamp).toLocaleString()}
+                    ✅ Orchestrated Flow
+                  </div>
+                </div>
+              ))}
+              {journeyEvents.length === 0 && (
+                <div className="text-center text-gray-500 py-8">
+                  No Journey events yet. Start the simulation or send a test event.
+                </div>
+              )}
+            </div>
+          </CardContent>
+        </Card>
       </div>
 
       {/* Detailed comparison */}
@@ -462,7 +647,7 @@ const EventDrivenComparisonDemo: React.FC = () => {
             </TabsList>
 
             <TabsContent value="overview">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <div className="space-y-4">
                   <h3 className="text-lg font-semibold">WebHooks</h3>
                   <ul className="space-y-2 text-sm">
@@ -489,11 +674,24 @@ const EventDrivenComparisonDemo: React.FC = () => {
                     <li>❌ Requires infrastructure management</li>
                   </ul>
                 </div>
+                <div className="space-y-4">
+                  <h3 className="text-lg font-semibold">Journey Orchestration</h3>
+                  <ul className="space-y-2 text-sm">
+                    <li>✅ Centralized business logic</li>
+                    <li>✅ Journey state management</li>
+                    <li>✅ Multi-step orchestration</li>
+                    <li>✅ Event-driven architecture</li>
+                    <li>✅ Error handling & compensation</li>
+                    <li>✅ Built-in monitoring</li>
+                    <li>❌ Additional complexity</li>
+                    <li>❌ Requires event backbone</li>
+                  </ul>
+                </div>
               </div>
             </TabsContent>
 
             <TabsContent value="performance">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <div className="space-y-4">
                   <h3 className="text-lg font-semibold">WebHook Performance</h3>
                   <div className="space-y-2">
@@ -536,11 +734,32 @@ const EventDrivenComparisonDemo: React.FC = () => {
                     </div>
                   </div>
                 </div>
+                <div className="space-y-4">
+                  <h3 className="text-lg font-semibold">Journey Performance</h3>
+                  <div className="space-y-2">
+                    <div className="flex justify-between">
+                      <span>Typical Throughput:</span>
+                      <span>15K+ journeys/sec</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span>Latency:</span>
+                      <span>5-50ms (orchestration)</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span>Scalability:</span>
+                      <span>Horizontal (microservices)</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span>Batching:</span>
+                      <span>✅ Journey-based batching</span>
+                    </div>
+                  </div>
+                </div>
               </div>
             </TabsContent>
 
             <TabsContent value="reliability">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <div className="space-y-4">
                   <h3 className="text-lg font-semibold">WebHook Reliability</h3>
                   <div className="space-y-3">
@@ -572,6 +791,23 @@ const EventDrivenComparisonDemo: React.FC = () => {
                       <div>• Built-in replication and failover</div>
                       <div>• Transactional guarantees</div>
                       <div>• Persistent storage with retention policies</div>
+                    </div>
+                  </div>
+                </div>
+                <div className="space-y-4">
+                  <h3 className="text-lg font-semibold">Journey Reliability</h3>
+                  <div className="space-y-3">
+                    <Alert>
+                      <AlertDescription>
+                        <strong>Delivery:</strong> Orchestrated delivery with 
+                        compensating actions and saga patterns.
+                      </AlertDescription>
+                    </Alert>
+                    <div className="text-sm space-y-1">
+                      <div>• Built-in state management</div>
+                      <div>• Compensation and rollback actions</div>
+                      <div>• Journey-level error handling</div>
+                      <div>• Event-driven resilience patterns</div>
                     </div>
                   </div>
                 </div>
