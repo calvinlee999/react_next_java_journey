@@ -1,0 +1,264 @@
+# Batch Inference Service Configuration
+server:
+  port: 8085
+  servlet:
+    context-path: /batch-inference
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+  endpoint:
+    health:
+      show-details: always
+  metrics:
+    export:
+      prometheus:
+        enabled: true
+  info:
+    env:
+      enabled: true
+
+spring:
+  application:
+    name: batch-inference-service
+  profiles:
+    active: local
+  task:
+    execution:
+      pool:
+        core-size: 4
+        max-size: 8
+        queue-capacity: 100
+    scheduling:
+      pool:
+        size: 2
+
+kafka:
+  bootstrap:
+    servers: localhost:9092
+  consumer:
+    group-id: batch-inference-consumer
+    auto-offset-reset: earliest
+    enable-auto-commit: false
+    max-poll-records: 10000
+  producer:
+    retries: 3
+    batch-size: 65536
+    linger-ms: 10
+    compression-type: snappy
+
+spark:
+  app:
+    name: batch-inference-service
+  master: local[*]
+  serializer: org.apache.spark.serializer.KryoSerializer
+  sql:
+    adaptive:
+      enabled: true
+      coalescePartitions:
+        enabled: true
+      skewJoin:
+        enabled: true
+  dynamicAllocation:
+    enabled: false
+  executor:
+    memory: 2g
+    cores: 2
+  driver:
+    memory: 1g
+    maxResultSize: 1g
+
+azure:
+  storage:
+    account:
+      name: ${AZURE_STORAGE_ACCOUNT_NAME:fintechstorage}
+      key: ${AZURE_STORAGE_ACCOUNT_KEY:}
+    container:
+      name: fintech-datalake
+    connection:
+      string: ${AZURE_STORAGE_CONNECTION_STRING:}
+
+data:
+  lake:
+    historical:
+      path: /historical
+    features:
+      path: /features
+    predictions:
+      path: /predictions
+    models:
+      path: /models
+    training:
+      path: /training-data
+
+mlflow:
+  tracking:
+    uri: ${MLFLOW_TRACKING_URI:http://localhost:5000}
+  registry:
+    uri: ${MLFLOW_REGISTRY_URI:http://localhost:5000}
+  experiment:
+    name: batch-inference-experiments
+  artifact:
+    uri: ${MLFLOW_ARTIFACT_URI:s3://mlflow-artifacts/}
+
+model:
+  registry:
+    default:
+      version: latest
+    cache:
+      enabled: true
+      ttl:
+        minutes: 5
+    refresh:
+      interval:
+        minutes: 15
+
+batch:
+  inference:
+    schedule:
+      enabled: true
+    batch:
+      size: 100000
+    processing:
+      timeout: 3600
+    max:
+      concurrent:
+        jobs: 3
+    retry:
+      attempts: 3
+      delay:
+        seconds: 30
+
+logging:
+  level:
+    com.fintech.batch: INFO
+    org.apache.spark: WARN
+    org.apache.kafka: WARN
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} - %msg%n"
+    file: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+
+---
+# Azure Profile Configuration
+spring:
+  config:
+    activate:
+      on-profile: azure
+
+spark:
+  master: yarn
+  submit:
+    deployMode: cluster
+  dynamicAllocation:
+    enabled: true
+    minExecutors: 2
+    maxExecutors: 20
+    initialExecutors: 5
+  executor:
+    memory: 4g
+    cores: 4
+  driver:
+    memory: 2g
+  sql:
+    adaptive:
+      advisoryPartitionSizeInBytes: 256MB
+      coalescePartitions:
+        parallelismFirst: false
+
+databricks:
+  workspace:
+    url: ${DATABRICKS_WORKSPACE_URL:}
+  access:
+    token: ${DATABRICKS_ACCESS_TOKEN:}
+  cluster:
+    id: ${DATABRICKS_CLUSTER_ID:}
+  job:
+    cluster:
+      spark:
+        version: 13.3.x-scala2.12
+
+azure:
+  storage:
+    account:
+      name: ${AZURE_STORAGE_ACCOUNT_NAME}
+      key: ${AZURE_STORAGE_ACCOUNT_KEY}
+    sas:
+      token: ${AZURE_STORAGE_SAS_TOKEN:}
+    msi:
+      endpoint: ${AZURE_MSI_ENDPOINT:}
+  servicebus:
+    connection:
+      string: ${AZURE_SERVICEBUS_CONNECTION_STRING:}
+    namespace: ${AZURE_SERVICEBUS_NAMESPACE:}
+  keyvault:
+    uri: ${AZURE_KEYVAULT_URI:}
+    client:
+      id: ${AZURE_CLIENT_ID:}
+      secret: ${AZURE_CLIENT_SECRET:}
+
+kafka:
+  bootstrap:
+    servers: ${KAFKA_BOOTSTRAP_SERVERS}
+  security:
+    protocol: SASL_SSL
+  sasl:
+    mechanism: PLAIN
+    jaas:
+      config: 'org.apache.kafka.common.security.plain.PlainLoginModule required username="${KAFKA_API_KEY}" password="${KAFKA_API_SECRET}";'
+
+---
+# Test Profile Configuration
+spring:
+  config:
+    activate:
+      on-profile: test
+  datasource:
+    url: jdbc:h2:mem:testdb
+    driver-class-name: org.h2.Driver
+    username: sa
+    password: ""
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+  kafka:
+    consumer:
+      bootstrap-servers: localhost:9093
+    producer:
+      bootstrap-servers: localhost:9093
+
+spark:
+  master: local[1]
+  executor:
+    memory: 512m
+  driver:
+    memory: 512m
+  serializer: org.apache.spark.serializer.JavaSerializer
+  sql:
+    adaptive:
+      enabled: false
+
+kafka:
+  bootstrap:
+    servers: localhost:9093
+
+batch:
+  inference:
+    schedule:
+      enabled: false
+    batch:
+      size: 100
+
+model:
+  registry:
+    cache:
+      enabled: false
+
+data:
+  lake:
+    historical:
+      path: /tmp/test/historical
+    features:
+      path: /tmp/test/features
+    predictions:
+      path: /tmp/test/predictions
