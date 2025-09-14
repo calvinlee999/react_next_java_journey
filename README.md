@@ -76,6 +76,8 @@ cd react_next_java_journey
 - **🔍 NEW: Data Governance Console**: [http://localhost:3000/governance-console](http://localhost:3000/governance-console)
 - **⚡ NEW: Quality Monitoring**: [http://localhost:3000/quality-dashboard](http://localhost:3000/quality-dashboard)
 - **🔍 NEW: Lineage Visualization**: [http://localhost:3000/lineage-explorer](http://localhost:3000/lineage-explorer)
+- **📊 NEW: Real-Time Analytics Dashboard**: [http://localhost:3000/analytics-dashboard](http://localhost:3000/analytics-dashboard)
+- **📈 NEW: Business Intelligence Board**: [http://localhost:3000/business-intelligence](http://localhost:3000/business-intelligence)
 
 ## 🏗️ Architecture Overview
 
@@ -666,6 +668,105 @@ graph TB
 ```
 
 **📋 Complete Architecture Documentation**: [Architecture Summary](./docs/azure/AZURE_LEVEL1_ARCHITECTURE_SUMMARY.md)
+
+## 📊 **NEW: Unified Analytics & Business Intelligence Platform**
+
+Building upon our **Azure Databricks Data Mesh** foundation, we now introduce a **comprehensive analytics platform** that delivers both real-time operational intelligence and strategic business insights through a unified lakehouse architecture.
+
+### 🎯 **Dual Analytics Architecture**
+
+Our platform provides **two complementary analytics experiences** powered by the same Azure Databricks infrastructure:
+
+#### ⚡ **Real-Time Analytics Dashboard**
+**URL**: [http://localhost:3000/analytics-dashboard](http://localhost:3000/analytics-dashboard)
+
+- **Live Streaming Data**: Sub-second updates from Azure Databricks Delta Live Tables
+- **Fraud Monitoring**: ML-powered fraud detection with real-time risk scoring  
+- **Transaction Analytics**: Live transaction metrics, volume tracking, and performance KPIs
+- **System Health Monitoring**: Databricks cluster health, Kafka connectivity, Delta Lake status
+- **Interactive Visualization**: Tabbed interface for pipeline metrics, fraud alerts, and performance analytics
+
+#### 📈 **Business Intelligence Visualization Board**
+**URL**: [http://localhost:3000/business-intelligence](http://localhost:3000/business-intelligence)
+
+- **Executive KPIs**: Revenue, transactions, customer metrics with trend analysis
+- **Power BI Integration**: DirectQuery connectivity to Delta Lake Gold layer for live reports
+- **Scheduled Reports**: Automated weekly/monthly business review dashboards
+- **Performance Tracking**: Goal progress monitoring with target achievement visualization
+- **Report Management**: Scheduled report distribution and interactive drill-down analytics
+
+### 🏗️ **Azure Databricks Unified Lakehouse Architecture**
+
+```
+┌─────────────────────────────────────────────────────────────────────────┐
+│                    AZURE DATABRICKS UNIFIED ANALYTICS                  │
+├─────────────────────────────────────────────────────────────────────────┤
+│  Real-Time Processing           │            Batch Processing            │
+│  ────────────────────           │            ──────────────────          │
+│  • Delta Live Tables            │            • Scheduled Spark Jobs      │
+│  • Structured Streaming         │            • Weekly/Monthly Reports    │
+│  • Fraud Detection ML           │            • Business Intelligence     │
+│  • 2-Second Dashboard Updates   │            • Power BI Refresh          │
+├─────────────────────────────────────────────────────────────────────────┤
+│                         DELTA LAKE LAYERS                              │
+│  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐                     │
+│  │ Bronze      │  │ Silver      │  │ Gold        │                     │
+│  │ Raw Events  │→ │ Cleansed    │→ │ Analytics   │                     │
+│  │ Kafka Topics│  │ Validated   │  │ KPI Views   │                     │
+│  │ Schema Check│  │ Business    │  │ Power BI    │                     │
+│  └─────────────┘  │ Logic       │  │ Ready       │                     │
+│                    └─────────────┘  └─────────────┘                     │
+├─────────────────────────────────────────────────────────────────────────┤
+│  Frontend Analytics              │            Business Intelligence      │
+│  ──────────────────              │            ─────────────────────      │
+│  • React Real-time Dashboard    │            • Power BI Reports         │
+│  • Live Transaction Metrics     │            • Executive Dashboards     │
+│  • Fraud Alert System          │            • Weekly/Monthly Analytics  │
+│  • System Health Monitoring     │            • Scheduled Email Reports  │
+└─────────────────────────────────────────────────────────────────────────┘
+```
+
+### 🎛️ **Analytics Features**
+
+#### Real-Time Analytics Dashboard
+- **📊 Transaction Metrics**: Live transaction volume, success rates, average order values
+- **🛡️ Fraud Detection**: Real-time fraud alerts with ML risk scoring and severity classification
+- **⚡ Pipeline Monitoring**: Bronze→Silver→Gold processing rates and data quality metrics
+- **💡 System Health**: Databricks cluster status, Kafka connectivity, Delta Lake health
+- **🎨 Interactive UI**: Tabbed interface for different analytics views with live data refresh
+
+#### Business Intelligence Board  
+- **📈 Executive KPIs**: Revenue tracking, customer growth, conversion rates with trend analysis
+- **🎯 Goal Monitoring**: Target achievement visualization with progress tracking
+- **📅 Scheduled Reports**: Automated weekly/monthly business review generation
+- **🔗 Power BI Integration**: DirectQuery to Delta Lake for real-time business intelligence
+- **⚙️ Report Management**: Configurable report schedules and recipient management
+
+### 📋 **Analytics Documentation**
+
+Explore our comprehensive analytics platform documentation:
+
+- 🏗️ **[Azure Databricks Architecture](./docs/databricks-architecture.md)** - Unified lakehouse architecture with Bronze-Silver-Gold layers
+- ⚡ **[Analytics Sequence Diagrams](./docs/analytics-sequence-diagrams.md)** - Real-time streaming and batch processing workflows
+- 📊 **[Real-Time Analytics Dashboard](/analytics-dashboard)** - Live operational intelligence
+- 📈 **[Business Intelligence Board](/business-intelligence)** - Strategic business insights
+
+### 🔄 **Data Flow Architecture**
+
+| Processing Mode | Latency | Use Case | Technology Stack |
+|----------------|---------|----------|------------------|
+| **Real-Time Streaming** | 2 seconds | Fraud detection, live dashboards | Delta Live Tables, Structured Streaming |
+| **Near Real-Time** | 5 minutes | Operational metrics, system monitoring | Micro-batch processing, Kafka Streams |
+| **Batch Processing** | Daily/Weekly | Business intelligence, reporting | Spark batch jobs, Power BI refresh |
+
+### 🎯 **Key Benefits**
+
+- **🔄 Unified Platform**: Single Azure Databricks infrastructure for all analytics workloads
+- **⚡ Real-Time Insights**: Sub-second fraud detection and operational monitoring
+- **📊 Business Intelligence**: Automated report generation with Power BI integration  
+- **🎨 User Experience**: React TypeScript components with live data visualization
+- **🏗️ Scalable Architecture**: Bronze-Silver-Gold data layers with Delta Lake ACID transactions
+- **🔒 Enterprise Security**: Unity Catalog governance with role-based access control
 
 ### 🏛️ Azure Well-Architected Framework Implementation
 
