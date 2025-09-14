@@ -1,46 +1,157 @@
-# 🚀 Golden Path Template - Enterprise React + Next.js + Java + Azure
+# 🏦 AI Platform for FinTech Evolution
 
-> **🎯 Complete Enterprise-Grade Full-Stack Architecture with AI Integration (GPT-5 Mini) and Azure API Management Gateway**
+> **🎯 FinTech-native AI platform designed for secure, agile, and intelligent innovation in banking. Addresses the "lemons" of traditional systems: siloed data, slow feature delivery, and inability to scale AI effectively.**
 
 [![Next.js](https://img.shields.io/badge/Next.js-15.5.3-black?logo=next.js)](https://nextjs.org/)
 [![React](https://img.shields.io/badge/React-19.1.0-blue?logo=react)](https://react.dev/)
 [![Spring Boot](https://img.shields.io/badge/Spring_Boot-3.2.0-green?logo=spring)](https://spring.io/projects/spring-boot)
-[![Azure](https://img.shields.io/badge/Azure-Cloud_Ready-blue?logo=microsoft-azure)](https://azure.microsoft.com/)
-[![Azure OpenAI](https://img.shields.io/badge/Azure_OpenAI-GPT--5_Mini-green?logo=openai)](https://azure.microsoft.com/en-us/products/ai-services/openai-service)
-[![Azure API Management](https://img.shields.io/badge/Azure_API_Management-Enterprise-orange?logo=microsoft-azure)](https://azure.microsoft.com/en-us/products/api-management)
+[![Azure](https://img.shields.io/badge/Azure-Multi_Cloud-blue?logo=microsoft-azure)](https://azure.microsoft.com/)
+[![AI-First](https://img.shields.io/badge/AI_First-GPT--5_Mini_|_Gemini_Pro-green?logo=openai)](https://azure.microsoft.com/en-us/products/ai-services/openai-service)
+[![BIAN](https://img.shields.io/badge/BIAN-Service_Landscape-orange)](https://bian.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue?logo=typescript)](https://www.typescriptlang.org/)
 
-## 🤖 NEW: AI SDK Integration with GPT-5 Mini
+## 💡 **Core Value Dimensions**
 
-This template now includes a **production-ready AI SDK** with support for GPT-5 Mini and enterprise-grade AI capabilities:
+This cloud-native, AI-first blueprint aligns with the **BIAN service landscape** and empowers domain-aligned teams. Built by a team with deep experience in **payments, lending, and capital markets**, this blueprint offers a battle-tested approach to modern FinTech architecture.
 
-- ✅ **GPT-5 Mini Integration**: Latest Azure OpenAI model with enhanced performance
-- ✅ **Real-time AI Inference**: Sub-100ms response times with intelligent caching
-- ✅ **Personalization Engine**: Azure Personalizer for tailored user experiences
-- ✅ **Event-Driven AI**: Kafka integration for real-time AI event streaming
-- ✅ **Scalable Architecture**: Two deployment options (embedded vs microservice)
-- ✅ **Enterprise Security**: Azure AD authentication and API key support
+- ☁️ **Cloud-Agnostic**: Deploy on Azure, AWS, or GCP
+- 🤖 **AI-First**: Integrates GPT-5 Mini, Gemini Pro, AWS Claude/Titan  
+- 🧱 **Modular Tech Stack**: Java, .NET, Python, Node.js, React, Angular
+- 🏦 **BIAN-Aligned**: Domain-centric architecture for composable banking
+- 🔄 **Data Mesh Ready**: Decentralized data ownership with observability
 
-### 🏗️ AI Architecture Options
+## 📊 **Executive Outcomes**
 
-📖 **[Complete AI Architecture Documentation](./docs/AI_SDK_ARCHITECTURE.md)**
+- 🧠 **AI at Scale**: Real-time fraud detection, credit scoring, personalization
+- ⏱️ **Faster Time-to-Market**: Microservices and micro-frontends reduce delivery from months to weeks
+- 🛡️ **Compliance by Design**: Automated quality gates, lineage, audit trails
+- 💰 **Cost Efficiency**: Tiered AI inference, caching, autoscaling
+- 🌐 **Omnichannel UX**: Centralized APIs and orchestration enable seamless customer journeys
 
-| Approach | Use Case | Performance | Complexity |
-|----------|----------|-------------|------------|
-| **Next.js Embedded** (MVP) | Rapid development, small teams | 25-75ms latency | Low complexity |
-| **Containerized Microservice** (Scale) | Production scale, multiple teams | 50-150ms latency | Higher complexity |
+## 🔬 **Technical Deep Dive & Documentation**
 
-### 🚀 Quick AI Demo
+### 🧠 **AI Platform Architecture**
+
+The AI platform supports a range of performance and scalability needs via three distinct inference modes:
+
+| **Inference Mode** | **Use Case Examples** | **Latency** | **Scalability** |
+|-------------------|----------------------|-------------|-----------------|
+| **Real-Time** | Credit scoring, chatbots, recommendations | 25–100ms | 10K+ requests/sec |
+| **Near-Real-Time** | Fraud signals, behavioral risk profiling | 0.5–1s | 50K+ events/sec |
+| **Batch** | Model training, portfolio risk, KYC remediation | Minutes+ | 1M+ records/hour |
+
+### 📦 **Deployment Models**
+
+- **Embedded AI**: Direct integration into frontends using Next.js or Angular
+- **API-Based Inference**: Scalable containerized services in Java, .NET, or Python  
+- **Event-Driven**: Streaming AI workflows using Kafka, Kinesis, or Pub/Sub
+
+➡️ **[View AI Inference Sequence Diagram](./docs/analytics-sequence-diagrams.md#ai-inference-patterns)**
+
+### 🏦 **BIAN Domain-Centric Architecture**
+
+Mapped to the BIAN service landscape, ensuring composability and business-aligned design:
+
+| **Domain** | **AI-Powered Use Cases** | **Services Leveraged** |
+|------------|--------------------------|------------------------|
+| **Payments** | Fraud detection, fee optimization, smart routing | Payment Execution, Account Services |
+| **Lending** | Credit scoring, approval workflows | Loan Fulfillment, Credit Risk |
+| **Cards** | Real-time transaction scoring, churn prediction | Card Management, Transaction Engine |
+| **Customer Onboarding** | KYC validation, sentiment and risk scoring | Customer Profile, Compliance Services |
+
+➡️ **[View BIAN Domain Architecture Map](./docs/azure-ai-srl-architecture.md#bian-service-landscape)**
+
+### 🔄 **Data Mesh Backbone** (Pluggable)
+
+Enables decentralized ownership and observability with a flexible stack:
+
+| **Layer** | **Tools / Tech Stack Options** |
+|-----------|--------------------------------|
+| **Streaming Backbone** | Kafka / Confluent / AWS Kinesis / GCP Pub/Sub |
+| **AI Governance** | MLflow / SageMaker / Azure ML / Vertex AI |
+| **Quality Monitoring** | Spark, Databricks, Great Expectations, Delta Live |
+| **Lineage & Auditing** | Azure Purview / Data Catalog / BigQuery Lineage |
+
+*Treat data as a product—build pipelines that are observable, testable, and reusable across domains.*
+
+➡️ **[View Data Mesh Architecture Diagram](./docs/analytics-sequence-diagrams.md#data-mesh-workflows)**
+
+### ☁️ **Cloud-Agnostic Principles** (Well-Architected Compliance)
+
+Adheres to all five pillars of cloud-native design:
+
+| **Pillar** | **Azure** | **AWS** | **GCP** |
+|------------|-----------|---------|---------|
+| 🔁 **Reliability** | Availability Zones, Auto-Heal | Multi-AZ, Route53 Failover | Regional Instances |
+| 🔐 **Security** | Azure AD, Key Vault | IAM, KMS | IAM, Secrets Manager |
+| 💵 **Cost Optimization** | Autoscale Rules, Reserved VM | Spot Instances, Savings Plan | Committed Use Discounts |
+| ⚡ **Performance** | Redis, CDN, Durable Functions | Lambda, CloudFront | Cloud CDN, Cloud Functions |
+| ⚙️ **Operational Excellence** | Bicep, Azure Monitor, App Insights | CloudWatch, X-Ray | Stackdriver, Cloud Ops |
+
+➡️ **[View Cloud Architecture Comparison](./docs/azure-ai-srl-architecture.md#cloud-agnostic-deployment)**
+
+### 🧱 **Deployment Reference Architectures**
+
+#### 🟦 **Azure**
+- **Gateway**: Azure API Management
+- **AI**: Azure OpenAI, Azure Personalizer  
+- **Data**: Event Hubs, Databricks, Data Lake Gen2
+- **Monitoring**: Azure Monitor, App Insights
+
+#### 🟥 **AWS**
+- **Gateway**: Amazon API Gateway
+- **AI**: AWS Bedrock (Claude, Titan)
+- **Data**: Kinesis, SageMaker, Redshift
+- **Monitoring**: CloudWatch, X-Ray
+
+#### 🟩 **GCP**
+- **Gateway**: Apigee / Cloud Endpoints
+- **AI**: Gemini Pro via Vertex AI
+- **Data**: BigQuery, Pub/Sub, Dataform  
+- **Monitoring**: Cloud Monitoring, Cloud Trace
+
+➡️ **[View Deployment Diagrams](./docs/analytics-sequence-diagrams.md#cloud-deployment-patterns)**
+
+*Each deployment includes IaC templates (Terraform/Bicep), CI/CD pipelines, and pre-configured observability.*
+
+### 👥 **Roles & Skills Alignment**
+
+| **Role** | **Platform Impact Area** | **Skills Involved** |
+|----------|-------------------------|-------------------|
+| **Frontend Engineer** | AI-driven UX, micro-frontends | React 19, Next.js, Zustand, WebSocket APIs |
+| **Backend Engineer** | AI orchestration, service integration | Spring Boot, Node.js, Kafka, Redis |
+| **Data Engineer** | Data Mesh, lineage, quality automation | Delta Lake, Databricks, Spark, MLflow |
+| **ML Engineer** | Real-time inference, model lifecycle | Azure OpenAI, SageMaker, Vertex AI, ML Ops |
+| **DevOps/SRE** | IaC, observability, scalable infra | Bicep/Terraform, Azure/AWS/GCP, GitHub CI |
+
+### 🚀 **Developer Quick Start**
 
 ```bash
-# Start with AI-enabled frontend
-npm run dev
+# Run Frontend
+cd frontend && npm install && npm run dev
 
-# Test GPT-5 Mini integration
+# Run Backend  
+cd backend && ./mvnw spring-boot:run
+
+# Test AI Inference API
 curl -X POST http://localhost:3000/api/ai/inference \
   -H "Content-Type: application/json" \
-  -d '{"inferenceType": "chat", "payload": {"messages": [{"role": "user", "content": "Hello GPT-5 Mini!"}]}}'
+  -d '{"inferenceType":"chat","payload":{"messages":[{"role":"user","content":"Test GPT-5 Mini"}]}}'
 ```
+
+### 📘 **API Documentation**
+
+| **Endpoint** | **Description** |
+|-------------|----------------|
+| `GET /api/health` | Application health check |
+| `POST /api/ai/inference` | AI chat & inference handler |
+| `GET /actuator/*` | Spring Boot monitoring endpoints |
+
+### ✅ **Ready to Accelerate Your FinTech Transformation?**
+
+This is your blueprint for building **composable, intelligent, and resilient FinTech systems** — designed to scale with your cloud strategy and AI maturity.
+
+> *"Data as a product. AI at the core. Compliance by design. Built for scale."*
 
 ## 🚀 Quick Start (2-Minute Setup)
 
