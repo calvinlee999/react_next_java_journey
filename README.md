@@ -2,6 +2,12 @@
 
 > **🎯 FinTech-native AI platform designed for secure, agile, and intelligent innovation in banking. Addresses the "lemons" of traditional systems: siloed data, slow feature delivery, and inability to scale AI effectively.**
 
+## 🏗️ **Architecture Documentation**
+
+📚 **[Complete Architecture Hub](https://github.com/calvinlee999/AI-Platform-for-FinTech-Evolution)** - Comprehensive cloud architecture documentation for AWS, Azure, and GCP implementations.
+
+This repository focuses on the **React + Java + Azure** proof-of-concept implementation. For complete architecture patterns, reference implementations, and multi-cloud designs, visit the dedicated architecture repository.
+
 [![Next.js](https://img.shields.io/badge/Next.js-15.5.3-black?logo=next.js)](https://nextjs.org/)
 [![React](https://img.shields.io/badge/React-19.1.0-blue?logo=react)](https://react.dev/)
 [![Spring Boot](https://img.shields.io/badge/Spring_Boot-3.2.0-green?logo=spring)](https://spring.io/projects/spring-boot)
