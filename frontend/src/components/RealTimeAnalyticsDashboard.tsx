@@ -26,7 +26,13 @@ import {
   Clock,
   Target,
   Globe,
-  Server
+  Server,
+  Brain,
+  Eye,
+  TrendingDown,
+  Info,
+  Layers,
+  Gauge
 } from 'lucide-react';
 
 // Types for real-time data
@@ -53,6 +59,42 @@ interface FraudAlert {
   timestamp: string;
   status: AlertStatus;
   riskScore: number;
+  confidenceScore?: number;
+  explanations?: ModelExplanation[];
+}
+
+// XAI (Explainable AI) Interfaces
+interface ModelExplanation {
+  feature: string;
+  importance: number;
+  value: string | number;
+  impact: 'positive' | 'negative' | 'neutral';
+}
+
+interface ModelPerformance {
+  accuracy: number;
+  precision: number;
+  recall: number;
+  f1Score: number;
+  modelVersion: string;
+  lastTrainingDate: string;
+  driftScore: number;
+}
+
+interface FeatureImportance {
+  feature: string;
+  importance: number;
+  category: 'transaction' | 'user' | 'location' | 'temporal' | 'behavioral';
+}
+
+interface ModelPrediction {
+  predictionId: string;
+  prediction: 'fraud' | 'legitimate';
+  confidenceScore: number;
+  riskScore: number;
+  explanations: ModelExplanation[];
+  timestamp: string;
+  modelVersion: string;
 }
 
 interface DataPipelineMetrics {
@@ -105,6 +147,29 @@ const RealTimeAnalyticsDashboard: React.FC = () => {
     overallHealth: 100
   });
 
+  // XAI (Explainable AI) State
+  const [modelPerformance, setModelPerformance] = useState<ModelPerformance>({
+    accuracy: 94.2,
+    precision: 92.8,
+    recall: 95.1,
+    f1Score: 93.9,
+    modelVersion: 'v2.1.3',
+    lastTrainingDate: '2024-01-15',
+    driftScore: 0.12
+  });
+
+  const [featureImportances, setFeatureImportances] = useState<FeatureImportance[]>([
+    { feature: 'transaction_amount', importance: 0.285, category: 'transaction' },
+    { feature: 'user_activity_score', importance: 0.218, category: 'behavioral' },
+    { feature: 'location_risk_score', importance: 0.156, category: 'location' },
+    { feature: 'time_since_last_transaction', importance: 0.134, category: 'temporal' },
+    { feature: 'merchant_category', importance: 0.097, category: 'transaction' },
+    { feature: 'user_age_days', importance: 0.071, category: 'user' },
+    { feature: 'velocity_1h', importance: 0.039, category: 'behavioral' }
+  ]);
+
+  const [recentPredictions, setRecentPredictions] = useState<ModelPrediction[]>([]);
+
   // Real-time data simulation
   const intervalRef = useRef<number | null>(null);
 
@@ -122,18 +187,29 @@ const RealTimeAnalyticsDashboard: React.FC = () => {
           timestamp: new Date().toISOString()
         }));
 
-        // Simulate fraud alerts
+        // Simulate fraud alerts with XAI data
         if (Math.random() < 0.1) { // 10% chance of new alert
           const severities: AlertSeverity[] = ['low', 'medium', 'high', 'critical'];
           const types = ['Unusual Transaction Pattern', 'Geographic Anomaly', 'Velocity Check', 'Risk Score Threshold'];
+          const severity = severities[Math.floor(Math.random() * 4)];
+          const confidenceScore = 0.75 + Math.random() * 0.25; // High confidence for alerts
+          
+          const explanations: ModelExplanation[] = [
+            { feature: 'transaction_amount', importance: Math.random() * 0.4 + 0.3, value: Math.floor(Math.random() * 10000) + 1000, impact: 'positive' as const },
+            { feature: 'location_risk_score', importance: Math.random() * 0.3 + 0.2, value: Math.random() * 10, impact: 'positive' as const },
+            { feature: 'velocity_1h', importance: Math.random() * 0.2 + 0.1, value: Math.floor(Math.random() * 15) + 5, impact: 'positive' as const }
+          ].sort((a, b) => b.importance - a.importance);
+
           const newAlert: FraudAlert = {
             id: `alert_${Date.now()}`,
-            severity: severities[Math.floor(Math.random() * 4)],
+            severity,
             type: types[Math.floor(Math.random() * 4)],
             description: 'Automated fraud detection triggered',
             timestamp: new Date().toISOString(),
             status: 'active',
-            riskScore: Math.floor(Math.random() * 100)
+            riskScore: Math.floor(Math.random() * 100),
+            confidenceScore,
+            explanations
           };
           setFraudAlerts(prev => [newAlert, ...prev.slice(0, 9)]);
         }
@@ -157,6 +233,41 @@ const RealTimeAnalyticsDashboard: React.FC = () => {
           powerBiConnectivity: Math.random() > 0.8 ? 'connected' : 'degraded',
           overallHealth: Math.floor(Math.random() * 10) + 90
         });
+
+        // Simulate XAI model performance updates
+        setModelPerformance(prev => ({
+          ...prev,
+          accuracy: Math.max(90, Math.min(98, prev.accuracy + (Math.random() - 0.5) * 0.5)),
+          precision: Math.max(88, Math.min(96, prev.precision + (Math.random() - 0.5) * 0.8)),
+          recall: Math.max(90, Math.min(98, prev.recall + (Math.random() - 0.5) * 0.6)),
+          f1Score: Math.max(89, Math.min(97, prev.f1Score + (Math.random() - 0.5) * 0.4)),
+          driftScore: Math.max(0.05, Math.min(0.3, prev.driftScore + (Math.random() - 0.5) * 0.02))
+        }));
+
+        // Simulate new model predictions with explanations
+        if (Math.random() < 0.15) { // 15% chance of new prediction
+          const isFraud = Math.random() < 0.12; // 12% fraud rate
+          const confidenceScore = isFraud ? 0.7 + Math.random() * 0.3 : 0.8 + Math.random() * 0.2;
+          
+          const explanations: ModelExplanation[] = [
+            { feature: 'transaction_amount', importance: Math.random() * 0.3 + 0.2, value: Math.floor(Math.random() * 5000) + 100, impact: isFraud ? 'positive' as const : 'negative' as const },
+            { feature: 'user_activity_score', importance: Math.random() * 0.25 + 0.15, value: Math.random() * 100, impact: isFraud ? 'negative' as const : 'positive' as const },
+            { feature: 'location_risk_score', importance: Math.random() * 0.2 + 0.1, value: Math.random() * 10, impact: isFraud ? 'positive' as const : 'neutral' as const },
+            { feature: 'velocity_1h', importance: Math.random() * 0.15 + 0.05, value: Math.floor(Math.random() * 20), impact: isFraud ? 'positive' as const : 'negative' as const }
+          ].sort((a, b) => b.importance - a.importance);
+
+          const newPrediction: ModelPrediction = {
+            predictionId: `pred_${Date.now()}`,
+            prediction: isFraud ? 'fraud' : 'legitimate',
+            confidenceScore,
+            riskScore: isFraud ? Math.floor(Math.random() * 40) + 60 : Math.floor(Math.random() * 30) + 10,
+            explanations,
+            timestamp: new Date().toISOString(),
+            modelVersion: modelPerformance.modelVersion
+          };
+
+          setRecentPredictions(prev => [newPrediction, ...prev.slice(0, 19)]);
+        }
       }, 2000); // Update every 2 seconds
     }
 
@@ -386,10 +497,11 @@ const RealTimeAnalyticsDashboard: React.FC = () => {
 
       {/* Main Content Tabs */}
       <Tabs defaultValue="pipeline" className="space-y-4">
-        <TabsList className="grid w-full grid-cols-4">
+        <TabsList className="grid w-full grid-cols-5">
           <TabsTrigger value="pipeline">Data Pipeline</TabsTrigger>
           <TabsTrigger value="fraud">Fraud Monitoring</TabsTrigger>
           <TabsTrigger value="analytics">Real-Time Analytics</TabsTrigger>
+          <TabsTrigger value="xai">Explainable AI</TabsTrigger>
           <TabsTrigger value="performance">Performance</TabsTrigger>
         </TabsList>
 
@@ -654,6 +766,184 @@ const RealTimeAnalyticsDashboard: React.FC = () => {
                     </div>
                   </div>
                 </div>
+              </CardContent>
+            </Card>
+          </div>
+        </TabsContent>
+
+        {/* Explainable AI Tab */}
+        <TabsContent value="xai">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {/* Model Performance Card */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Brain className="h-5 w-5" />
+                  Model Performance
+                </CardTitle>
+                <p className="text-sm text-gray-600">
+                  Real-time model accuracy and performance metrics
+                </p>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="text-center p-3 border rounded-lg">
+                      <div className="text-xl font-bold text-green-600">{modelPerformance.accuracy.toFixed(1)}%</div>
+                      <div className="text-xs text-muted-foreground">Accuracy</div>
+                    </div>
+                    <div className="text-center p-3 border rounded-lg">
+                      <div className="text-xl font-bold text-blue-600">{modelPerformance.precision.toFixed(1)}%</div>
+                      <div className="text-xs text-muted-foreground">Precision</div>
+                    </div>
+                    <div className="text-center p-3 border rounded-lg">
+                      <div className="text-xl font-bold text-purple-600">{modelPerformance.recall.toFixed(1)}%</div>
+                      <div className="text-xs text-muted-foreground">Recall</div>
+                    </div>
+                    <div className="text-center p-3 border rounded-lg">
+                      <div className="text-xl font-bold text-orange-600">{modelPerformance.f1Score.toFixed(1)}%</div>
+                      <div className="text-xs text-muted-foreground">F1-Score</div>
+                    </div>
+                  </div>
+                  
+                  <div className="pt-4 border-t">
+                    <div className="flex justify-between items-center mb-2">
+                      <span className="text-sm font-medium">Model Drift Score</span>
+                      <Gauge className="h-4 w-4" />
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <div className="flex-1 bg-gray-200 rounded-full h-2">
+                        <div 
+                          className={`h-2 rounded-full ${modelPerformance.driftScore < 0.1 ? 'bg-green-500' : modelPerformance.driftScore < 0.2 ? 'bg-yellow-500' : 'bg-red-500'}`}
+                          style={{ width: `${modelPerformance.driftScore * 100}%` }}
+                        ></div>
+                      </div>
+                      <span className="text-sm font-medium">{modelPerformance.driftScore.toFixed(3)}</span>
+                    </div>
+                  </div>
+
+                  <div className="pt-2">
+                    <div className="text-xs text-muted-foreground">
+                      Model Version: {modelPerformance.modelVersion} | Last Training: {modelPerformance.lastTrainingDate}
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Feature Importance Card */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Layers className="h-5 w-5" />
+                  Feature Importance
+                </CardTitle>
+                <p className="text-sm text-gray-600">
+                  Most influential features in model predictions
+                </p>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-3">
+                  {featureImportances.map((feature, index) => (
+                    <div key={feature.feature} className="space-y-1">
+                      <div className="flex justify-between items-center">
+                        <div className="flex items-center gap-2">
+                          <span className="text-sm font-medium">{feature.feature.replace('_', ' ')}</span>
+                          <span className={`text-xs px-2 py-1 rounded-full ${
+                            feature.category === 'transaction' ? 'bg-blue-100 text-blue-700' :
+                            feature.category === 'behavioral' ? 'bg-green-100 text-green-700' :
+                            feature.category === 'location' ? 'bg-purple-100 text-purple-700' :
+                            feature.category === 'temporal' ? 'bg-orange-100 text-orange-700' :
+                            'bg-gray-100 text-gray-700'
+                          }`}>
+                            {feature.category}
+                          </span>
+                        </div>
+                        <span className="text-sm font-bold">{(feature.importance * 100).toFixed(1)}%</span>
+                      </div>
+                      <div className="w-full bg-gray-200 rounded-full h-2">
+                        <div 
+                          className="bg-gradient-to-r from-blue-500 to-purple-600 h-2 rounded-full"
+                          style={{ width: `${feature.importance * 100}%` }}
+                        ></div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Model Confidence & Predictions */}
+            <Card className="lg:col-span-2">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Eye className="h-5 w-5" />
+                  Recent Predictions with Explanations
+                </CardTitle>
+                <p className="text-sm text-gray-600">
+                  Real-time model predictions with confidence scores and feature explanations
+                </p>
+              </CardHeader>
+              <CardContent>
+                {recentPredictions.length === 0 ? (
+                  <div className="text-center py-8 text-muted-foreground">
+                    <Info className="h-8 w-8 mx-auto mb-2 opacity-50" />
+                    <p>No recent predictions available. Predictions will appear when the streaming is active.</p>
+                  </div>
+                ) : (
+                  <div className="space-y-4">
+                    {recentPredictions.slice(0, 5).map((prediction) => (
+                      <div key={prediction.predictionId} className="border rounded-lg p-4 space-y-3">
+                        <div className="flex justify-between items-start">
+                          <div className="space-y-1">
+                            <div className="flex items-center gap-2">
+                              <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                                prediction.prediction === 'fraud' 
+                                  ? 'bg-red-100 text-red-800' 
+                                  : 'bg-green-100 text-green-800'
+                              }`}>
+                                {prediction.prediction === 'fraud' ? 'Fraud Detected' : 'Legitimate'}
+                              </span>
+                              <span className="text-xs text-muted-foreground">
+                                {new Date(prediction.timestamp).toLocaleTimeString()}
+                              </span>
+                            </div>
+                            <div className="text-sm text-muted-foreground">
+                              Model: {prediction.modelVersion}
+                            </div>
+                          </div>
+                          <div className="text-right space-y-1">
+                            <div className="text-lg font-bold">
+                              {(prediction.confidenceScore * 100).toFixed(1)}%
+                            </div>
+                            <div className="text-xs text-muted-foreground">Confidence</div>
+                          </div>
+                        </div>
+                        
+                        <div className="space-y-2">
+                          <div className="text-sm font-medium">Top Contributing Features:</div>
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                            {prediction.explanations.slice(0, 4).map((explanation, idx) => (
+                              <div key={idx} className="flex items-center justify-between p-2 bg-gray-50 rounded">
+                                <span className="text-sm">{explanation.feature.replace('_', ' ')}</span>
+                                <div className="flex items-center gap-1">
+                                  <span className="text-xs font-medium">{(explanation.importance * 100).toFixed(1)}%</span>
+                                  {explanation.impact === 'positive' ? (
+                                    <TrendingUp className="h-3 w-3 text-green-500" />
+                                  ) : explanation.impact === 'negative' ? (
+                                    <TrendingDown className="h-3 w-3 text-red-500" />
+                                  ) : (
+                                    <span className="h-3 w-3 rounded-full bg-gray-400"></span>
+                                  )}
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </CardContent>
             </Card>
           </div>

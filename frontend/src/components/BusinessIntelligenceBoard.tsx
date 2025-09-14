@@ -21,7 +21,13 @@ import {
   Clock,
   FileText,
   Database,
-  PowerIcon
+  PowerIcon,
+  Brain,
+  Eye,
+  Gauge,
+  Info,
+  Layers,
+  AlertTriangle
 } from 'lucide-react';
 
 // TypeScript interfaces for business intelligence data
@@ -60,6 +66,40 @@ interface PowerBIReport {
   lastRefresh: string;
   status: 'ready' | 'refreshing' | 'error';
   url: string;
+}
+
+// XAI (Explainable AI) Strategic Interfaces
+interface ModelValidationMetric {
+  modelName: string;
+  accuracy: number;
+  precision: number;
+  recall: number;
+  f1Score: number;
+  businessImpact: number; // Revenue impact in $
+  confidenceLevel: number;
+  validationPeriod: string;
+  trend: 'improving' | 'stable' | 'declining';
+}
+
+interface BusinessAIInsight {
+  category: 'fraud_prevention' | 'customer_behavior' | 'revenue_optimization' | 'risk_assessment';
+  insight: string;
+  confidenceScore: number;
+  potentialImpact: number; // In dollars
+  recommendation: string;
+  implementationComplexity: 'low' | 'medium' | 'high';
+  timeframe: string;
+}
+
+interface StrategicFeedback {
+  feedbackId: string;
+  businessObjective: string;
+  modelPerformance: number;
+  businessOutcome: number;
+  gap: number;
+  actionItems: string[];
+  priority: 'low' | 'medium' | 'high' | 'critical';
+  owner: string;
 }
 
 const BusinessIntelligenceBoard: React.FC = () => {
@@ -172,6 +212,104 @@ const BusinessIntelligenceBoard: React.FC = () => {
       lastRefresh: '2024-01-12T05:45:00Z',
       status: 'refreshing',
       url: '#'
+    }
+  ]);
+
+  // XAI Strategic Validation State
+  const [modelValidations] = useState<ModelValidationMetric[]>([
+    {
+      modelName: 'Fraud Detection Model',
+      accuracy: 94.2,
+      precision: 92.8,
+      recall: 95.1,
+      f1Score: 93.9,
+      businessImpact: 2850000, // Revenue protected
+      confidenceLevel: 96.5,
+      validationPeriod: 'Last 30 Days',
+      trend: 'improving'
+    },
+    {
+      modelName: 'Customer Behavior Prediction',
+      accuracy: 88.7,
+      precision: 87.2,
+      recall: 90.3,
+      f1Score: 88.7,
+      businessImpact: 1420000, // Revenue generated
+      confidenceLevel: 91.2,
+      validationPeriod: 'Last 30 Days',
+      trend: 'stable'
+    },
+    {
+      modelName: 'Risk Assessment Engine',
+      accuracy: 91.4,
+      precision: 89.6,
+      recall: 93.2,
+      f1Score: 91.4,
+      businessImpact: 980000, // Risk mitigated
+      confidenceLevel: 94.8,
+      validationPeriod: 'Last 30 Days',
+      trend: 'improving'
+    }
+  ]);
+
+  const [businessAIInsights] = useState<BusinessAIInsight[]>([
+    {
+      category: 'fraud_prevention',
+      insight: 'Geographic transaction patterns show 23% reduction in false positives with new location-based features',
+      confidenceScore: 94.2,
+      potentialImpact: 450000,
+      recommendation: 'Expand geographic risk scoring to include velocity patterns',
+      implementationComplexity: 'medium',
+      timeframe: '6-8 weeks'
+    },
+    {
+      category: 'customer_behavior',
+      insight: 'Time-based transaction features improve customer segmentation accuracy by 18%',
+      confidenceScore: 87.6,
+      potentialImpact: 320000,
+      recommendation: 'Implement temporal behavior models for personalized offers',
+      implementationComplexity: 'high',
+      timeframe: '10-12 weeks'
+    },
+    {
+      category: 'revenue_optimization',
+      insight: 'Model confidence correlates with 89% success rate in high-value transaction processing',
+      confidenceScore: 91.8,
+      potentialImpact: 1200000,
+      recommendation: 'Create confidence-based transaction routing system',
+      implementationComplexity: 'low',
+      timeframe: '3-4 weeks'
+    }
+  ]);
+
+  const [strategicFeedback] = useState<StrategicFeedback[]>([
+    {
+      feedbackId: 'SF-001',
+      businessObjective: 'Reduce fraud losses by 25%',
+      modelPerformance: 94.2,
+      businessOutcome: 89.7,
+      gap: -4.5,
+      actionItems: [
+        'Enhance geographic risk scoring',
+        'Implement real-time feedback loops',
+        'Increase training data diversity'
+      ],
+      priority: 'high',
+      owner: 'Risk Management Team'
+    },
+    {
+      feedbackId: 'SF-002',
+      businessObjective: 'Improve customer experience score to 4.8/5',
+      modelPerformance: 88.7,
+      businessOutcome: 92.0,
+      gap: 3.3,
+      actionItems: [
+        'Reduce false positive alerts',
+        'Optimize transaction approval speed',
+        'Enhance customer communication'
+      ],
+      priority: 'medium',
+      owner: 'Customer Experience Team'
     }
   ]);
 
@@ -307,11 +445,12 @@ const BusinessIntelligenceBoard: React.FC = () => {
       </div>
 
       <Tabs defaultValue="overview" className="space-y-6">
-        <TabsList className="grid w-full grid-cols-4">
+        <TabsList className="grid w-full grid-cols-5">
           <TabsTrigger value="overview">Executive Overview</TabsTrigger>
           <TabsTrigger value="reports">Power BI Reports</TabsTrigger>
           <TabsTrigger value="schedules">Report Schedules</TabsTrigger>
           <TabsTrigger value="insights">Business Insights</TabsTrigger>
+          <TabsTrigger value="xai">AI Validation</TabsTrigger>
         </TabsList>
 
         {/* Executive Overview Tab */}
@@ -557,6 +696,235 @@ const BusinessIntelligenceBoard: React.FC = () => {
               </CardContent>
             </Card>
           </div>
+        </TabsContent>
+
+        {/* AI Validation Tab */}
+        <TabsContent value="xai" className="space-y-6">
+          {/* Model Validation Metrics */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {modelValidations.map((model) => (
+              <Card key={model.modelName} className="relative overflow-hidden">
+                <CardHeader className="pb-2">
+                  <div className="flex items-center justify-between">
+                    <CardTitle className="text-lg flex items-center gap-2">
+                      <Brain className="h-5 w-5" />
+                      {model.modelName}
+                    </CardTitle>
+                    <div className={`px-2 py-1 rounded-full text-xs font-medium ${
+                      model.trend === 'improving' ? 'bg-green-100 text-green-700' :
+                      model.trend === 'stable' ? 'bg-blue-100 text-blue-700' :
+                      'bg-orange-100 text-orange-700'
+                    }`}>
+                      {model.trend}
+                    </div>
+                  </div>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="grid grid-cols-2 gap-3">
+                    <div className="text-center p-2 border rounded">
+                      <div className="text-lg font-bold text-green-600">{model.accuracy.toFixed(1)}%</div>
+                      <div className="text-xs text-muted-foreground">Accuracy</div>
+                    </div>
+                    <div className="text-center p-2 border rounded">
+                      <div className="text-lg font-bold text-blue-600">{model.f1Score.toFixed(1)}%</div>
+                      <div className="text-xs text-muted-foreground">F1-Score</div>
+                    </div>
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <div className="flex justify-between">
+                      <span className="text-sm font-medium">Business Impact</span>
+                      <span className="text-sm font-bold text-green-600">
+                        ${(model.businessImpact / 1000000).toFixed(1)}M
+                      </span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-sm font-medium">Confidence Level</span>
+                      <div className="flex items-center gap-1">
+                        <Gauge className="h-3 w-3" />
+                        <span className="text-sm font-bold">{model.confidenceLevel.toFixed(1)}%</span>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div className="text-xs text-muted-foreground border-t pt-2">
+                    Validation Period: {model.validationPeriod}
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+
+          {/* Business AI Insights */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Eye className="h-5 w-5" />
+                Strategic AI Insights
+              </CardTitle>
+              <p className="text-sm text-gray-600">
+                AI-driven business recommendations with confidence scores and impact analysis
+              </p>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                {businessAIInsights.map((insight, index) => (
+                  <div key={index} className="border rounded-lg p-4 space-y-3">
+                    <div className="flex justify-between items-start">
+                      <div className="space-y-2 flex-1">
+                        <div className="flex items-center gap-2">
+                          <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                            insight.category === 'fraud_prevention' ? 'bg-red-100 text-red-800' :
+                            insight.category === 'customer_behavior' ? 'bg-blue-100 text-blue-800' :
+                            insight.category === 'revenue_optimization' ? 'bg-green-100 text-green-800' :
+                            'bg-purple-100 text-purple-800'
+                          }`}>
+                            {insight.category.replace('_', ' ').toUpperCase()}
+                          </span>
+                          <span className="text-xs text-muted-foreground">
+                            Confidence: {insight.confidenceScore.toFixed(1)}%
+                          </span>
+                        </div>
+                        <p className="text-sm font-medium">{insight.insight}</p>
+                        <p className="text-sm text-muted-foreground">
+                          <strong>Recommendation:</strong> {insight.recommendation}
+                        </p>
+                      </div>
+                      <div className="text-right space-y-1 ml-4">
+                        <div className="text-lg font-bold text-green-600">
+                          ${(insight.potentialImpact / 1000).toFixed(0)}K
+                        </div>
+                        <div className="text-xs text-muted-foreground">Impact</div>
+                      </div>
+                    </div>
+                    
+                    <div className="flex justify-between items-center pt-2 border-t">
+                      <div className="flex items-center gap-2">
+                        <span className={`px-2 py-1 rounded text-xs ${
+                          insight.implementationComplexity === 'low' ? 'bg-green-100 text-green-700' :
+                          insight.implementationComplexity === 'medium' ? 'bg-yellow-100 text-yellow-700' :
+                          'bg-red-100 text-red-700'
+                        }`}>
+                          {insight.implementationComplexity} complexity
+                        </span>
+                        <span className="text-xs text-muted-foreground">
+                          Timeframe: {insight.timeframe}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Strategic Feedback Loop */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Layers className="h-5 w-5" />
+                Strategic Feedback & Alignment
+              </CardTitle>
+              <p className="text-sm text-gray-600">
+                Business objective alignment with AI model performance and gap analysis
+              </p>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                {strategicFeedback.map((feedback) => (
+                  <div key={feedback.feedbackId} className="border rounded-lg p-4 space-y-3">
+                    <div className="flex justify-between items-start">
+                      <div className="space-y-1 flex-1">
+                        <div className="flex items-center gap-2">
+                          <span className="font-medium text-sm">{feedback.businessObjective}</span>
+                          <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                            feedback.priority === 'critical' ? 'bg-red-100 text-red-700' :
+                            feedback.priority === 'high' ? 'bg-orange-100 text-orange-700' :
+                            feedback.priority === 'medium' ? 'bg-yellow-100 text-yellow-700' :
+                            'bg-green-100 text-green-700'
+                          }`}>
+                            {feedback.priority} priority
+                          </span>
+                        </div>
+                        <div className="text-xs text-muted-foreground">
+                          Owner: {feedback.owner} | ID: {feedback.feedbackId}
+                        </div>
+                      </div>
+                      <div className="text-right space-y-1 ml-4">
+                        <div className={`text-lg font-bold ${feedback.gap >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                          {feedback.gap >= 0 ? '+' : ''}{feedback.gap.toFixed(1)}%
+                        </div>
+                        <div className="text-xs text-muted-foreground">Gap</div>
+                      </div>
+                    </div>
+                    
+                    <div className="grid grid-cols-2 gap-4 py-2">
+                      <div className="space-y-1">
+                        <div className="text-xs text-muted-foreground">Model Performance</div>
+                        <div className="flex items-center gap-2">
+                          <div className="flex-1 bg-gray-200 rounded-full h-2">
+                            <div 
+                              className="bg-blue-500 h-2 rounded-full"
+                              style={{ width: `${feedback.modelPerformance}%` }}
+                            ></div>
+                          </div>
+                          <span className="text-sm font-medium">{feedback.modelPerformance.toFixed(1)}%</span>
+                        </div>
+                      </div>
+                      <div className="space-y-1">
+                        <div className="text-xs text-muted-foreground">Business Outcome</div>
+                        <div className="flex items-center gap-2">
+                          <div className="flex-1 bg-gray-200 rounded-full h-2">
+                            <div 
+                              className="bg-green-500 h-2 rounded-full"
+                              style={{ width: `${feedback.businessOutcome}%` }}
+                            ></div>
+                          </div>
+                          <span className="text-sm font-medium">{feedback.businessOutcome.toFixed(1)}%</span>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <div className="pt-2 border-t">
+                      <div className="text-xs font-medium text-muted-foreground mb-2">Action Items:</div>
+                      <ul className="space-y-1">
+                        {feedback.actionItems.map((item, idx) => (
+                          <li key={idx} className="text-sm flex items-center gap-2">
+                            <div className="w-1.5 h-1.5 rounded-full bg-blue-500"></div>
+                            {item}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* AI Performance Alert */}
+          <Card className="border-orange-200 bg-orange-50">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2 text-orange-800">
+                <AlertTriangle className="h-5 w-5" />
+                AI Performance Alert
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-2">
+                <p className="text-sm text-orange-700">
+                  <strong>Model Drift Detected:</strong> Customer Behavior Prediction model showing 2.3% accuracy decline over the past week.
+                </p>
+                <div className="flex items-center gap-4 text-xs text-orange-600">
+                  <span>Recommended Action: Retrain with recent data</span>
+                  <span>•</span>
+                  <span>Est. Impact: -$45K/month if unaddressed</span>
+                  <span>•</span>
+                  <span>Priority: High</span>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
         </TabsContent>
       </Tabs>
     </div>
