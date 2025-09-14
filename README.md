@@ -347,6 +347,8 @@ Files          Enrichment      Security        Reporting
 
 ## 📚 **Architecture Documentation**
 
+**[Complete Architecture Hub](https://github.com/calvinlee999/AI-Platform-for-FinTech-Evolution)** - Comprehensive architecture documentation for AWS, Azure, and GCP implementations.
+
 **[MCP Server Development Guide](https://www.youtube.com/watch?v=MCP-Server-Build)** - Learn how to build Model Context Protocol servers from scratch, a foundational skill for connecting AI agents to any system.
 
 This repository showcases the **React + Java + Azure** implementation with three primary AI applications. The platform demonstrates enterprise-grade MCP server automation for FinTech operations and workflow automation.
