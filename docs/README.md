@@ -11,6 +11,21 @@ Welcome to the React + Java + Azure Journey documentation. This comprehensive gu
 - **[Data Lineage & Tracking](./data-lineage-tracking.md)** - Exactly-once processing with complete audit trails and provenance
 - **[Azure Databricks Integration](./azure-databricks-integration.md)** - Unified processing platform with MLflow model management
 
+## 🌐 **NEW: Data Mesh Architecture**
+
+### Organizational Transformation Documentation
+- **[Data Mesh Architecture](./data-mesh-architecture.md)** - Four foundational principles and strategic organizational transformation
+- **[Data Platform Architecture Diagrams](./data-platform-architecture-diagrams.md)** - Visual architecture evolution from centralized to Data Mesh
+- **[Data Mesh Sequence Diagrams](./data-mesh-sequence-diagrams.md)** - Operational workflows and inter-domain communication patterns
+
+### Data Mesh Implementation Features
+- **🏢 Domain-Oriented Ownership**: Decentralized data ownership with domain expertise
+- **📦 Data as a Product**: First-class data products with APIs, SLAs, and contracts
+- **🛠️ Self-Service Platform**: Automated provisioning and infrastructure management
+- **⚖️ Federated Governance**: Distributed governance with global policy compliance
+- **🌊 Cross-Domain Integration**: Seamless data product discovery and consumption
+- **📊 Strategic Roadmap**: 3-phase transformation with measurable milestones
+
 ### Platform Capabilities
 - **🌊 Event-Driven Backbone**: Apache Kafka with exactly-once semantics and immutable log storage
 - **📊 Unified Analytics**: Azure Databricks for real-time, near-time, and batch processing
