@@ -48,7 +48,190 @@ The AI platform supports a range of performance and scalability needs via three 
 
 ➡️ **[View AI Inference Sequence Diagram](./docs/analytics-sequence-diagrams.md#ai-inference-patterns)**
 
-### 🏦 **BIAN Domain-Centric Architecture**
+### �️ **Azure Architecture Styles & Patterns**
+
+Our FinTech platform implements **Microsoft Azure architecture styles** for enterprise-grade scalability and resilience:
+
+#### **Microservices Architecture**
+```mermaid
+graph TB
+    subgraph "Client Applications"
+        Mobile[Mobile Banking App]
+        Web[Web Portal]
+        API[Third-Party APIs]
+    end
+    
+    subgraph "API Gateway Layer"
+        APIM[Azure API Management]
+        Gateway[Application Gateway]
+    end
+    
+    subgraph "Microservices (BIAN-Aligned)"
+        PaymentSvc[Payment Service]
+        LendingSvc[Lending Service]
+        CardSvc[Card Service]
+        OnboardSvc[Onboarding Service]
+        AISvc[AI Inference Service]
+    end
+    
+    subgraph "Event-Driven Backbone"
+        EventHub[Azure Event Hubs]
+        ServiceBus[Azure Service Bus]
+        EventGrid[Azure Event Grid]
+    end
+    
+    subgraph "Data Persistence"
+        CosmosDB[(Azure Cosmos DB)]
+        SQLDb[(Azure SQL Database)]
+        Redis[(Azure Cache for Redis)]
+    end
+    
+    subgraph "AI & Analytics"
+        OpenAI[Azure OpenAI Service]
+        ML[Azure Machine Learning]
+        Databricks[Azure Databricks]
+    end
+    
+    subgraph "Observability & Management"
+        Monitor[Azure Monitor]
+        AppInsights[Application Insights]
+        LogAnalytics[Log Analytics]
+    end
+    
+    Mobile --> APIM
+    Web --> APIM
+    API --> APIM
+    APIM --> Gateway
+    Gateway --> PaymentSvc
+    Gateway --> LendingSvc
+    Gateway --> CardSvc
+    Gateway --> OnboardSvc
+    
+    PaymentSvc --> EventHub
+    LendingSvc --> EventHub
+    CardSvc --> ServiceBus
+    OnboardSvc --> EventGrid
+    
+    EventHub --> AISvc
+    AISvc --> OpenAI
+    AISvc --> ML
+    
+    PaymentSvc --> CosmosDB
+    LendingSvc --> SQLDb
+    CardSvc --> Redis
+    
+    EventHub --> Databricks
+    Databricks --> Monitor
+    
+    PaymentSvc --> AppInsights
+    LendingSvc --> AppInsights
+    CardSvc --> LogAnalytics
+```
+
+#### **Event-Driven Architecture Pattern**
+```mermaid
+graph LR
+    subgraph "Event Producers"
+        Transaction[Transaction Events]
+        UserAction[User Actions]
+        SystemEvent[System Events]
+        ExternalAPI[External API Events]
+    end
+    
+    subgraph "Event Ingestion"
+        EventHubs[Azure Event Hubs<br/>10M events/sec]
+        EventGrid[Azure Event Grid<br/>Pub/Sub Routing]
+        ServiceBus[Azure Service Bus<br/>Reliable Messaging]
+    end
+    
+    subgraph "Event Consumers"
+        FraudDetection[Fraud Detection<br/>Real-time ML]
+        RiskScoring[Risk Scoring<br/>Credit Analysis]
+        Notifications[Push Notifications<br/>Customer Alerts]
+        Analytics[Stream Analytics<br/>Business Intelligence]
+        Audit[Audit Logging<br/>Compliance]
+    end
+    
+    Transaction --> EventHubs
+    UserAction --> EventGrid
+    SystemEvent --> ServiceBus
+    ExternalAPI --> EventHubs
+    
+    EventHubs --> FraudDetection
+    EventHubs --> RiskScoring
+    EventGrid --> Notifications
+    ServiceBus --> Analytics
+    EventHubs --> Audit
+    
+    FraudDetection --> EventGrid
+    RiskScoring --> ServiceBus
+```
+
+#### **Big Data & Analytics Architecture**
+```mermaid
+graph TB
+    subgraph "Data Sources"
+        Transactions[Transaction Data<br/>50K TPS]
+        CustomerData[Customer Data<br/>10M Profiles]
+        MarketData[Market Data<br/>Real-time Feeds]
+        ExternalData[External Data<br/>Credit Bureaus]
+    end
+    
+    subgraph "Data Ingestion"
+        EventHubs[Azure Event Hubs<br/>Stream Ingestion]
+        DataFactory[Azure Data Factory<br/>Batch ETL]
+        Kafka[Confluent Kafka<br/>Event Streaming]
+    end
+    
+    subgraph "Data Processing"
+        StreamAnalytics[Azure Stream Analytics<br/>Real-time Processing]
+        Databricks[Azure Databricks<br/>Spark Processing]
+        Synapse[Azure Synapse<br/>Big Data Analytics]
+    end
+    
+    subgraph "Data Storage"
+        DataLake[Azure Data Lake Gen2<br/>Raw Data Storage]
+        CosmosDB[Azure Cosmos DB<br/>Operational Data]
+        SQLDWh[Azure SQL DW<br/>Analytics Warehouse]
+        Redis[Azure Redis<br/>Hot Data Cache]
+    end
+    
+    subgraph "AI & Machine Learning"
+        MLWorkspace[Azure ML Workspace<br/>Model Training]
+        OpenAI[Azure OpenAI<br/>GPT-4o Inference]
+        CognitiveServices[Cognitive Services<br/>AI APIs]
+    end
+    
+    subgraph "Analytics & Visualization"
+        PowerBI[Power BI<br/>Executive Dashboards]
+        RealTimeDash[Real-time Dashboard<br/>Operations Center]
+        Alerts[Alert System<br/>Fraud Notifications]
+    end
+    
+    Transactions --> EventHubs
+    CustomerData --> DataFactory
+    MarketData --> Kafka
+    ExternalData --> DataFactory
+    
+    EventHubs --> StreamAnalytics
+    DataFactory --> Databricks
+    Kafka --> StreamAnalytics
+    
+    StreamAnalytics --> DataLake
+    Databricks --> DataLake
+    StreamAnalytics --> CosmosDB
+    Databricks --> SQLDWh
+    
+    DataLake --> MLWorkspace
+    CosmosDB --> OpenAI
+    SQLDWh --> PowerBI
+    
+    StreamAnalytics --> Redis
+    Redis --> RealTimeDash
+    MLWorkspace --> Alerts
+```
+
+### �🏦 **BIAN Domain-Centric Architecture**
 
 Mapped to the BIAN service landscape, ensuring composability and business-aligned design:
 

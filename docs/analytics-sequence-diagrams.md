@@ -1,4 +1,135 @@
-# FinTech AI Platform Sequence Diagrams
+# Analytics Sequence Diagrams
+
+This document contains comprehensive sequence diagrams for the FinTech AI Platform's analytics workflows, demonstrating real-time and batch processing patterns following Microsoft Azure architecture styles and Well-Architected Framework principles.
+
+## Azure Architecture Integration
+
+Our analytics workflows implement Microsoft Azure's recommended patterns for:
+- **Event-Driven Architecture**: Real-time data processing with Azure Event Hubs and Stream Analytics
+- **Big Data Architecture**: Scalable batch processing with Azure Databricks and Synapse Analytics  
+- **Microservices Architecture**: Decoupled analytics services with API Gateway and service mesh
+- **IoT Architecture**: Device data ingestion and processing with Azure IoT Hub and Time Series Insights
+
+## Azure IoT Data Ingestion Sequence
+
+```mermaid
+sequenceDiagram
+    participant IoTDevice as IoT Payment Terminal
+    participant IoTHub as Azure IoT Hub
+    participant StreamAnalytics as Stream Analytics
+    participant EventHubs as Event Hubs
+    participant Functions as Azure Functions
+    participant CosmosDB as Cosmos DB
+    participant TSI as Time Series Insights
+    participant Alerts as Alert Manager
+    participant Dashboard as Real-time Dashboard
+
+    IoTDevice->>IoTHub: Device Telemetry (JSON)
+    IoTHub->>StreamAnalytics: Route to Analytics
+    StreamAnalytics->>StreamAnalytics: Windowed Aggregation
+    
+    StreamAnalytics->>EventHubs: Processed Events
+    EventHubs->>Functions: Trigger Processing
+    Functions->>CosmosDB: Store Analytics Results
+    
+    StreamAnalytics->>TSI: Time Series Data
+    TSI->>Dashboard: Real-time Visualizations
+    
+    alt Anomaly Detected
+        StreamAnalytics->>Alerts: Anomaly Event
+        Alerts->>Dashboard: Alert Notification
+        Alerts->>Functions: Trigger Response
+    end
+    
+    Note over IoTHub,TSI: Multi-protocol device support
+    Note over StreamAnalytics: Sub-second processing
+    Note over CosmosDB: Global distribution
+```
+
+## Azure Event Streaming Architecture
+
+```mermaid
+sequenceDiagram
+    participant Producer as Transaction Producer
+    participant EventHubs as Azure Event Hubs
+    participant StreamAnalytics as Stream Analytics
+    participant ServiceBus as Service Bus
+    participant Functions as Azure Functions
+    participant Redis as Azure Cache
+    participant SQL as Azure SQL Database
+    participant Monitor as Azure Monitor
+    participant PowerBI as Power BI Streaming
+
+    Producer->>EventHubs: High Volume Events (10K/sec)
+    EventHubs->>StreamAnalytics: Real-time Stream
+    
+    StreamAnalytics->>StreamAnalytics: Complex Event Processing
+    StreamAnalytics->>ServiceBus: Filtered Events
+    
+    ServiceBus->>Functions: Message Processing
+    Functions->>Redis: Cache Hot Data
+    Functions->>SQL: Persist Analytics
+    
+    StreamAnalytics->>PowerBI: Streaming Dataset
+    PowerBI->>PowerBI: Real-time Dashboard Update
+    
+    Functions->>Monitor: Metrics & Logs
+    Monitor->>Monitor: Alert Evaluation
+    
+    alt Performance Threshold Exceeded
+        Monitor->>Functions: Scale Out Trigger
+        Functions->>Functions: Auto-scale Instances
+    end
+    
+    Note over EventHubs: Partition scaling
+    Note over StreamAnalytics: Windowed operations
+    Note over PowerBI: 1-second refresh
+```
+
+## Azure Big Data Analytics Workflow
+
+```mermaid
+sequenceDiagram
+    participant DataLake as Azure Data Lake Gen2
+    participant ADF as Azure Data Factory
+    participant Databricks as Azure Databricks
+    participant Synapse as Azure Synapse
+    participant ML as Azure ML Workspace
+    participant Purview as Azure Purview
+    participant PowerBI as Power BI Premium
+    participant EventGrid as Event Grid
+    participant KeyVault as Azure Key Vault
+
+    DataLake->>EventGrid: New Data Arrival Event
+    EventGrid->>ADF: Trigger Pipeline
+    ADF->>KeyVault: Retrieve Credentials
+    
+    ADF->>Databricks: Start Spark Cluster
+    Databricks->>DataLake: Read Raw Data (Parquet)
+    Databricks->>Databricks: Delta Lake Processing
+    
+    Databricks->>Synapse: Load to SQL Pool
+    Synapse->>ML: Feature Engineering
+    ML->>ML: Model Training & Scoring
+    
+    ML->>Databricks: Model Artifacts
+    Databricks->>DataLake: Write Gold Layer
+    
+    Synapse->>PowerBI: Analytics Models
+    PowerBI->>PowerBI: Generate Reports
+    
+    Databricks->>Purview: Data Lineage
+    Purview->>Purview: Governance Catalog
+    
+    alt Data Quality Issues
+        Databricks->>EventGrid: Quality Alert
+        EventGrid->>ADF: Trigger Remediation
+    end
+    
+    Note over DataLake,Purview: Enterprise data governance
+    Note over Databricks: Auto-scaling clusters
+    Note over Synapse: Serverless & dedicated pools
+```
 
 ## FinTech Payment Fraud Detection Workflow
 
@@ -934,6 +1065,138 @@ sequenceDiagram
     Note over SRL: Self-improving AI pipeline
 ```
 
+## Azure Kubernetes Service (AKS) Analytics Microservices
+
+```mermaid
+sequenceDiagram
+    participant Gateway as Azure API Gateway
+    participant AKS as AKS Cluster
+    participant Analytics as Analytics Service
+    participant Cache as Azure Redis Cache
+    participant Database as Azure SQL Database
+    participant ServiceMesh as Istio Service Mesh
+    participant Monitor as Azure Monitor
+    participant AAD as Azure Active Directory
+
+    Gateway->>AAD: Authentication Request
+    AAD->>Gateway: JWT Token
+    Gateway->>ServiceMesh: Authenticated Request
+    
+    ServiceMesh->>Analytics: Route to Analytics Pod
+    Analytics->>Cache: Check Cache (Redis)
+    
+    alt Cache Hit
+        Cache->>Analytics: Return Cached Result
+    else Cache Miss
+        Analytics->>Database: Query Analytics Data
+        Database->>Analytics: Return Query Results
+        Analytics->>Cache: Store in Cache
+    end
+    
+    Analytics->>ServiceMesh: Analytics Response
+    ServiceMesh->>Gateway: Service Response
+    Gateway->>Gateway: Response Processing
+    
+    AKS->>Monitor: Pod Metrics
+    Analytics->>Monitor: Application Metrics
+    Monitor->>Monitor: Alerting Rules
+    
+    alt Performance Issue
+        Monitor->>AKS: Scale Trigger
+        AKS->>AKS: Horizontal Pod Autoscaler
+    end
+    
+    Note over AKS: Multi-zone deployment
+    Note over ServiceMesh: Circuit breaker pattern
+    Note over Monitor: Application Insights integration
+```
+
+## Azure Synapse Serverless Analytics Pipeline
+
+```mermaid
+sequenceDiagram
+    participant Client as Analytics Client
+    participant Synapse as Azure Synapse Workspace
+    participant Serverless as Serverless SQL Pool
+    participant DataLake as Azure Data Lake
+    participant PowerBI as Power BI Service
+    participant Purview as Azure Purview
+    participant Monitor as Azure Monitor
+    participant Security as Azure Security Center
+
+    Client->>Synapse: Analytics Query Request
+    Synapse->>Serverless: Route to Serverless Pool
+    Serverless->>DataLake: Query Data Lake (Parquet)
+    
+    DataLake->>Purview: Data Access Audit
+    Purview->>Security: Compliance Check
+    Security->>Serverless: Access Approved
+    
+    Serverless->>Serverless: Query Optimization
+    Serverless->>DataLake: Parallel Data Read
+    DataLake->>Serverless: Query Results
+    
+    Serverless->>PowerBI: Analytics Dataset
+    PowerBI->>PowerBI: Report Generation
+    PowerBI->>Client: Interactive Dashboard
+    
+    Serverless->>Monitor: Query Performance
+    Monitor->>Monitor: Cost Analysis
+    
+    alt Query Optimization Needed
+        Monitor->>Synapse: Performance Alert
+        Synapse->>Serverless: Query Tuning
+    end
+    
+    Note over Serverless: Pay-per-query model
+    Note over DataLake: Columnar storage optimization
+    Note over Purview: Data governance automation
+```
+
+## Azure DevOps MLOps Pipeline
+
+```mermaid
+sequenceDiagram
+    participant Developer as ML Engineer
+    participant ADO as Azure DevOps
+    participant ACR as Azure Container Registry
+    participant AKS as AKS ML Cluster
+    participant MLWorkspace as Azure ML Workspace
+    participant Monitor as Application Insights
+    participant KeyVault as Azure Key Vault
+    participant Artifacts as Azure Artifacts
+
+    Developer->>ADO: Commit ML Model Code
+    ADO->>ADO: Trigger CI/CD Pipeline
+    ADO->>KeyVault: Retrieve ML Secrets
+    
+    ADO->>MLWorkspace: Train Model
+    MLWorkspace->>MLWorkspace: Model Validation
+    MLWorkspace->>Artifacts: Store Model Artifacts
+    
+    ADO->>ACR: Build Model Container
+    ACR->>ACR: Security Scanning
+    ACR->>AKS: Deploy to Staging
+    
+    AKS->>Monitor: Model Performance Tests
+    Monitor->>ADO: Test Results
+    
+    alt Tests Pass
+        ADO->>AKS: Deploy to Production
+        AKS->>Monitor: Production Monitoring
+        Monitor->>Developer: Deployment Success
+    else Tests Fail
+        ADO->>Developer: Pipeline Failure Alert
+    end
+    
+    Monitor->>MLWorkspace: Model Drift Detection
+    MLWorkspace->>ADO: Retrain Trigger
+    
+    Note over ADO: GitOps workflow
+    Note over MLWorkspace: Automated model management
+    Note over Monitor: ML model observability
+```
+
 ## Performance Monitoring & Feedback Loop
 
 ```mermaid
@@ -973,5 +1236,23 @@ sequenceDiagram
     Note over Monitor,Dashboard: Real-time feedback effectiveness
     Note over Metrics: 360-degree performance view
     Note over Alerts: Intelligent threshold management
-
 ```
+
+## Azure Well-Architected Framework Compliance
+
+### Key Azure Services Integration
+
+- **Reliability**: Multi-region AKS deployment with Azure Traffic Manager
+- **Security**: Azure AD integration with Key Vault secrets management  
+- **Cost Optimization**: Serverless SQL pools with auto-scaling AKS clusters
+- **Performance**: Azure Redis Cache with Application Insights monitoring
+- **Operational Excellence**: Azure DevOps MLOps with automated testing
+
+### Enterprise Analytics Patterns
+
+- **Circuit Breaker**: Istio service mesh resilience patterns
+- **Bulkhead**: Isolated resource pools for different workloads
+- **Event Sourcing**: Azure Event Hubs with Stream Analytics processing
+- **CQRS**: Separate read/write models with Cosmos DB and Azure SQL
+
+This comprehensive sequence diagram collection demonstrates Microsoft Azure's recommended architecture patterns for enterprise FinTech analytics, ensuring scalability, security, and operational excellence.
