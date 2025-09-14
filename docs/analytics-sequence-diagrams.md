@@ -584,3 +584,224 @@ sequenceDiagram
 - **Stakeholder Transparency**: Role-based explanation interfaces for operations and executives
 - **Feedback Integration**: Automated model improvement based on explanation insights
 - **Performance Correlation**: Real-time correlation between AI decisions and business outcomes
+
+## Human-in-the-Loop (HITL) Feedback Sequence
+
+```mermaid
+sequenceDiagram
+    participant Analyst as Human Analyst
+    participant Dashboard as Real-Time Dashboard
+    participant UI as HITL UI Component
+    participant Kafka as Kafka Cluster
+    participant Feedback as Feedback Store
+    participant Metrics as Feedback Metrics
+    participant Model as ML Model Service
+
+    Dashboard->>Model: Request Prediction
+    Model->>Dashboard: Prediction + Explanation
+    Dashboard->>UI: Display Prediction with Confidence
+    UI->>Analyst: Show Prediction for Review
+    
+    alt High Risk/Low Confidence
+        UI->>Analyst: Flag for Human Review
+        Note over Analyst: Reviews prediction with explanations
+        
+        alt Analyst Disagrees
+            Analyst->>UI: Provide Correction (Fraud/Legitimate)
+            UI->>Kafka: Publish Human Feedback Event
+            Kafka->>Feedback: Store Feedback
+            Feedback->>Metrics: Update Feedback Metrics
+            Note over Metrics: Increment correction count
+        end
+        
+        alt Analyst Agrees
+            Analyst->>UI: Confirm AI Decision
+            UI->>Kafka: Publish Confirmation Event
+            Kafka->>Feedback: Store Confirmation
+            Feedback->>Metrics: Update Feedback Metrics
+            Note over Metrics: Increment confirmation count
+        end
+    end
+    
+    Metrics->>Dashboard: Updated HITL Metrics
+    Dashboard->>Analyst: Real-time Feedback Impact
+    
+    Note over Kafka: Topic: human_feedback_events
+    Note over Feedback: Audit trail for compliance
+    Note over Metrics: Real-time feedback analytics
+```
+
+## Self-Reinforcement Learning (SRL) Pipeline Sequence
+
+```mermaid
+sequenceDiagram
+    participant Kafka as Kafka Cluster
+    participant Trigger as Pipeline Trigger
+    participant Databricks as Databricks Cluster
+    participant AzureML as Azure Machine Learning
+    participant MLflow as MLflow Registry
+    participant Validation as Model Validation
+    participant Deployment as Production Deployment
+    participant Monitor as Performance Monitor
+
+    Kafka->>Trigger: Human Feedback Threshold Reached
+    Trigger->>Databricks: Start SRL Pipeline Job
+    
+    Databricks->>Kafka: Consume Feedback Events
+    Databricks->>Databricks: Aggregate & Validate Feedback
+    Databricks->>AzureML: Trigger Model Retraining
+    
+    AzureML->>AzureML: Feature Engineering + Training
+    AzureML->>MLflow: Register New Model Version
+    MLflow->>Validation: Model Performance Testing
+    
+    alt Performance Improved
+        Validation->>AzureML: Validation Passed
+        AzureML->>Deployment: Deploy New Model
+        Deployment->>Monitor: Start Monitoring New Version
+        Monitor->>Databricks: Performance Metrics
+        
+        Note over Deployment: Blue-Green Deployment
+        Note over Monitor: A/B Testing with Gradual Rollout
+    else Performance Degraded
+        Validation->>MLflow: Reject Model Version
+        MLflow->>AzureML: Rollback to Previous Version
+        AzureML->>Monitor: Continue with Stable Model
+        
+        Note over Validation: Automated rollback protection
+    end
+    
+    Monitor->>Kafka: Model Performance Events
+    Kafka->>Databricks: Update Performance Dashboard
+    
+    Note over Databricks: Weekly automated retraining
+    Note over AzureML: MLOps pipeline with governance
+    Note over MLflow: Model versioning and lineage
+```
+
+## Azure AI Foundry Integration Sequence
+
+```mermaid
+sequenceDiagram
+    participant UI as Dashboard UI
+    participant Foundry as Azure AI Foundry
+    participant OpenAI as Azure OpenAI Service
+    participant Search as Azure AI Search
+    participant ML as Azure ML Workspace
+    participant Responsible as Responsible AI Service
+
+    UI->>Foundry: Request Enhanced Explanation
+    Foundry->>OpenAI: Generate Natural Language Explanation
+    OpenAI->>Search: Query Contextual Information
+    Search->>OpenAI: Relevant Context & Examples
+    OpenAI->>Responsible: Content Safety Check
+    Responsible->>OpenAI: Approved Explanation
+    OpenAI->>Foundry: Enhanced Explanation Response
+    Foundry->>UI: Rich Explanation with Context
+    
+    UI->>ML: Model Performance Request
+    ML->>Foundry: Performance Metrics & Drift Analysis
+    Foundry->>UI: Comprehensive Model Health Report
+    
+    alt Feedback Incorporation
+        UI->>Foundry: Human Feedback Event
+        Foundry->>ML: Feedback for Model Improvement
+        ML->>Foundry: Updated Model Insights
+        Foundry->>UI: Feedback Impact Analysis
+    end
+    
+    Note over OpenAI: GPT-4o for explanations
+    Note over Search: Vector + hybrid search
+    Note over Responsible: Bias detection & content filtering
+    Note over ML: MLflow integration for versioning
+```
+
+## End-to-End HITL+SRL+XAI Workflow
+
+```mermaid
+sequenceDiagram
+    participant User as Financial Analyst
+    participant Dashboard as Real-Time Dashboard
+    participant XAI as Explainable AI Engine
+    participant HITL as HITL Feedback System
+    participant SRL as SRL Pipeline
+    participant Azure as Azure AI Foundry
+    participant Production as Production Model
+
+    User->>Dashboard: Monitor Real-Time Transactions
+    Dashboard->>Production: Request Fraud Predictions
+    Production->>XAI: Generate Explanations
+    XAI->>Azure: Enhance with Natural Language
+    Azure->>XAI: Rich Explanation Response
+    XAI->>Dashboard: Prediction + Enhanced Explanation
+    Dashboard->>User: Display with Confidence Scores
+    
+    alt Low Confidence or High Risk
+        Dashboard->>HITL: Flag for Human Review
+        HITL->>User: Present for Validation
+        User->>HITL: Provide Feedback (Correct/Confirm)
+        HITL->>SRL: Human Feedback Event
+        
+        alt Sufficient Feedback Accumulated
+            SRL->>Azure: Trigger Model Retraining
+            Azure->>SRL: Improved Model Version
+            SRL->>Production: Deploy Enhanced Model
+            Production->>Dashboard: Better Predictions
+            Dashboard->>User: Improved Accuracy
+            
+            Note over SRL: Automated learning cycle
+            Note over Production: Continuous improvement
+        end
+    end
+    
+    User->>Dashboard: Review HITL Impact Metrics
+    Dashboard->>HITL: Fetch Feedback Analytics
+    HITL->>Dashboard: Feedback Impact Report
+    Dashboard->>User: Show Model Improvement
+    
+    Note over User,Production: Closed-loop intelligent system
+    Note over Azure: Enterprise AI governance
+    Note over SRL: Self-improving AI pipeline
+```
+
+## Performance Monitoring & Feedback Loop
+
+```mermaid
+sequenceDiagram
+    participant Monitor as Performance Monitor
+    participant Metrics as Metrics Store
+    participant Alerts as Alert System
+    participant HITL as HITL System
+    participant SRL as SRL Pipeline
+    participant Dashboard as Business Dashboard
+
+    Monitor->>Metrics: Model Performance Data
+    Monitor->>Metrics: Human Feedback Impact
+    Monitor->>Metrics: Business Outcome Correlation
+    
+    Metrics->>Alerts: Performance Threshold Check
+    
+    alt Performance Degradation
+        Alerts->>HITL: Increase Human Review Rate
+        HITL->>SRL: Accelerate Feedback Collection
+        SRL->>Monitor: Emergency Retraining Triggered
+        
+        Note over SRL: Rapid response to performance drops
+    end
+    
+    alt Improvement Opportunity
+        Alerts->>SRL: Feedback Quality High
+        SRL->>SRL: Optimize Training Parameters
+        SRL->>Monitor: Enhanced Model Performance
+        
+        Note over SRL: Proactive optimization
+    end
+    
+    Metrics->>Dashboard: Business Impact Analytics
+    Dashboard->>Monitor: Strategic Performance KPIs
+    
+    Note over Monitor,Dashboard: Real-time feedback effectiveness
+    Note over Metrics: 360-degree performance view
+    Note over Alerts: Intelligent threshold management
+
+```

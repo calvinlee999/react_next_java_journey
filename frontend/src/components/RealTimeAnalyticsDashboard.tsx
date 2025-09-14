@@ -97,6 +97,49 @@ interface ModelPrediction {
   modelVersion: string;
 }
 
+// HITL (Human-in-the-Loop) Feedback Interfaces
+interface HumanFeedback {
+  predictionId: string;
+  userId: string;
+  userRole: 'analyst' | 'supervisor' | 'expert';
+  originalPrediction: 'fraud' | 'legitimate';
+  humanLabel: 'fraud' | 'legitimate';
+  confidence: number; // Human confidence in their correction (1-100)
+  reasoning: string;
+  timestamp: string;
+  reviewTime: number; // Time spent on review in seconds
+  feedbackType: 'correction' | 'confirmation' | 'uncertain';
+}
+
+interface FeedbackMetrics {
+  totalFeedbacks: number;
+  correctionsReceived: number;
+  confirmationsReceived: number;
+  avgReviewTime: number;
+  modelAccuracyImprovement: number;
+  topCorrectionReasons: string[];
+  lastRetrainingDate: string;
+}
+
+interface SelfReinforcementMetrics {
+  retrainingCycles: number;
+  accuracyTrend: number[];
+  feedbackIncorporated: number;
+  modelVersions: string[];
+  performanceGains: number;
+  automatedImprovements: number;
+}
+
+interface AzureAIIntegration {
+  foundryProjectId: string;
+  openAIServiceEndpoint: string;
+  mlWorkspaceId: string;
+  modelDeploymentId: string;
+  searchServiceEndpoint: string;
+  responsibleAIEnabled: boolean;
+  lastSyncTimestamp: string;
+}
+
 interface DataPipelineMetrics {
   bronzeIngestionRate: number;
   silverProcessingRate: number;
@@ -169,6 +212,71 @@ const RealTimeAnalyticsDashboard: React.FC = () => {
   ]);
 
   const [recentPredictions, setRecentPredictions] = useState<ModelPrediction[]>([]);
+
+  // HITL (Human-in-the-Loop) & SRL (Self-Reinforcement Learning) State
+  const [feedbackMetrics, setFeedbackMetrics] = useState<FeedbackMetrics>({
+    totalFeedbacks: 1247,
+    correctionsReceived: 89,
+    confirmationsReceived: 1158,
+    avgReviewTime: 45.2,
+    modelAccuracyImprovement: 2.8,
+    topCorrectionReasons: ['False Positive: Small Amount', 'Edge Case: International Transfer', 'Context Missing: VIP User'],
+    lastRetrainingDate: '2024-01-14'
+  });
+
+  const [srlMetrics, setSrlMetrics] = useState<SelfReinforcementMetrics>({
+    retrainingCycles: 8,
+    accuracyTrend: [91.2, 92.1, 92.8, 93.4, 93.9, 94.1, 94.2, 94.5],
+    feedbackIncorporated: 1247,
+    modelVersions: ['v2.0.1', 'v2.0.5', 'v2.1.0', 'v2.1.3'],
+    performanceGains: 3.3,
+    automatedImprovements: 156
+  });
+
+  const [azureAIConfig, setAzureAIConfig] = useState<AzureAIIntegration>({
+    foundryProjectId: 'ai-foundry-prod-01',
+    openAIServiceEndpoint: 'https://fintech-openai.openai.azure.com/',
+    mlWorkspaceId: 'ml-workspace-fraud-detection',
+    modelDeploymentId: 'fraud-model-v2-1-3',
+    searchServiceEndpoint: 'https://fintech-search.search.windows.net/',
+    responsibleAIEnabled: true,
+    lastSyncTimestamp: '2024-01-15T10:30:00Z'
+  });
+
+  const [humanFeedbacks, setHumanFeedbacks] = useState<HumanFeedback[]>([]);
+  const [pendingReview, setPendingReview] = useState<ModelPrediction[]>([]);
+
+  // HITL Feedback Functions
+  const submitHumanFeedback = (prediction: ModelPrediction, humanLabel: 'fraud' | 'legitimate', confidence: number, reasoning: string) => {
+    const feedback: HumanFeedback = {
+      predictionId: prediction.predictionId,
+      userId: 'analyst-001', // Would come from auth context
+      userRole: 'analyst',
+      originalPrediction: prediction.prediction,
+      humanLabel,
+      confidence,
+      reasoning,
+      timestamp: new Date().toISOString(),
+      reviewTime: Math.random() * 60 + 20, // Simulate review time
+      feedbackType: prediction.prediction === humanLabel ? 'confirmation' : 'correction'
+    };
+
+    setHumanFeedbacks(prev => [feedback, ...prev]);
+    
+    // Update feedback metrics
+    setFeedbackMetrics(prev => ({
+      ...prev,
+      totalFeedbacks: prev.totalFeedbacks + 1,
+      correctionsReceived: feedback.feedbackType === 'correction' ? prev.correctionsReceived + 1 : prev.correctionsReceived,
+      confirmationsReceived: feedback.feedbackType === 'confirmation' ? prev.confirmationsReceived + 1 : prev.confirmationsReceived
+    }));
+
+    // Remove from pending review
+    setPendingReview(prev => prev.filter(p => p.predictionId !== prediction.predictionId));
+
+    // Simulate publishing to Kafka topic for model retraining
+    console.log('Publishing human feedback to Kafka topic: human_feedback_events', feedback);
+  };
 
   // Real-time data simulation
   const intervalRef = useRef<number | null>(null);
@@ -267,6 +375,11 @@ const RealTimeAnalyticsDashboard: React.FC = () => {
           };
 
           setRecentPredictions(prev => [newPrediction, ...prev.slice(0, 19)]);
+          
+          // Add high-risk predictions to pending review for HITL
+          if (newPrediction.riskScore > 70 || newPrediction.confidenceScore < 0.85) {
+            setPendingReview(prev => [newPrediction, ...prev.slice(0, 9)]);
+          }
         }
       }, 2000); // Update every 2 seconds
     }
@@ -497,11 +610,13 @@ const RealTimeAnalyticsDashboard: React.FC = () => {
 
       {/* Main Content Tabs */}
       <Tabs defaultValue="pipeline" className="space-y-4">
-        <TabsList className="grid w-full grid-cols-5">
+        <TabsList className="grid w-full grid-cols-6">
           <TabsTrigger value="pipeline">Data Pipeline</TabsTrigger>
           <TabsTrigger value="fraud">Fraud Monitoring</TabsTrigger>
           <TabsTrigger value="analytics">Real-Time Analytics</TabsTrigger>
           <TabsTrigger value="xai">Explainable AI</TabsTrigger>
+          <TabsTrigger value="hitl">HITL Feedback</TabsTrigger>
+          <TabsTrigger value="performance">Performance</TabsTrigger>
           <TabsTrigger value="performance">Performance</TabsTrigger>
         </TabsList>
 
@@ -939,6 +1054,274 @@ const RealTimeAnalyticsDashboard: React.FC = () => {
                               </div>
                             ))}
                           </div>
+                        </div>
+                        
+                        {/* HITL Feedback Buttons */}
+                        <div className="pt-3 border-t">
+                          <div className="text-sm font-medium mb-2">Human Review:</div>
+                          <div className="flex gap-2">
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() => submitHumanFeedback(prediction, 'legitimate', 95, 'Confirmed as legitimate transaction')}
+                              className="text-green-600 border-green-300 hover:bg-green-50"
+                            >
+                              <CheckCircle className="h-3 w-3 mr-1" />
+                              Legitimate
+                            </Button>
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() => submitHumanFeedback(prediction, 'fraud', 90, 'Confirmed as fraudulent activity')}
+                              className="text-red-600 border-red-300 hover:bg-red-50"
+                            >
+                              <AlertTriangle className="h-3 w-3 mr-1" />
+                              Fraud
+                            </Button>
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() => submitHumanFeedback(prediction, prediction.prediction, 85, 'Agree with AI prediction')}
+                              className="text-blue-600 border-blue-300 hover:bg-blue-50"
+                            >
+                              <Brain className="h-3 w-3 mr-1" />
+                              Confirm AI
+                            </Button>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </div>
+        </TabsContent>
+
+        {/* Human-in-the-Loop (HITL) Feedback Tab */}
+        <TabsContent value="hitl">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {/* Feedback Metrics Card */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Brain className="h-5 w-5" />
+                  HITL Feedback Metrics
+                </CardTitle>
+                <p className="text-sm text-gray-600">
+                  Human feedback impact on model performance
+                </p>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="text-center p-3 border rounded-lg">
+                      <div className="text-xl font-bold text-blue-600">{feedbackMetrics.totalFeedbacks}</div>
+                      <div className="text-xs text-muted-foreground">Total Feedback</div>
+                    </div>
+                    <div className="text-center p-3 border rounded-lg">
+                      <div className="text-xl font-bold text-green-600">{feedbackMetrics.correctionsReceived}</div>
+                      <div className="text-xs text-muted-foreground">Corrections</div>
+                    </div>
+                    <div className="text-center p-3 border rounded-lg">
+                      <div className="text-xl font-bold text-purple-600">{feedbackMetrics.avgReviewTime.toFixed(1)}s</div>
+                      <div className="text-xs text-muted-foreground">Avg Review Time</div>
+                    </div>
+                    <div className="text-center p-3 border rounded-lg">
+                      <div className="text-xl font-bold text-orange-600">+{feedbackMetrics.modelAccuracyImprovement.toFixed(1)}%</div>
+                      <div className="text-xs text-muted-foreground">Accuracy Gain</div>
+                    </div>
+                  </div>
+                  
+                  <div className="pt-4 border-t">
+                    <div className="text-sm font-medium mb-2">Top Correction Reasons</div>
+                    <div className="space-y-2">
+                      {feedbackMetrics.topCorrectionReasons.map((reason, index) => (
+                        <div key={index} className="text-sm p-2 bg-blue-50 rounded border-l-4 border-blue-400">
+                          {reason}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Self-Reinforcement Learning Metrics */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <RefreshCw className="h-5 w-5" />
+                  Self-Reinforcement Learning
+                </CardTitle>
+                <p className="text-sm text-gray-600">
+                  Automated model improvement from human feedback
+                </p>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="text-center p-3 border rounded-lg">
+                      <div className="text-xl font-bold text-green-600">{srlMetrics.retrainingCycles}</div>
+                      <div className="text-xs text-muted-foreground">Retraining Cycles</div>
+                    </div>
+                    <div className="text-center p-3 border rounded-lg">
+                      <div className="text-xl font-bold text-blue-600">+{srlMetrics.performanceGains.toFixed(1)}%</div>
+                      <div className="text-xs text-muted-foreground">Performance Gain</div>
+                    </div>
+                  </div>
+                  
+                  <div className="pt-4 border-t">
+                    <div className="text-sm font-medium mb-2">Accuracy Trend</div>
+                    <div className="space-y-2">
+                      {srlMetrics.accuracyTrend.slice(-5).map((accuracy, index) => (
+                        <div key={index} className="flex justify-between items-center">
+                          <span className="text-sm">Cycle {srlMetrics.retrainingCycles - 4 + index}</span>
+                          <div className="flex items-center gap-2">
+                            <div className="w-24 bg-gray-200 rounded-full h-2">
+                              <div 
+                                className="bg-gradient-to-r from-blue-500 to-green-500 h-2 rounded-full"
+                                style={{ width: `${accuracy}%` }}
+                              ></div>
+                            </div>
+                            <span className="text-sm font-medium">{accuracy.toFixed(1)}%</span>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Azure AI Foundry Integration Status */}
+            <Card className="lg:col-span-2">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Globe className="h-5 w-5" />
+                  Azure AI Foundry Integration
+                </CardTitle>
+                <p className="text-sm text-gray-600">
+                  Enterprise AI platform integration status and capabilities
+                </p>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div className="space-y-3">
+                    <div className="text-sm font-medium">Azure AI Services</div>
+                    <div className="space-y-2">
+                      <div className="flex items-center justify-between p-2 bg-green-50 rounded">
+                        <span className="text-sm">OpenAI Service</span>
+                        <CheckCircle className="h-4 w-4 text-green-600" />
+                      </div>
+                      <div className="flex items-center justify-between p-2 bg-green-50 rounded">
+                        <span className="text-sm">ML Workspace</span>
+                        <CheckCircle className="h-4 w-4 text-green-600" />
+                      </div>
+                      <div className="flex items-center justify-between p-2 bg-green-50 rounded">
+                        <span className="text-sm">AI Search</span>
+                        <CheckCircle className="h-4 w-4 text-green-600" />
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div className="space-y-3">
+                    <div className="text-sm font-medium">Configuration</div>
+                    <div className="space-y-2 text-xs">
+                      <div>Project: <span className="font-mono bg-gray-100 px-1 rounded">{azureAIConfig.foundryProjectId}</span></div>
+                      <div>Model: <span className="font-mono bg-gray-100 px-1 rounded">{azureAIConfig.modelDeploymentId}</span></div>
+                      <div>Last Sync: <span className="font-medium">{new Date(azureAIConfig.lastSyncTimestamp).toLocaleString()}</span></div>
+                    </div>
+                  </div>
+                  
+                  <div className="space-y-3">
+                    <div className="text-sm font-medium">Responsible AI</div>
+                    <div className="space-y-2">
+                      <div className="flex items-center gap-2">
+                        <div className={`w-2 h-2 rounded-full ${azureAIConfig.responsibleAIEnabled ? 'bg-green-500' : 'bg-red-500'}`} />
+                        <span className="text-sm">{azureAIConfig.responsibleAIEnabled ? 'Enabled' : 'Disabled'}</span>
+                      </div>
+                      <div className="text-xs text-muted-foreground">
+                        Content filtering, bias detection, and fairness monitoring active
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+            
+            {/* Pending Human Review Queue */}
+            <Card className="lg:col-span-2">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Clock className="h-5 w-5" />
+                  Pending Human Review ({pendingReview.length})
+                </CardTitle>
+                <p className="text-sm text-gray-600">
+                  High-risk predictions requiring human validation
+                </p>
+              </CardHeader>
+              <CardContent>
+                {pendingReview.length === 0 ? (
+                  <div className="text-center py-8 text-muted-foreground">
+                    <CheckCircle className="h-8 w-8 mx-auto mb-2 opacity-50 text-green-500" />
+                    <p>No predictions pending review. All high-risk transactions have been validated.</p>
+                  </div>
+                ) : (
+                  <div className="space-y-4">
+                    {pendingReview.slice(0, 3).map((prediction) => (
+                      <div key={prediction.predictionId} className="border-l-4 border-orange-400 bg-orange-50 rounded-lg p-4 space-y-3">
+                        <div className="flex justify-between items-start">
+                          <div className="space-y-1">
+                            <div className="flex items-center gap-2">
+                              <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                                prediction.prediction === 'fraud' 
+                                  ? 'bg-red-100 text-red-800' 
+                                  : 'bg-green-100 text-green-800'
+                              }`}>
+                                AI Prediction: {prediction.prediction === 'fraud' ? 'Fraud' : 'Legitimate'}
+                              </span>
+                              <span className="text-xs px-2 py-1 bg-orange-200 text-orange-800 rounded-full">
+                                Needs Review
+                              </span>
+                            </div>
+                            <div className="text-sm text-muted-foreground">
+                              Risk Score: {prediction.riskScore}/100 | Confidence: {(prediction.confidenceScore * 100).toFixed(1)}%
+                            </div>
+                          </div>
+                          <div className="text-right space-y-1">
+                            <div className="text-sm text-muted-foreground">
+                              {new Date(prediction.timestamp).toLocaleTimeString()}
+                            </div>
+                          </div>
+                        </div>
+                        
+                        {/* Quick Action Buttons */}
+                        <div className="flex gap-2 pt-2">
+                          <Button
+                            size="sm"
+                            onClick={() => submitHumanFeedback(prediction, 'legitimate', 95, 'Analyst confirmed legitimate')}
+                            className="bg-green-600 hover:bg-green-700 text-white"
+                          >
+                            <CheckCircle className="h-3 w-3 mr-1" />
+                            Approve as Legitimate
+                          </Button>
+                          <Button
+                            size="sm"
+                            onClick={() => submitHumanFeedback(prediction, 'fraud', 90, 'Analyst confirmed fraud')}
+                            className="bg-red-600 hover:bg-red-700 text-white"
+                          >
+                            <AlertTriangle className="h-3 w-3 mr-1" />
+                            Flag as Fraud
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => submitHumanFeedback(prediction, prediction.prediction, 80, 'Analyst agrees with AI')}
+                          >
+                            <Brain className="h-3 w-3 mr-1" />
+                            Confirm AI Decision
+                          </Button>
                         </div>
                       </div>
                     ))}
