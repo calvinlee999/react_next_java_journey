@@ -4,13 +4,16 @@
 
 ## �️ Platform Overview
 
-The AI Platform for FinTech Evolution delivers **two primary applications** designed to revolutionize financial services development and operations:
+The AI Platform for FinTech Evolution delivers **three primary applications** designed to revolutionize financial services development and operations:
 
 ### **1. 🤖 AI Inference Platform**
 Advanced AI-powered financial services with real-time decision making and intelligent automation.
 
 ### **2. 🚀 Agentic AI Development Platform** 
 Automated end-to-end FinTech/BIAN domain feature implementation using AI agents and Model Context Protocol (MCP) servers.
+
+### **3. 🔧 MCP Server Automation Platform**
+Building Model Context Protocol servers for existing and new features using Agentic AI to automate business operations and workflow automation.
 
 ---
 
@@ -72,6 +75,128 @@ Output: ✅ Complete BIAN-compliant banking service with:
 - **💾 Prisma/MongoDB MCP**: Database operations and schema management
 - **🧠 Sequential Thinking MCP**: Complex workflow execution
 - **📝 Memory MCP**: Persistent context across development sessions
+
+---
+
+### **3. 🔧 MCP Server Automation Platform**
+
+**Building Model Context Protocol servers for existing and new features using Agentic AI to automate business operations and workflow automation.**
+
+#### **Enterprise Agentic Platforms Integration:**
+
+##### **🤖 UiPath Integration**
+- **Market Leader in RPA**: Enterprise-grade Robotic Process Automation platform
+- **Agentic Automation Platform**: Orchestrates workflows with legacy systems lacking modern APIs
+- **FinOps Excellence**: Complex financial workflows like invoice processing and loan origination
+- **AI Agent Orchestration**: Manages AI agents, software robots, and human-in-the-loop tasks
+- **Legacy System Integration**: Robotic process capabilities for non-API systems
+
+##### **🔧 Microsoft Power Platform**
+- **Low-Code/No-Code Platform**: Build agentic workflows without deep coding expertise
+- **Power Automate + AI Builder**: Create agents connecting hundreds of financial applications
+- **Departmental Workflows**: Ideal for line-of-business automation
+- **Enterprise Integration**: Seamless Microsoft ecosystem integration
+- **Financial Applications**: Comprehensive service connectivity
+
+##### **🌐 Make.com Integration**
+- **Business Automation Leader**: Leading platform for workflow automation
+- **MCP Server Support**: Exposes capabilities to AI agents through MCP
+- **Visual Interface**: Intuitive workflow design and management
+- **Application Connectivity**: Connects diverse financial applications
+- **FinOps Deployment**: Strong choice for financial operation workflows
+
+#### **Specialized Financial Operations Tools:**
+
+##### **🛡️ Feedzai (Fraud Detection)**
+- **AI-Powered Risk Assessment**: Real-time fraud detection and AML capabilities
+- **Specialized Agent Tool**: High-performance risk scoring API
+- **Payment Integration**: Real-time transaction approval workflow
+- **Enterprise Security**: Banking-grade fraud prevention
+
+##### **📄 Hebbia (Document Analysis)**
+- **AI Document Processing**: Advanced unstructured document analysis
+- **FinOps Excellence**: Contract analysis, financial statement processing
+- **Underwriting Automation**: Large-volume document processing
+- **Compliance Support**: Regulatory document analysis and extraction
+
+#### **MCP Server Development Framework:**
+
+##### **🐍 FastMCP (Python)**
+- **De-facto Standard**: Primary framework for Model Context Protocol
+- **Python-based SDK**: Simplified MCP server creation
+- **Tool Definition**: Clean, Pythonic tool and resource definition
+- **Transport Handling**: HTTP, STDIO protocol management
+- **Schema Generation**: Automatic tool schema generation
+
+##### **☕ Java Framework Integration**
+- **ModelContextProtocol Java SDK**: Official SDK for enterprise Java applications
+- **Spring AI Integration**: Seamless Spring Framework integration
+- **Enterprise Backend**: Perfect for Spring Boot microservices
+- **Transport Support**: STDIO, WebFlux, WebMVC protocols
+- **Microservice Exposure**: Convert business logic to agent tools
+
+##### **💻 TypeScript/Node.js Framework**
+- **MCP-Framework**: Higher-level framework built on official SDK
+- **TypeScript-First**: Strong type safety using Zod schemas
+- **Directory Discovery**: Automatic tool and resource discovery
+- **Frontend Integration**: Next.js and Node.js backend support
+- **UI Testing**: Automated interface testing and interaction
+
+##### **#️⃣ .NET Integration**
+- **Semantic Kernel**: Microsoft's open-source AI agent SDK
+- **Official C# SDK**: Microsoft-Anthropic partnership for MCP
+- **NuGet Package**: Seamless .NET ecosystem integration
+- **Azure Integration**: Enterprise-grade security and scalability
+- **Copilot Integration**: Microsoft Dataverse and Copilot connectivity
+
+#### **MCP Server Development Process:**
+
+##### **1. 🎯 Business Capability Identification**
+```yaml
+Focus Areas:
+  - Core business functions over individual API endpoints
+  - Agent-consumable capabilities
+  - High-value automation targets
+
+Example Transformation:
+  Existing: POST /api/v1/loan/createApplication
+  MCP Tool: submit_loan_application
+  Description: "Submits new loan application with applicant details"
+```
+
+##### **2. 🏗️ MCP Server Construction**
+```yaml
+Development Steps:
+  - Framework Selection: FastMCP, Java SDK, or .NET
+  - Tool Definition: Business capability functions
+  - Type Safety: Strong typing with documentation
+  - API Integration: Adapter pattern for existing services
+  - Containerization: Docker packaging for deployment
+```
+
+##### **3. 🚀 Registration and Deployment**
+```yaml
+Deployment Pipeline:
+  - Registration: VS Code mcpServers configuration
+  - Cloud Deployment: Azure/AWS/GCP container services
+  - Auto-scaling: Kubernetes orchestration
+  - Security: Enterprise-grade access controls
+  - Monitoring: Observability and performance tracking
+```
+
+#### **Enterprise Workflow Automation:**
+
+##### **🔄 End-to-End Process Orchestration**
+- **Cross-System Integration**: Legacy and modern system coordination
+- **Compliance Automation**: Regulatory workflow management
+- **Audit Trail**: Complete process documentation and tracking
+- **Human-in-the-Loop**: Seamless human oversight integration
+
+##### **📊 Business Operations Intelligence**
+- **Process Analytics**: Workflow performance monitoring
+- **Bottleneck Identification**: Automated optimization recommendations
+- **SLA Management**: Service level agreement monitoring
+- **Cost Optimization**: Resource utilization optimization
 
 ---
 
@@ -222,9 +347,9 @@ Files          Enrichment      Security        Reporting
 
 ## 📚 **Architecture Documentation**
 
-**[Complete Architecture Hub](https://github.com/calvinlee999/AI-Platform-for-FinTech-Evolution)** - Comprehensive cloud architecture documentation for AWS, Azure, and GCP implementations.
+**[MCP Server Development Guide](https://www.youtube.com/watch?v=MCP-Server-Build)** - Learn how to build Model Context Protocol servers from scratch, a foundational skill for connecting AI agents to any system.
 
-This repository focuses on the **React + Java + Azure** proof-of-concept implementation. For complete architecture patterns, reference implementations, and multi-cloud designs, visit the dedicated architecture repository.
+This repository showcases the **React + Java + Azure** implementation with three primary AI applications. The platform demonstrates enterprise-grade MCP server automation for FinTech operations and workflow automation.
 
 [![Next.js](https://img.shields.io/badge/Next.js-15.5.3-black?logo=next.js)](https://nextjs.org/)
 [![React](https://img.shields.io/badge/React-19.1.0-blue?logo=react)](https://react.dev/)
