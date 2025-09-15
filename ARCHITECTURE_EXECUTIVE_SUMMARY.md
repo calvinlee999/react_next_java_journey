@@ -94,7 +94,32 @@ graph TB
 | **Microservices** | Spring Boot 3.2 + AI Journey Orchestrator + Domain MCP + Docker | AI customer journey orchestration with domain-based MCP integration |
 | **Event Streaming** | Apache Kafka + Flink + Spark | Real-time, Near Real-Time and Batch event/data/inference processing |
 | **Data Platform** | Azure Databricks + Spark + Domain Data Mesh + AI Data Governance | Advanced analytics with lineage, data quality, scalability, partitioning, in-memory processing, and auto-scaling |
-| **Cloud Infrastructure** | Azure Kubernetes Service | Container orchestration and scaling |
+| **Cloud Infrastructure** | Azure Kubernetes Service + Azure Container Instances + Azure Virtual Machines + Azure Networking + Azure Storage + Azure Monitor | Comprehensive Azure cloud infrastructure with container orchestration, compute, networking, storage, and monitoring (Multi-cloud: AWS, GCP supported) |
+
+### Azure Infrastructure Services Mapping
+
+| Layer | Azure Infrastructure Services | Purpose |
+|-------|------------------------------|---------|
+| **Security** | Azure Active Directory + Azure Key Vault + Azure Security Center + Azure Sentinel + Azure Policy | Identity management, secrets management, security monitoring, threat detection, and compliance policies |
+| **Frontend** | Azure Static Web Apps + Azure CDN + Azure Front Door + Azure App Service | Static web hosting, content delivery, global load balancing, and web application hosting |
+| **API Gateway** | Azure API Management + Azure Application Gateway + Azure Load Balancer + Azure Traffic Manager | API lifecycle management, application-level routing, load balancing, and traffic distribution |
+| **MCP Gateway** | Azure Container Instances + Azure Service Fabric + Azure App Service + Azure Functions | Containerized MCP services, microservices orchestration, web hosting, and serverless functions |
+| **MCP Framework** | Azure Kubernetes Service + Azure Container Registry + Azure Machine Learning + Azure Cognitive Services | Container orchestration, image registry, ML model hosting, and AI services |
+| **AI Platform** | Azure Machine Learning + Azure Cognitive Services + Azure OpenAI + Azure Databricks + Azure Synapse Analytics | ML model deployment, AI services, language models, advanced analytics, and data processing |
+| **Microservices** | Azure Kubernetes Service + Azure Service Fabric + Azure Container Instances + Azure App Service + Azure Functions | Container orchestration, microservices platform, containerized apps, web services, and serverless computing |
+| **Event Streaming** | Azure Event Hubs + Azure Service Bus + Azure Event Grid + Azure Stream Analytics + Azure Data Factory | Event ingestion, messaging, event routing, real-time analytics, and data integration |
+| **Data Platform** | Azure Databricks + Azure Synapse Analytics + Azure Data Lake Storage + Azure SQL Database + Azure Cosmos DB + Azure Data Factory | Analytics platform, data warehousing, data lake storage, relational database, NoSQL database, and data integration |
+| **Cloud Infrastructure** | Azure Kubernetes Service + Azure Virtual Machines + Azure Virtual Networks + Azure Storage + Azure Monitor + Azure Resource Manager | Container orchestration, compute instances, networking, storage services, monitoring, and resource management |
+
+### Multi-Cloud Architecture Support
+
+The platform supports deployment across multiple cloud providers:
+
+- **Primary**: Azure (Full implementation with comprehensive services)
+- **Secondary**: AWS (Implementation available)
+- **Tertiary**: Google Cloud Platform (Implementation available)
+
+Each cloud provider implementation maintains architectural consistency while leveraging provider-specific services for optimal performance and cost efficiency.
 
 ## 📊 Business Impact Metrics
 
