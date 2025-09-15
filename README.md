@@ -497,10 +497,170 @@ Ctrl+Shift+P → "Tasks: Run Task" → "Build All Services"
 
 ### Security Architecture
 
-- **Zero Trust**: Never trust, always verify
-- **OAuth 2.0/OIDC**: Industry-standard authentication
-- **JWT Tokens**: Stateless authorization
-- **RBAC**: Role-based access control
+```mermaid
+graph TB
+    subgraph "Security Perimeter"
+        subgraph "External"
+            Client[Web Client]
+            Mobile[Mobile App]
+            External[External APIs]
+        end
+        
+        subgraph "Edge Security"
+            WAF[Web Application Firewall]
+            DDoS[DDoS Protection]
+            CDN[CDN with SSL/TLS]
+        end
+        
+        subgraph "Gateway Security Layer"
+            APIGatewaySec[API Gateway Security]
+            MCPGatewaySec[MCP Gateway Security]
+            OAuth[OAuth 2.0/OIDC Provider]
+            JWT[JWT Token Service]
+        end
+        
+        subgraph "Platform Security"
+            subgraph "Frontend Security"
+                CSP[Content Security Policy]
+                CORS[CORS Protection]
+                TokenMgmt[Secure Token Management]
+            end
+            
+            subgraph "MCP Framework Security"
+                AgentAuth[Agent Authentication]
+                ToolSandbox[Tool Execution Sandbox]
+                ModelACL[AI Model Access Control]
+            end
+            
+            subgraph "AI Platform Security"
+                ModelAuth[Model Serving Auth]
+                WorkflowSec[Workflow Security]
+                DevPlatformACL[Development Platform ACL]
+            end
+            
+            subgraph "Microservices Security"
+                mTLS[Service-to-Service mTLS]
+                ContainerSec[Container Security]
+                ServiceMesh[Service Mesh Security]
+            end
+            
+            subgraph "Event Security"
+                KafkaEnc[Kafka Encryption]
+                TopicACL[Topic Access Control]
+                PayloadEnc[Payload Encryption]
+            end
+            
+            subgraph "Data Security"
+                DataEnc[Data Encryption]
+                PIIDetection[PII Detection]
+                DataLineage[Data Lineage Audit]
+            end
+        end
+        
+        subgraph "Identity & Access Management"
+            AAD[Azure Active Directory]
+            RBAC[Role-Based Access Control]
+            PAM[Privileged Access Management]
+        end
+        
+        subgraph "Compliance & Governance"
+            GDPR[GDPR Compliance]
+            PCIDSS[PCI DSS]
+            SOX[SOX Compliance]
+            AuditLogs[Audit Logging]
+        end
+        
+        subgraph "Security Monitoring"
+            SIEM[Security Information & Event Management]
+            ThreatIntel[Threat Intelligence]
+            Alerts[Real-time Security Alerts]
+            Compliance[Compliance Monitoring]
+        end
+    end
+    
+    %% External to Edge
+    Client --> WAF
+    Mobile --> WAF
+    External --> WAF
+    WAF --> DDoS
+    DDoS --> CDN
+    
+    %% Edge to Gateway
+    CDN --> APIGatewaySec
+    CDN --> MCPGatewaySec
+    APIGatewaySec --> OAuth
+    MCPGatewaySec --> OAuth
+    OAuth --> JWT
+    
+    %% Gateway to Platform
+    JWT --> CSP
+    JWT --> AgentAuth
+    JWT --> ModelAuth
+    JWT --> mTLS
+    JWT --> KafkaEnc
+    JWT --> DataEnc
+    
+    %% Cross-layer Security
+    AAD --> OAuth
+    RBAC --> AgentAuth
+    RBAC --> ModelAuth
+    PAM --> mTLS
+    
+    %% Monitoring & Compliance
+    AuditLogs --> SIEM
+    GDPR --> Compliance
+    PCIDSS --> Compliance
+    SOX --> Compliance
+    SIEM --> ThreatIntel
+    ThreatIntel --> Alerts
+```
+
+#### Cross-Platform Security Management
+- **Zero Trust Architecture**: Never trust, always verify across all platform layers
+- **OAuth 2.0/OIDC**: Industry-standard authentication with OpenID Connect
+- **JWT Tokens**: Stateless authorization with token-based security
+- **RBAC**: Role-based access control with fine-grained permissions
+
+#### Layer-Specific Security Implementation
+- **Frontend Security**: 
+  - CSP (Content Security Policy) and CORS protection
+  - Client-side token management and secure storage
+  - SSL/TLS encryption for all communications
+- **API Gateway Security**:
+  - API rate limiting and throttling
+  - Request/response validation and sanitization
+  - OAuth 2.0 token validation and JWT verification
+- **MCP Gateway Security**:
+  - MCP protocol security with encrypted connections
+  - Tool access control and permission management
+  - MCP server authentication and authorization
+- **MCP Framework Security**:
+  - Agent-to-agent secure communication
+  - Tool execution sandboxing and isolation
+  - AI model access control and audit logging
+- **AI Platform Security**:
+  - Model serving authentication and authorization
+  - Workflow execution security and audit trails
+  - Agentic development platform access controls
+- **Microservices Security**:
+  - Service-to-service authentication (mTLS)
+  - Container security and image scanning
+  - Network policies and service mesh security
+- **Event Streaming Security**:
+  - Kafka encryption in transit and at rest
+  - Topic-level access control and ACLs
+  - Event payload encryption and data masking
+- **Data Platform Security**:
+  - Azure Databricks workspace security
+  - Data encryption at rest and in transit
+  - Data lineage and access audit trails
+  - PII detection and data classification
+
+#### Compliance and Governance
+- **IAM Integration**: Azure Active Directory for centralized identity management
+- **Compliance Frameworks**: GDPR, PCI DSS, SOX, and HIPAA compliance
+- **Audit and Monitoring**: Real-time security monitoring and compliance reporting
+- **Data Governance**: Automated data classification and retention policies
 
 ## 📊 MCP Demo Features
 
