@@ -53,7 +53,7 @@ graph TB
     end
     
     subgraph "Event Streaming"
-        Kafka[Apache Kafka]
+        Kafka[Apache Kafka + Flink + Spark]
         Events[Event Store]
         
         Kafka --> Events
@@ -271,7 +271,7 @@ Ctrl+Shift+P → "Tasks: Run Task" → "Build All Services"
 - **Security**: OAuth 2.0, JWT tokens, RBAC
 - **Monitoring**: Application Insights, health checks
 - **Caching**: Redis for performance optimization
-- **Event Streaming**: Kafka for real-time processing
+- **Event Streaming**: Kafka + Flink + Spark for real-time, near real-time, and batch processing
 
 ## 🛠️ Technology Stack
 
@@ -288,7 +288,7 @@ Ctrl+Shift+P → "Tasks: Run Task" → "Build All Services"
 - **Java 17**: Modern Java features
 - **Spring Boot 3.2**: Enterprise framework
 - **Spring Cloud Gateway**: API gateway with routing
-- **Apache Kafka**: Event streaming platform
+- **Apache Kafka + Flink + Spark**: Comprehensive event streaming and data processing platform
 - **Redis**: High-performance caching
 
 ### Cloud & Infrastructure
@@ -311,7 +311,7 @@ Ctrl+Shift+P → "Tasks: Run Task" → "Build All Services"
 ### Event-Driven Architecture
 
 - **Domain Events**: Business event modeling
-- **Event Streaming**: Real-time data processing
+- **Event Streaming**: Real-time, near real-time, and batch data processing
 - **CQRS**: Command Query Responsibility Segregation
 - **Saga Pattern**: Distributed transaction management
 
