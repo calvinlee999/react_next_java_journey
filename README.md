@@ -26,7 +26,7 @@ graph TB
     end
     
     subgraph "API Gateway"
-        Gateway[Spring Cloud Gateway]
+        Gateway[Spring Cloud Gateway + Multi-API]
         Auth[OAuth 2.0 + JWT]
         Gateway --> Auth
     end
@@ -287,7 +287,7 @@ Ctrl+Shift+P → "Tasks: Run Task" → "Build All Services"
 
 - **Java 17**: Modern Java features
 - **Spring Boot 3.2 + AI Journey Orchestrator + Domain MCP + Docker**: Intelligent microservices framework
-- **Spring Cloud Gateway**: API gateway with routing
+- **Spring Cloud Gateway + Multi-API**: Comprehensive API gateway supporting REST, Async, GraphQL, WebHooks, WebSockets with OpenAPI/AsyncAPI standards
 - **Apache Kafka + Flink + Spark**: Comprehensive event streaming and data processing platform
 - **Redis**: High-performance caching
 
@@ -303,7 +303,7 @@ Ctrl+Shift+P → "Tasks: Run Task" → "Build All Services"
 
 ### Microservices Architecture
 
-- **API Gateway**: Centralized routing and authentication
+- **API Gateway**: Multi-paradigm routing, authentication, and standards compliance (REST/Async/GraphQL/WebHooks/WebSockets)
 - **Service Discovery**: Automatic service registration
 - **Circuit Breaker**: Resilience patterns
 - **Event Sourcing**: Audit trail and replay capability
