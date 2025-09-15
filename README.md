@@ -25,10 +25,14 @@ graph TB
         UI --> Demo
     end
     
-    subgraph "API Gateway"
-        Gateway[Spring Cloud Gateway + Multi-API]
+    subgraph "Unified Gateway Layer"
+        APIGateway[Spring Cloud Gateway + Multi-API]
+        MCPGateway[MCP Gateway + Lifecycle Management]
         Auth[OAuth 2.0 + JWT]
-        Gateway --> Auth
+        
+        APIGateway --> Auth
+        MCPGateway --> Auth
+        APIGateway --> MCPGateway
     end
     
     subgraph "MCP Framework Core"
@@ -77,8 +81,9 @@ graph TB
         DataMesh --> Governance
     end
     
-    UI --> Gateway
-    Gateway --> Registry
+    UI --> APIGateway
+    APIGateway --> Registry
+    MCPGateway --> Registry
     Registry --> AIInference
     AIInference --> AgenticWorkflow
     AgenticDev --> Business
@@ -173,6 +178,78 @@ graph TB
     AIInference --> AgenticWorkflow
     AgenticWorkflow --> AgenticDev
     AgenticDev --> MCPConnector
+```
+
+### Unified Gateway Architecture
+
+```mermaid
+graph TB
+    subgraph "Unified Gateway Layer"
+        APIGateway[API Gateway]
+        MCPGateway[MCP Gateway]
+        AuthLayer[Authentication Layer]
+    end
+    
+    subgraph "API Gateway Core"
+        RESTRouter[REST API Router]
+        AsyncRouter[Async API Router]
+        GraphQLRouter[GraphQL Router]
+        WebHookRouter[WebHook Router]
+        WebSocketRouter[WebSocket Router]
+        OpenAPISpec[OpenAPI Specification]
+        AsyncAPISpec[AsyncAPI Specification]
+        
+        RESTRouter --> OpenAPISpec
+        AsyncRouter --> AsyncAPISpec
+        GraphQLRouter --> OpenAPISpec
+        WebHookRouter --> AsyncAPISpec
+        WebSocketRouter --> OpenAPISpec
+    end
+    
+    subgraph "MCP Gateway Core"
+        MCPRegistry[MCP Server Registry]
+        MCPLifecycle[MCP Lifecycle Manager]
+        ToolRegistry[Tool Registry]
+        MCPRouter[MCP Protocol Router]
+        MCPVersioning[MCP Version Control]
+        MCPMonitoring[MCP Health Monitoring]
+        
+        MCPRegistry --> MCPLifecycle
+        MCPLifecycle --> ToolRegistry
+        ToolRegistry --> MCPRouter
+        MCPRouter --> MCPVersioning
+        MCPVersioning --> MCPMonitoring
+    end
+    
+    subgraph "Lifecycle Management"
+        APILifecycle[API Lifecycle Manager]
+        MCPServerLifecycle[MCP Server Lifecycle]
+        VersionControl[Unified Version Control]
+        HealthChecks[Health & Monitoring]
+        SecurityPolicy[Security Policies]
+        
+        APILifecycle --> VersionControl
+        MCPServerLifecycle --> VersionControl
+        VersionControl --> HealthChecks
+        HealthChecks --> SecurityPolicy
+    end
+    
+    APIGateway --> RESTRouter
+    APIGateway --> AsyncRouter
+    APIGateway --> GraphQLRouter
+    APIGateway --> WebHookRouter
+    APIGateway --> WebSocketRouter
+    
+    MCPGateway --> MCPRegistry
+    MCPGateway --> MCPLifecycle
+    MCPGateway --> ToolRegistry
+    MCPGateway --> MCPRouter
+    
+    APIGateway --> AuthLayer
+    MCPGateway --> AuthLayer
+    
+    AuthLayer --> APILifecycle
+    AuthLayer --> MCPServerLifecycle
 ```
 
 ## 🔄 Sequence Diagrams
@@ -352,7 +429,10 @@ Ctrl+Shift+P → "Tasks: Run Task" → "Build All Services"
 
 - **Java 17**: Modern Java features
 - **Spring Boot 3.2 + AI Journey Orchestrator + Domain MCP + Docker**: Intelligent microservices framework
-- **Spring Cloud Gateway + Multi-API**: Comprehensive API gateway supporting REST, Async, GraphQL, WebHooks, WebSockets with OpenAPI/AsyncAPI standards
+- **Unified Gateway Architecture**: 
+  - **API Gateway**: Spring Cloud Gateway supporting REST, Async, GraphQL, WebHooks, WebSockets with OpenAPI/AsyncAPI standards
+  - **MCP Gateway**: Comprehensive MCP server and tool lifecycle management with protocol routing and version control
+  - **Lifecycle Management**: Unified API and MCP server lifecycle with health monitoring and security policies
 - **Apache Kafka + Flink + Spark**: Comprehensive event streaming and data processing platform
 - **Redis**: High-performance caching
 
@@ -392,6 +472,16 @@ Ctrl+Shift+P → "Tasks: Run Task" → "Build All Services"
 - **Service Discovery**: Automatic service registration
 - **Circuit Breaker**: Resilience patterns
 - **Event Sourcing**: Audit trail and replay capability
+
+### MCP Gateway Patterns
+
+- **Unified Gateway Architecture**: Single entry point for both traditional APIs and MCP protocol
+- **MCP Server Lifecycle Management**: Automated registration, discovery, and health monitoring of MCP servers
+- **Tool Registry Management**: Dynamic tool discovery and version control for MCP tools
+- **Protocol Routing**: Intelligent routing between API calls and MCP protocol messages
+- **MCP Version Control**: Backward compatibility and migration support for MCP protocol versions
+- **Security Integration**: Unified authentication and authorization for API and MCP access
+- **Health Monitoring**: Real-time monitoring of MCP server availability and performance
 
 ### Event-Driven Architecture
 

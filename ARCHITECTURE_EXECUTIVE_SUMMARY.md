@@ -86,7 +86,7 @@ graph TB
 | Layer | Technology | Purpose |
 |-------|------------|---------|
 | **Frontend** | React 19 + Next.js 15 + Node.js | Modern web interface with CSR/SSR/SSG/Caching |
-| **API Gateway** | Spring Cloud Gateway + REST/Async/GraphQL/WebHook/WebSocket + OpenAPI/AsyncAPI | Multi-paradigm API management with comprehensive standards |
+| **API Gateway** | Spring Cloud Gateway + MCP Gateway + REST/Async/GraphQL/WebHook/WebSocket + OpenAPI/AsyncAPI | Unified gateway for API and MCP lifecycle management with comprehensive standards |
 | **MCP Framework** | Java MCP + Spring AI | AI agent coordination and tool execution |
 | **AI Platform** | AI Inference + Agentic Workflow Automation + Agentic Development (Microfrontend/Service/Database) | Comprehensive AI platform with MCP integration for continuous feature inventory and API management |
 | **Microservices** | Spring Boot 3.2 + AI Journey Orchestrator + Domain MCP + Docker | AI customer journey orchestration with domain-based MCP integration |
