@@ -1,0 +1,33 @@
+steps:
+  # Build backend Docker image
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['build', '-t', 'gcr.io/$PROJECT_ID/react-java-backend:$BUILD_ID', './backend']
+    
+  # Push backend image
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['push', 'gcr.io/$PROJECT_ID/react-java-backend:$BUILD_ID']
+    
+  # Build frontend Docker image
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['build', '-t', 'gcr.io/$PROJECT_ID/react-java-frontend:$BUILD_ID', './frontend']
+    
+  # Push frontend image
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['push', 'gcr.io/$PROJECT_ID/react-java-frontend:$BUILD_ID']
+    
+  # Deploy to GKE
+  - name: 'gcr.io/cloud-builders/gke-deploy'
+    args:
+    - run
+    - --filename=./infra/gcp/gke-deployment.yaml
+    - --cluster=react-java-cluster
+    - --location=${_LOCATION}
+    - --image=gcr.io/$PROJECT_ID/react-java-backend:$BUILD_ID
+    - --image=gcr.io/$PROJECT_ID/react-java-frontend:$BUILD_ID
+
+substitutions:
+  _LOCATION: us-central1
+
+options:
+  logging: CLOUD_LOGGING_ONLY
+  machineType: 'E2_HIGHCPU_8'

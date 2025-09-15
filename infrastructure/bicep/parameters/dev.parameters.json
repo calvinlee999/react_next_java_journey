@@ -1,0 +1,36 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "environment": {
+      "value": "dev"
+    },
+    "primaryLocation": {
+      "value": "eastus2"
+    },
+    "secondaryLocation": {
+      "value": "westus2"
+    },
+    "tertiaryLocation": {
+      "value": "northeurope"
+    },
+    "prefix": {
+      "value": "aiplatform"
+    },
+    "tags": {
+      "value": {
+        "Environment": "Development",
+        "Project": "AI-Platform",
+        "CostCenter": "Technology",
+        "Owner": "Platform-Team",
+        "CreatedBy": "Bicep-IaC",
+        "ManagedBy": "Local-Development",
+        "BusinessUnit": "Technology",
+        "Purpose": "Development-Environment",
+        "Criticality": "Low",
+        "DataClassification": "Internal",
+        "Compliance": "Development-Only"
+      }
+    }
+  }
+}
