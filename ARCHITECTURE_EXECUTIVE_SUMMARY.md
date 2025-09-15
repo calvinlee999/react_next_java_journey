@@ -85,6 +85,7 @@ graph TB
 
 | Layer | Technology | Purpose |
 |-------|------------|---------|
+| **Security** | OAuth 2.0 + Zero Trust + SSO + IAM + Compliance + RBAC + Encryption | Cross-platform security architecture with Single Sign-On, managing authentication, authorization, compliance, and data protection across all layers |
 | **Frontend** | React 19 + Next.js 15 + Node.js | Modern web interface with CSR/SSR/SSG/Caching |
 | **API Gateway** | Spring Cloud Gateway + REST/Async/GraphQL/WebHook/WebSocket + OpenAPI/AsyncAPI | Multi-paradigm API management with comprehensive standards |
 | **MCP Gateway** | MCP Server Registry + MCP Lifecycle Manager + Tool Registry + Protocol Router | Comprehensive MCP lifecycle management and protocol routing |
@@ -93,7 +94,6 @@ graph TB
 | **Microservices** | Spring Boot 3.2 + AI Journey Orchestrator + Domain MCP + Docker | AI customer journey orchestration with domain-based MCP integration |
 | **Event Streaming** | Apache Kafka + Flink + Spark | Real-time, Near Real-Time and Batch event/data/inference processing |
 | **Data Platform** | Azure Databricks + Spark + Domain Data Mesh + AI Data Governance | Advanced analytics with lineage, data quality, scalability, partitioning, in-memory processing, and auto-scaling |
-| **Security** | OAuth 2.0 + Zero Trust + IAM + Compliance + RBAC + Encryption | Cross-platform security architecture managing authentication, authorization, compliance, and data protection across all layers |
 | **Cloud Infrastructure** | Azure Kubernetes Service | Container orchestration and scaling |
 
 ## 📊 Business Impact Metrics
