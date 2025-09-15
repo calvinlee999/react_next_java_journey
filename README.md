@@ -1,17 +1,28 @@
-# MCP-Enabled FinTech Platform
+# AI Platform Technical Implementation
 
-## Golden Path Template - React, Java, Azure
+## Complete Development Repository - React, Java, Azure
 
-A comprehensive enterprise-grade financial technology application demonstrating the Model Context Protocol (MCP) for intelligent workflow automation and AI-driven business processes.
+This repository contains the **complete technical implementation** and **development artifacts** for the AI Platform for FinTech Evolution. It serves as the primary codebase for development teams, technical interviews, and engineering reference.
 
-## 🎯 Executive Summary
+## 🎯 Repository Purpose
+
+This repository is designed for:
+
+- **👨‍💻 Development Teams & Software Engineers**
+- **🔧 Technical Interviewers & Senior Developers**
+- **⚙️ DevOps Engineers & Site Reliability Engineers**
+- **🏗️ Solution Architects & System Designers**
+- **🧪 QA Engineers & Test Automation Specialists**
+
+## 🚀 Technical Platform Overview
 
 This platform demonstrates production-ready implementation of:
 
-- **MCP Framework**: Intelligent AI agent coordination for complex business workflows
+- **MCP Framework**: Model Context Protocol for intelligent AI agent coordination
 - **Agentic Automation**: Multi-domain orchestration with real-time decision making
-- **Enterprise Architecture**: AI-powered microservices with event-driven communication and journey orchestration
-- **Modern Stack**: React 19 + Next.js 15 + Node.js, Java Spring Boot, Azure Cloud
+- **Enterprise Architecture**: 13-layer enterprise-grade microservices architecture
+- **Modern Full-Stack**: React 19 + Next.js 15, Java Spring Boot, Azure Cloud Platform
+- **DevOps Excellence**: Complete CI/CD, Infrastructure as Code, monitoring, and observability
 
 ## 🏗️ System Architecture
 
@@ -841,12 +852,19 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - [ ] Compliance automation
 - [ ] Performance optimization
 
-## 👥 Team
+## � Related Repositories
 
-- **Architecture**: Enterprise-grade system design
+For **executive-level documentation** and **high-level architecture overview**, see:
+
+- **[AI-Platform-for-FinTech-Evolution](https://github.com/calvinlee999/AI-Platform-for-FinTech-Evolution)** - Executive summary and strategic architecture overview for business stakeholders
+
+## �👥 Development Team
+
+- **Architecture**: Enterprise-grade system design and technical leadership
 - **Backend**: Java/Spring Boot AI-powered microservices with journey orchestration
-- **Frontend**: React/Next.js modern web development
-- **DevOps**: Azure cloud infrastructure and CI/CD
+- **Frontend**: React/Next.js modern web development with micro-frontend architecture
+- **DevOps**: Azure cloud infrastructure, CI/CD, and platform engineering
+- **AI/ML**: Model Context Protocol implementation and intelligent automation
 - **AI/ML**: Model Context Protocol and intelligent automation
 
 ---
