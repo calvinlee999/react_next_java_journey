@@ -59,20 +59,20 @@ graph TB
         Kafka --> Events
     end
     
-    subgraph "Data Layer"
-        Azure[Azure SQL Database]
-        Redis[Redis Cache]
-        Blob[Azure Blob Storage]
+    subgraph "Data Platform"
+        Databricks[Azure Databricks + Spark]
+        DataMesh[Domain Data Mesh]
+        Governance[AI Data Governance]
         
-        Azure --> Redis
-        Redis --> Blob
+        Databricks --> DataMesh
+        DataMesh --> Governance
     end
     
     UI --> Gateway
     Gateway --> Registry
     Coordinator --> Kafka
     Business --> Kafka
-    Kafka --> Data
+    Kafka --> Databricks
 ```
 
 ### MCP Framework Architecture
@@ -296,7 +296,7 @@ Ctrl+Shift+P → "Tasks: Run Task" → "Build All Services"
 - **Azure**: Primary cloud provider
 - **Docker**: Containerization
 - **Kubernetes**: Container orchestration
-- **Azure SQL Database**: Managed database service
+- **Azure Databricks**: Advanced analytics platform with Spark, Domain Data Mesh, AI-assisted data governance, lineage, data quality, scalability with partitioning, in-memory processing, and auto-scaling
 - **Azure Blob Storage**: Object storage
 
 ## 🏢 Enterprise Architecture Patterns

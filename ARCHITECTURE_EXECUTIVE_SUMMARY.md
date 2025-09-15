@@ -90,7 +90,7 @@ graph TB
 | **MCP Framework** | Java MCP + Spring AI | AI agent coordination and tool execution |
 | **Microservices** | Spring Boot 3.2 + AI Journey Orchestrator + Domain MCP + Docker | AI customer journey orchestration with domain-based MCP integration |
 | **Event Streaming** | Apache Kafka + Flink + Spark | Real-time, Near Real-Time and Batch event/data/inference processing |
-| **Data Platform** | Azure SQL + Redis + Blob | Multi-tier data architecture |
+| **Data Platform** | Azure Databricks + Spark + Domain Data Mesh + AI Data Governance | Advanced analytics with lineage, data quality, scalability, partitioning, in-memory processing, and auto-scaling |
 | **Cloud Infrastructure** | Azure Kubernetes Service | Container orchestration and scaling |
 | **Security** | OAuth 2.0 + Zero Trust | Enterprise-grade security architecture |
 
