@@ -11,7 +11,7 @@ This platform demonstrates production-ready implementation of:
 - **MCP Framework**: Intelligent AI agent coordination for complex business workflows
 - **Agentic Automation**: Multi-domain orchestration with real-time decision making
 - **Enterprise Architecture**: Microservices with event-driven communication
-- **Modern Stack**: React 19, Next.js 15, Java Spring Boot, Azure Cloud
+- **Modern Stack**: React 19 + Next.js 15 + Node.js, Java Spring Boot, Azure Cloud
 
 ## 🏗️ System Architecture
 
@@ -20,7 +20,7 @@ This platform demonstrates production-ready implementation of:
 ```mermaid
 graph TB
     subgraph "Frontend Layer"
-        UI[React 19 + Next.js 15]
+        UI[React 19 + Next.js 15 + Node.js]
         Demo[MCP Demo Interface]
         UI --> Demo
     end

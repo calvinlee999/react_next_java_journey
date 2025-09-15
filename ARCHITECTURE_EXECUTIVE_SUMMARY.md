@@ -85,7 +85,7 @@ graph TB
 
 | Layer | Technology | Purpose |
 |-------|------------|---------|
-| **Frontend** | React 19 + Next.js 15 | Modern web interface with SSR/SSG |
+| **Frontend** | React 19 + Next.js 15 + Node.js | Modern web interface with CSR/SSR/SSG/Caching |
 | **API Gateway** | Spring Cloud Gateway | Centralized routing, security, rate limiting |
 | **MCP Framework** | Java MCP + Spring AI | AI agent coordination and tool execution |
 | **Microservices** | Java Spring Boot 3.2 | Domain-driven business services |
