@@ -10,7 +10,7 @@ This platform demonstrates production-ready implementation of:
 
 - **MCP Framework**: Intelligent AI agent coordination for complex business workflows
 - **Agentic Automation**: Multi-domain orchestration with real-time decision making
-- **Enterprise Architecture**: Microservices with event-driven communication
+- **Enterprise Architecture**: AI-powered microservices with event-driven communication and journey orchestration
 - **Modern Stack**: React 19 + Next.js 15 + Node.js, Java Spring Boot, Azure Cloud
 
 ## 🏗️ System Architecture
@@ -286,7 +286,7 @@ Ctrl+Shift+P → "Tasks: Run Task" → "Build All Services"
 ### Backend
 
 - **Java 17**: Modern Java features
-- **Spring Boot 3.2**: Enterprise framework
+- **Spring Boot 3.2 + AI Journey Orchestrator + Domain MCP + Docker**: Intelligent microservices framework
 - **Spring Cloud Gateway**: API gateway with routing
 - **Apache Kafka + Flink + Spark**: Comprehensive event streaming and data processing platform
 - **Redis**: High-performance caching
@@ -504,7 +504,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## 👥 Team
 
 - **Architecture**: Enterprise-grade system design
-- **Backend**: Java/Spring Boot microservices
+- **Backend**: Java/Spring Boot AI-powered microservices with journey orchestration
 - **Frontend**: React/Next.js modern web development
 - **DevOps**: Azure cloud infrastructure and CI/CD
 - **AI/ML**: Model Context Protocol and intelligent automation

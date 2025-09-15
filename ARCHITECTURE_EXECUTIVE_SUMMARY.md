@@ -88,7 +88,7 @@ graph TB
 | **Frontend** | React 19 + Next.js 15 + Node.js | Modern web interface with CSR/SSR/SSG/Caching |
 | **API Gateway** | Spring Cloud Gateway | Centralized routing, security, rate limiting |
 | **MCP Framework** | Java MCP + Spring AI | AI agent coordination and tool execution |
-| **Microservices** | Java Spring Boot 3.2 | Domain-driven business services |
+| **Microservices** | Spring Boot 3.2 + AI Journey Orchestrator + Domain MCP + Docker | AI customer journey orchestration with domain-based MCP integration |
 | **Event Streaming** | Apache Kafka + Flink + Spark | Real-time, Near Real-Time and Batch event/data/inference processing |
 | **Data Platform** | Azure SQL + Redis + Blob | Multi-tier data architecture |
 | **Cloud Infrastructure** | Azure Kubernetes Service | Container orchestration and scaling |
