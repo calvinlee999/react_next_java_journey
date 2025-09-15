@@ -25,14 +25,20 @@ graph TB
         UI --> Demo
     end
     
-    subgraph "Unified Gateway Layer"
+    subgraph "API Gateway Layer"
         APIGateway[Spring Cloud Gateway + Multi-API]
-        MCPGateway[MCP Gateway + Lifecycle Management]
         Auth[OAuth 2.0 + JWT]
         
         APIGateway --> Auth
-        MCPGateway --> Auth
-        APIGateway --> MCPGateway
+    end
+    
+    subgraph "MCP Gateway Layer"
+        MCPGateway[MCP Gateway + Lifecycle Management]
+        MCPRegistry[MCP Server Registry]
+        MCPLifecycle[MCP Lifecycle Manager]
+        
+        MCPGateway --> MCPRegistry
+        MCPRegistry --> MCPLifecycle
     end
     
     subgraph "MCP Framework Core"
@@ -82,7 +88,7 @@ graph TB
     end
     
     UI --> APIGateway
-    APIGateway --> Registry
+    APIGateway --> MCPGateway
     MCPGateway --> Registry
     Registry --> AIInference
     AIInference --> AgenticWorkflow
@@ -429,10 +435,9 @@ Ctrl+Shift+P → "Tasks: Run Task" → "Build All Services"
 
 - **Java 17**: Modern Java features
 - **Spring Boot 3.2 + AI Journey Orchestrator + Domain MCP + Docker**: Intelligent microservices framework
-- **Unified Gateway Architecture**: 
+- **Gateway Architecture**:
   - **API Gateway**: Spring Cloud Gateway supporting REST, Async, GraphQL, WebHooks, WebSockets with OpenAPI/AsyncAPI standards
-  - **MCP Gateway**: Comprehensive MCP server and tool lifecycle management with protocol routing and version control
-  - **Lifecycle Management**: Unified API and MCP server lifecycle with health monitoring and security policies
+  - **MCP Gateway**: Dedicated MCP server registry, lifecycle management, tool registry, and protocol routing
 - **Apache Kafka + Flink + Spark**: Comprehensive event streaming and data processing platform
 - **Redis**: High-performance caching
 
@@ -475,12 +480,12 @@ Ctrl+Shift+P → "Tasks: Run Task" → "Build All Services"
 
 ### MCP Gateway Patterns
 
-- **Unified Gateway Architecture**: Single entry point for both traditional APIs and MCP protocol
+- **Dedicated MCP Layer**: Specialized gateway layer between API Gateway and MCP Framework
 - **MCP Server Lifecycle Management**: Automated registration, discovery, and health monitoring of MCP servers
 - **Tool Registry Management**: Dynamic tool discovery and version control for MCP tools
-- **Protocol Routing**: Intelligent routing between API calls and MCP protocol messages
+- **Protocol Routing**: Intelligent routing and translation of MCP protocol messages
 - **MCP Version Control**: Backward compatibility and migration support for MCP protocol versions
-- **Security Integration**: Unified authentication and authorization for API and MCP access
+- **Integration Bridge**: Seamless communication bridge between traditional APIs and MCP ecosystem
 - **Health Monitoring**: Real-time monitoring of MCP server availability and performance
 
 ### Event-Driven Architecture
