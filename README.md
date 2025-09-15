@@ -18,6 +18,7 @@ The AI Platform for FinTech Evolution is designed to **transform legacy FinTech 
 - Machine learning-driven risk assessment and fraud detection
 - Predictive analytics for market trends and customer behavior
 - Natural language processing for document analysis and compliance
+- Event Streaming with Apache Kafka, Flink, Spark for real-time, near real-time & batch data processing and inference
 
 ### **2. 🤖 Agentic Business Workflow Automation with MCP**
 
