@@ -40,15 +40,24 @@ graph TB
         Executor --> Coordinator
     end
     
+    subgraph "AI Platform"
+        AIInference[AI Inference Engine]
+        AgenticWorkflow[Agentic Workflow Automation]
+        AgenticDev[Agentic Development Platform]
+        
+        AIInference --> AgenticWorkflow
+        AgenticWorkflow --> AgenticDev
+    end
+    
     subgraph "Business Domains"
         User[User Management]
         Journey[Journey Orchestrator]
-        AI[AI Inference]
+        AIServices[AI Services]
         Data[Data Products]
         
         User --> Registry
         Journey --> Registry
-        AI --> Registry
+        AIServices --> Registry
         Data --> Registry
     end
     
@@ -70,6 +79,9 @@ graph TB
     
     UI --> Gateway
     Gateway --> Registry
+    Registry --> AIInference
+    AIInference --> AgenticWorkflow
+    AgenticDev --> Business
     Coordinator --> Kafka
     Business --> Kafka
     Kafka --> Databricks
@@ -108,6 +120,59 @@ graph LR
     
     Agent --> Client
     BusinessSvc --> Events[Event Bus]
+```
+
+### AI Platform Architecture
+
+```mermaid
+graph TB
+    subgraph "AI Platform Core"
+        AIInference[AI Inference Engine]
+        AgenticWorkflow[Agentic Workflow Automation]
+        AgenticDev[Agentic Development Platform]
+    end
+    
+    subgraph "AI Inference Engine"
+        ModelRegistry[AI Model Registry]
+        InferenceAPI[Inference API]
+        MLOps[MLOps Pipeline]
+        
+        ModelRegistry --> InferenceAPI
+        InferenceAPI --> MLOps
+    end
+    
+    subgraph "Agentic Workflow Automation"
+        WorkflowEngine[Workflow Engine]
+        TaskOrchestrator[Task Orchestrator]
+        DecisionTree[AI Decision Tree]
+        
+        WorkflowEngine --> TaskOrchestrator
+        TaskOrchestrator --> DecisionTree
+    end
+    
+    subgraph "Agentic Development Platform"
+        Microfrontend[Dynamic Microfrontend Generator]
+        ServiceGenerator[Auto Service Generator]
+        DatabaseSchema[AI Database Schema Designer]
+        APIInventory[Continuous API Inventory]
+        
+        Microfrontend --> ServiceGenerator
+        ServiceGenerator --> DatabaseSchema
+        DatabaseSchema --> APIInventory
+    end
+    
+    subgraph "MCP Integration Layer"
+        MCPConnector[MCP Connector]
+        FeatureRegistry[Feature Registry]
+        APIManager[API Manager]
+        
+        MCPConnector --> FeatureRegistry
+        FeatureRegistry --> APIManager
+    end
+    
+    AIInference --> AgenticWorkflow
+    AgenticWorkflow --> AgenticDev
+    AgenticDev --> MCPConnector
 ```
 
 ## 🔄 Sequence Diagrams
@@ -290,6 +355,26 @@ Ctrl+Shift+P → "Tasks: Run Task" → "Build All Services"
 - **Spring Cloud Gateway + Multi-API**: Comprehensive API gateway supporting REST, Async, GraphQL, WebHooks, WebSockets with OpenAPI/AsyncAPI standards
 - **Apache Kafka + Flink + Spark**: Comprehensive event streaming and data processing platform
 - **Redis**: High-performance caching
+
+### AI Platform
+
+- **AI Inference Engine**: Advanced machine learning model deployment and inference
+  - Model Registry: Centralized AI model management
+  - Inference API: High-performance model serving
+  - MLOps Pipeline: Automated model lifecycle management
+- **Agentic Workflow Automation**: Intelligent workflow orchestration
+  - Workflow Engine: AI-driven process automation
+  - Task Orchestrator: Dynamic task management
+  - AI Decision Tree: Intelligent decision-making capabilities
+- **Agentic Development Platform**: Autonomous development capabilities
+  - Dynamic Microfrontend Generator: AI-generated UI components
+  - Auto Service Generator: Automated microservice creation
+  - AI Database Schema Designer: Intelligent schema design
+  - Continuous API Inventory: Real-time API discovery and management
+- **MCP Integration**: Seamless Model Context Protocol integration
+  - Feature Registry: Centralized feature management
+  - API Manager: Comprehensive API lifecycle management
+  - Continuous Inventory: Real-time tracking of existing and new features/APIs
 
 ### Cloud & Infrastructure
 
