@@ -157,25 +157,51 @@ graph TB
 ```mermaid
 sequenceDiagram
     participant Client
-    participant APIM as API Management
+    participant APIM as External API Management
     participant Frontend as Next.js Frontend
+    participant InternalGW as Internal API Gateway
+    participant LoadBalancer as Load Balancer
+    participant Auth as Auth Proxy
+    participant RateLimit as Rate Limiter
     participant Backend as Spring Boot API
-    participant DB as Database
+    participant Cache as Redis Cache
+    participant DB as Azure SQL Database
 
+    Note over Client, DB: Enhanced REST API Processing Flow
+    
     Client->>APIM: REST Request + Subscription Key
     APIM->>APIM: Validate Subscription
-    APIM->>APIM: Apply Rate Limiting
-    APIM->>APIM: Check Cache
+    APIM->>APIM: Apply External Rate Limiting
+    APIM->>APIM: Check External Cache
     
-    alt Cache Hit
+    alt External Cache Hit
         APIM-->>Client: Cached Response
-    else Cache Miss
+    else External Cache Miss
         APIM->>Frontend: Forward Request
-        Frontend->>Backend: API Call
-        Backend->>DB: Query Data
-        DB-->>Backend: Return Data
-        Backend-->>Frontend: Response
-        Frontend-->>APIM: Response
+        Frontend->>InternalGW: API Call with Auth Token
+        
+        InternalGW->>Auth: Validate Internal Auth
+        Auth-->>InternalGW: Auth Valid
+        InternalGW->>RateLimit: Check Internal Rate Limits
+        RateLimit-->>InternalGW: Rate Limit OK
+        InternalGW->>LoadBalancer: Route Request
+        
+        LoadBalancer->>LoadBalancer: Select Healthy Backend Instance
+        LoadBalancer->>Backend: Forward Request
+        
+        Backend->>Cache: Check Redis Cache
+        alt Backend Cache Hit
+            Cache-->>Backend: Cached Data
+        else Backend Cache Miss
+            Backend->>DB: Query Database
+            DB-->>Backend: Return Data
+            Backend->>Cache: Store in Cache
+        end
+        
+        Backend-->>LoadBalancer: API Response
+        LoadBalancer-->>InternalGW: Forward Response
+        InternalGW-->>Frontend: Response
+        Frontend-->>APIM: Response with Metrics
         APIM->>APIM: Cache Response
         APIM-->>Client: Response + Analytics
     end
@@ -189,32 +215,58 @@ sequenceDiagram
 ```mermaid
 sequenceDiagram
     participant Client
-    participant APIM as API Management
-    participant WSGateway as WebSocket Gateway
-    participant Backend as Spring Boot WS
-    participant DB as Database
+    participant APIM as External API Management
+    participant WSClient as WebSocket Client
+    participant InternalGW as Internal API Gateway
+    participant LoadBalancer as Load Balancer
+    participant Auth as Auth Proxy
+    participant WSServer as WebSocket Server
+    participant Cache as Redis Cache
+    participant DB as Azure SQL Database
 
-    Client->>APIM: WebSocket Upgrade Request
+    Note over Client, DB: Enhanced WebSocket Connection Flow
+    
+    Client->>APIM: WebSocket Upgrade Request + Subscription Key
     APIM->>APIM: Validate Subscription Key
     APIM->>APIM: Authenticate User (JWT)
-    APIM->>WSGateway: Establish Connection
-    WSGateway->>Backend: WebSocket Connection
-    Backend-->>WSGateway: Connection Established
-    WSGateway-->>APIM: Connection Ready
+    APIM->>APIM: Apply Connection Rate Limiting
+    APIM->>WSClient: Establish External WebSocket
+    WSClient->>InternalGW: Internal WebSocket Upgrade
+    
+    InternalGW->>Auth: Validate Internal Auth Token
+    Auth-->>InternalGW: Auth Valid
+    InternalGW->>LoadBalancer: Route WebSocket Connection
+    LoadBalancer->>LoadBalancer: Select Available WebSocket Server
+    LoadBalancer->>WSServer: Establish WebSocket Connection
+    WSServer-->>LoadBalancer: Connection Established
+    LoadBalancer-->>InternalGW: Connection Ready
+    InternalGW-->>WSClient: Internal Connection Ready
+    WSClient-->>APIM: Connection Established
     APIM-->>Client: WebSocket Connected
 
-    loop Real-time Messages
+    loop Real-time Message Exchange
         Client->>APIM: WebSocket Message
-        APIM->>APIM: Apply Policies
-        APIM->>WSGateway: Forward Message
-        WSGateway->>Backend: Process Message
-        Backend->>DB: Update Data
-        Backend-->>WSGateway: Response Message
-        WSGateway-->>APIM: Forward Response
+        APIM->>APIM: Apply Message Policies
+        APIM->>WSClient: Forward Message
+        WSClient->>InternalGW: Internal Message
+        InternalGW->>LoadBalancer: Route Message
+        LoadBalancer->>WSServer: Process Message
+        
+        WSServer->>Cache: Check/Update Cache
+        WSServer->>DB: Update/Query Data
+        DB-->>WSServer: Data Response
+        Cache-->>WSServer: Cache Response
+        
+        WSServer-->>LoadBalancer: Response Message
+        LoadBalancer-->>InternalGW: Forward Response
+        InternalGW-->>WSClient: Internal Response
+        WSClient-->>APIM: Forward Response
         APIM-->>Client: WebSocket Message
     end
 
     APIM->>APIM: Log Connection Metrics
+    InternalGW->>InternalGW: Log Internal WebSocket Metrics
+    LoadBalancer->>LoadBalancer: Update Connection Health
 ```
 
 ### WebHook Flow
@@ -222,25 +274,59 @@ sequenceDiagram
 ```mermaid
 sequenceDiagram
     participant External as External Service
-    participant APIM as API Management
+    participant APIM as External API Management
+    participant WHClient as WebHook Client
+    participant InternalGW as Internal API Gateway
+    participant LoadBalancer as Load Balancer
+    participant Auth as Auth Proxy
     participant WHHandler as WebHook Handler
     participant Backend as Spring Boot API
-    participant DB as Database
+    participant Cache as Redis Cache
+    participant DB as Azure SQL Database
 
+    Note over External, DB: Enhanced WebHook Processing Flow
+    
     External->>APIM: WebHook Event + Signature
     APIM->>APIM: Validate Request Format
-    APIM->>APIM: Verify Signature (GitHub/Stripe)
+    APIM->>APIM: Verify Webhook Signature (GitHub/Stripe)
     APIM->>APIM: Apply Security Policies
-    APIM->>WHHandler: Forward Validated Event
-    WHHandler->>WHHandler: Process Event Data
-    WHHandler->>Backend: Update Application State
-    Backend->>DB: Store Event Data
-    Backend-->>WHHandler: Processing Complete
-    WHHandler-->>APIM: Success Response
-    APIM-->>External: HTTP 200 OK
+    APIM->>WHClient: Forward Validated Event
+    WHClient->>InternalGW: Internal WebHook Request
+    
+    InternalGW->>Auth: Validate Internal Service Auth
+    Auth-->>InternalGW: Auth Valid
+    InternalGW->>LoadBalancer: Route WebHook Event
+    LoadBalancer->>LoadBalancer: Select Available Handler Instance
+    LoadBalancer->>WHHandler: Forward Event
+    
+    WHHandler->>WHHandler: Parse Event Data
+    WHHandler->>WHHandler: Validate Event Schema
+    
+    alt Event Processing Success
+        WHHandler->>Backend: Update Application State
+        Backend->>Cache: Check/Update Cache
+        Backend->>DB: Store Event Data
+        DB-->>Backend: Storage Confirmation
+        Cache-->>Backend: Cache Updated
+        Backend-->>WHHandler: Processing Complete
+        WHHandler-->>LoadBalancer: Success Response
+        LoadBalancer-->>InternalGW: Forward Success
+        InternalGW-->>WHClient: Internal Success
+        WHClient-->>APIM: Success Response
+        APIM-->>External: HTTP 200 OK
+    else Event Processing Error
+        WHHandler->>WHHandler: Log Error Details
+        WHHandler-->>LoadBalancer: Error Response
+        LoadBalancer-->>InternalGW: Forward Error
+        InternalGW-->>WHClient: Internal Error
+        WHClient-->>APIM: Error Response
+        APIM-->>External: HTTP 400/500 Error
+    end
 
     APIM->>APIM: Log Event Processing
     APIM->>APIM: Update Analytics
+    InternalGW->>InternalGW: Log Internal WebHook Metrics
+    LoadBalancer->>LoadBalancer: Update Handler Health
 ```
 
 ### Async API Flow
@@ -248,46 +334,83 @@ sequenceDiagram
 ```mermaid
 sequenceDiagram
     participant Client
-    participant APIM as API Management
-    participant Queue as Message Queue
+    participant APIM as External API Management
+    participant AsyncClient as Async API Client
+    participant InternalGW as Internal API Gateway
+    participant LoadBalancer as Load Balancer
+    participant Auth as Auth Proxy
     participant AsyncProcessor as Async Processor
+    participant Queue as Message Queue
     participant Backend as Spring Boot API
-    participant DB as Database
+    participant ServiceBus as Azure Service Bus
+    participant EventGrid as Azure Event Grid
     participant NotifyService as Notification Service
+    participant Cache as Redis Cache
+    participant DB as Azure SQL Database
 
-    Note over Client, NotifyService: Asynchronous API Processing Flow
+    Note over Client, DB: Enhanced Asynchronous API Processing Flow
     
     Client->>APIM: Async Request + Subscription Key
     APIM->>APIM: Validate Subscription & Auth
-    APIM->>APIM: Generate Request ID
+    APIM->>APIM: Generate Unique Request ID
     APIM-->>Client: HTTP 202 Accepted + Request ID
     
-    APIM->>Queue: Enqueue Request Message
-    Queue->>AsyncProcessor: Dequeue Message
-    AsyncProcessor->>AsyncProcessor: Validate Message Format
+    APIM->>AsyncClient: Forward Async Request
+    AsyncClient->>InternalGW: Internal Async Request
+    InternalGW->>Auth: Validate Internal Auth Token
+    Auth-->>InternalGW: Auth Valid
+    InternalGW->>LoadBalancer: Route Async Request
+    LoadBalancer->>Queue: Enqueue Request Message
+    Queue->>AsyncProcessor: Dequeue Message for Processing
     
-    alt Processing Success
-        AsyncProcessor->>Backend: Process Business Logic
-        Backend->>DB: Execute Operations
+    AsyncProcessor->>AsyncProcessor: Validate Message Format
+    AsyncProcessor->>AsyncProcessor: Parse Request Parameters
+    
+    alt Processing Success Path
+        AsyncProcessor->>Backend: Execute Business Logic
+        Backend->>Cache: Check/Update Cache
+        Backend->>DB: Execute Database Operations
         DB-->>Backend: Operation Results
+        Cache-->>Backend: Cache Response
         Backend-->>AsyncProcessor: Processing Complete
-        AsyncProcessor->>NotifyService: Send Success Notification
-        NotifyService->>Client: Push Notification/Email
-        AsyncProcessor->>APIM: Update Request Status (Completed)
-    else Processing Error
-        AsyncProcessor->>AsyncProcessor: Handle Error
-        AsyncProcessor->>Queue: Retry Message (if retryable)
-        AsyncProcessor->>NotifyService: Send Error Notification
-        NotifyService->>Client: Error Notification
-        AsyncProcessor->>APIM: Update Request Status (Failed)
+        
+        par Notification Broadcasting
+            AsyncProcessor->>ServiceBus: Send Success Message
+            ServiceBus->>NotifyService: Trigger Notification
+            NotifyService->>Client: Push Notification/Email
+        and
+            AsyncProcessor->>EventGrid: Publish Success Event
+            EventGrid->>NotifyService: Event-driven Notification
+        end
+        
+        AsyncProcessor->>InternalGW: Update Request Status (Completed)
+        InternalGW->>APIM: Status Update with Results
+        
+    else Processing Error Path
+        AsyncProcessor->>AsyncProcessor: Handle Error & Log Details
+        
+        alt Retryable Error
+            AsyncProcessor->>Queue: Retry Message (with backoff)
+            Queue->>AsyncProcessor: Requeue for Later Processing
+        else Non-retryable Error
+            AsyncProcessor->>ServiceBus: Send Error Message
+            ServiceBus->>NotifyService: Trigger Error Notification
+            NotifyService->>Client: Error Notification
+            AsyncProcessor->>InternalGW: Update Request Status (Failed)
+            InternalGW->>APIM: Status Update with Error Details
+        end
     end
     
     Note over Client: Client can poll status using Request ID
     Client->>APIM: GET /status/{requestId}
-    APIM-->>Client: Current Status + Results
+    APIM->>InternalGW: Forward Status Request
+    InternalGW-->>APIM: Current Status + Results
+    APIM-->>Client: Status Response
     
     APIM->>APIM: Log Async Metrics
     APIM->>APIM: Update Analytics Dashboard
+    InternalGW->>InternalGW: Log Internal Async Metrics
+    LoadBalancer->>LoadBalancer: Update Queue Health Metrics
 ```
 
 ### GraphQL API Flow
@@ -295,63 +418,100 @@ sequenceDiagram
 ```mermaid
 sequenceDiagram
     participant Client
-    participant APIM as API Management
+    participant APIM as External API Management
+    participant GraphQLClient as GraphQL Client
+    participant InternalGW as Internal API Gateway
+    participant LoadBalancer as Load Balancer
+    participant Auth as Auth Proxy
     participant GraphQLGateway as GraphQL Gateway
-    participant Resolver as Field Resolvers
-    participant Backend1 as User Service
-    participant Backend2 as Order Service
-    participant Backend3 as Product Service
+    participant UserResolver as User Resolver
+    participant OrderResolver as Order Resolver
+    participant ProductResolver as Product Resolver
+    participant UserService as User Service
+    participant OrderService as Order Service
+    participant ProductService as Product Service
     participant Cache as Redis Cache
-    participant DB1 as User DB
-    participant DB2 as Order DB
-    participant DB3 as Product DB
+    participant UserDB as User Database
+    participant OrderDB as Order Database
+    participant ProductDB as Product Database
 
-    Note over Client, DB3: GraphQL Federated Query Processing
+    Note over Client, ProductDB: Enhanced GraphQL Federated Query Processing
     
     Client->>APIM: GraphQL Query + Subscription Key
     APIM->>APIM: Validate API Key & Rate Limits
-    APIM->>APIM: Parse GraphQL Query
-    APIM->>GraphQLGateway: Forward Validated Query
+    APIM->>APIM: Parse GraphQL Query Schema
+    APIM->>GraphQLClient: Forward Validated Query
+    GraphQLClient->>InternalGW: Internal GraphQL Request
     
-    GraphQLGateway->>GraphQLGateway: Query Analysis & Planning
-    GraphQLGateway->>GraphQLGateway: Check Query Complexity
+    InternalGW->>Auth: Validate Internal Auth Token
+    Auth-->>InternalGW: Auth Valid
+    InternalGW->>LoadBalancer: Route GraphQL Query
+    LoadBalancer->>GraphQLGateway: Forward to GraphQL Gateway
+    
+    GraphQLGateway->>GraphQLGateway: Query Analysis & Field Extraction
+    GraphQLGateway->>GraphQLGateway: Check Query Complexity & Depth
+    GraphQLGateway->>Cache: Check Redis for Cached Results
     
     alt Query Complexity Valid
-        GraphQLGateway->>Cache: Check Cache for Partial Results
-        
-        par Parallel Resolution
-            GraphQLGateway->>Resolver: Resolve User Fields
-            Resolver->>Backend1: Fetch User Data
-            Backend1->>DB1: Query Users
-            DB1-->>Backend1: User Results
-            Backend1-->>Resolver: User Data
-        and
-            GraphQLGateway->>Resolver: Resolve Order Fields
-            Resolver->>Backend2: Fetch Order Data
-            Backend2->>DB2: Query Orders
-            DB2-->>Backend2: Order Results
-            Backend2-->>Resolver: Order Data
-        and
-            GraphQLGateway->>Resolver: Resolve Product Fields
-            Resolver->>Backend3: Fetch Product Data
-            Backend3->>DB3: Query Products
-            DB3-->>Backend3: Product Results
-            Backend3-->>Resolver: Product Data
+        alt Partial Cache Hit
+            Cache-->>GraphQLGateway: Partial Cached Data
+            GraphQLGateway->>GraphQLGateway: Identify Missing Fields
+        else Cache Miss
+            GraphQLGateway->>GraphQLGateway: Plan Full Resolution
         end
         
-        GraphQLGateway->>GraphQLGateway: Merge Resolved Data
-        GraphQLGateway->>Cache: Cache Resolved Data
-        GraphQLGateway-->>APIM: GraphQL Response
+        par Parallel Federated Resolution
+            alt User Fields Requested
+                GraphQLGateway->>UserResolver: Resolve User Fields
+                UserResolver->>UserService: Fetch User Data
+                UserService->>UserDB: Query User Database
+                UserDB-->>UserService: User Results
+                UserService-->>UserResolver: User Data
+                UserResolver-->>GraphQLGateway: Resolved User Fields
+            end
+        and
+            alt Order Fields Requested
+                GraphQLGateway->>OrderResolver: Resolve Order Fields
+                OrderResolver->>OrderService: Fetch Order Data
+                OrderService->>OrderDB: Query Order Database
+                OrderDB-->>OrderService: Order Results
+                OrderService-->>OrderResolver: Order Data
+                OrderResolver-->>GraphQLGateway: Resolved Order Fields
+            end
+        and
+            alt Product Fields Requested
+                GraphQLGateway->>ProductResolver: Resolve Product Fields
+                ProductResolver->>ProductService: Fetch Product Data
+                ProductService->>ProductDB: Query Product Database
+                ProductDB-->>ProductService: Product Results
+                ProductService-->>ProductResolver: Product Data
+                ProductResolver-->>GraphQLGateway: Resolved Product Fields
+            end
+        end
+        
+        GraphQLGateway->>GraphQLGateway: Merge All Resolved Data
+        GraphQLGateway->>GraphQLGateway: Apply Field-Level Security
+        GraphQLGateway->>Cache: Cache Resolved Results by Query Hash
+        GraphQLGateway-->>LoadBalancer: Complete GraphQL Response
+        LoadBalancer-->>InternalGW: Forward Response
+        InternalGW-->>GraphQLClient: Internal Response
+        GraphQLClient-->>APIM: GraphQL Response with Metadata
         APIM-->>Client: JSON Response
         
     else Query Too Complex
-        GraphQLGateway-->>APIM: Query Complexity Error
+        GraphQLGateway-->>LoadBalancer: Query Complexity Error
+        LoadBalancer-->>InternalGW: Forward Error
+        InternalGW-->>GraphQLClient: Internal Error
+        GraphQLClient-->>APIM: Complexity Error
         APIM-->>Client: HTTP 400 - Query Too Complex
     end
     
-    APIM->>APIM: Log GraphQL Metrics
+    APIM->>APIM: Log GraphQL Query Metrics
     APIM->>APIM: Track Field Usage Analytics
-    APIM->>APIM: Monitor Performance Metrics
+    APIM->>APIM: Monitor Resolver Performance
+    InternalGW->>InternalGW: Log Internal GraphQL Metrics
+    LoadBalancer->>LoadBalancer: Update Resolver Health Status
+    GraphQLGateway->>GraphQLGateway: Update Schema Usage Statistics
 ```
 
 ## 🏛️ Azure Well-Architected Framework Implementation
