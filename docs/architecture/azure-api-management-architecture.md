@@ -159,6 +159,117 @@ sequenceDiagram
     APIM->>APIM: Update Analytics
 ```
 
+### Async API Flow
+
+```mermaid
+sequenceDiagram
+    participant Client
+    participant APIM as API Management
+    participant Queue as Message Queue
+    participant AsyncProcessor as Async Processor
+    participant Backend as Spring Boot API
+    participant DB as Database
+    participant NotifyService as Notification Service
+
+    Note over Client, NotifyService: Asynchronous API Processing Flow
+    
+    Client->>APIM: Async Request + Subscription Key
+    APIM->>APIM: Validate Subscription & Auth
+    APIM->>APIM: Generate Request ID
+    APIM-->>Client: HTTP 202 Accepted + Request ID
+    
+    APIM->>Queue: Enqueue Request Message
+    Queue->>AsyncProcessor: Dequeue Message
+    AsyncProcessor->>AsyncProcessor: Validate Message Format
+    
+    alt Processing Success
+        AsyncProcessor->>Backend: Process Business Logic
+        Backend->>DB: Execute Operations
+        DB-->>Backend: Operation Results
+        Backend-->>AsyncProcessor: Processing Complete
+        AsyncProcessor->>NotifyService: Send Success Notification
+        NotifyService->>Client: Push Notification/Email
+        AsyncProcessor->>APIM: Update Request Status (Completed)
+    else Processing Error
+        AsyncProcessor->>AsyncProcessor: Handle Error
+        AsyncProcessor->>Queue: Retry Message (if retryable)
+        AsyncProcessor->>NotifyService: Send Error Notification
+        NotifyService->>Client: Error Notification
+        AsyncProcessor->>APIM: Update Request Status (Failed)
+    end
+    
+    Note over Client: Client can poll status using Request ID
+    Client->>APIM: GET /status/{requestId}
+    APIM-->>Client: Current Status + Results
+    
+    APIM->>APIM: Log Async Metrics
+    APIM->>APIM: Update Analytics Dashboard
+```
+
+### GraphQL API Flow
+
+```mermaid
+sequenceDiagram
+    participant Client
+    participant APIM as API Management
+    participant GraphQLGateway as GraphQL Gateway
+    participant Resolver as Field Resolvers
+    participant Backend1 as User Service
+    participant Backend2 as Order Service
+    participant Backend3 as Product Service
+    participant Cache as Redis Cache
+    participant DB1 as User DB
+    participant DB2 as Order DB
+    participant DB3 as Product DB
+
+    Note over Client, DB3: GraphQL Federated Query Processing
+    
+    Client->>APIM: GraphQL Query + Subscription Key
+    APIM->>APIM: Validate API Key & Rate Limits
+    APIM->>APIM: Parse GraphQL Query
+    APIM->>GraphQLGateway: Forward Validated Query
+    
+    GraphQLGateway->>GraphQLGateway: Query Analysis & Planning
+    GraphQLGateway->>GraphQLGateway: Check Query Complexity
+    
+    alt Query Complexity Valid
+        GraphQLGateway->>Cache: Check Cache for Partial Results
+        
+        par Parallel Resolution
+            GraphQLGateway->>Resolver: Resolve User Fields
+            Resolver->>Backend1: Fetch User Data
+            Backend1->>DB1: Query Users
+            DB1-->>Backend1: User Results
+            Backend1-->>Resolver: User Data
+        and
+            GraphQLGateway->>Resolver: Resolve Order Fields
+            Resolver->>Backend2: Fetch Order Data
+            Backend2->>DB2: Query Orders
+            DB2-->>Backend2: Order Results
+            Backend2-->>Resolver: Order Data
+        and
+            GraphQLGateway->>Resolver: Resolve Product Fields
+            Resolver->>Backend3: Fetch Product Data
+            Backend3->>DB3: Query Products
+            DB3-->>Backend3: Product Results
+            Backend3-->>Resolver: Product Data
+        end
+        
+        GraphQLGateway->>GraphQLGateway: Merge Resolved Data
+        GraphQLGateway->>Cache: Cache Resolved Data
+        GraphQLGateway-->>APIM: GraphQL Response
+        APIM-->>Client: JSON Response
+        
+    else Query Too Complex
+        GraphQLGateway-->>APIM: Query Complexity Error
+        APIM-->>Client: HTTP 400 - Query Too Complex
+    end
+    
+    APIM->>APIM: Log GraphQL Metrics
+    APIM->>APIM: Track Field Usage Analytics
+    APIM->>APIM: Monitor Performance Metrics
+```
+
 ## 🏛️ Azure Well-Architected Framework Implementation
 
 ### 🛡️ Security Pillar
