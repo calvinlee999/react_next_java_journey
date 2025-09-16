@@ -8,6 +8,8 @@ graph TB
         Web[🌐 Web Browser]
         Mobile[📱 Mobile App]
         Desktop[🖥️ Desktop App]
+        BIUsers[👥 Business Users]
+        DataAnalysts[📊 Data Analysts]
     end
 
     subgraph EXTERNAL_APIM ["🌍 Azure API Management Gateway"]
@@ -52,12 +54,67 @@ graph TB
         end
     end
 
-    subgraph DATA_LAYER ["💾 Data Layer"]
-        Database[(🗄️ Azure SQL Database)]
-        Cache[(⚡ Redis Cache)]
-        UserDB[(👤 User Database)]
-        OrderDB[(📦 Order Database)]
-        ProductDB[(🛍️ Product Database)]
+    subgraph STREAMING_LAYER ["🌊 Real-Time Streaming Layer"]
+        subgraph KAFKA_CLUSTER ["Apache Kafka Cluster"]
+            KafkaProducer[📤 Kafka Producer]
+            KafkaBroker[🔄 Kafka Broker]
+            KafkaConsumer[📥 Kafka Consumer]
+        end
+        
+        subgraph STREAM_PROCESSING ["Stream Processing"]
+            FlinkStreaming[⚡ Apache Flink]
+            FlinkCEP[🧠 Flink CEP Engine]
+            FlinkSQL[📊 Flink SQL]
+        end
+    end
+
+    subgraph DATA_PROCESSING ["🔧 Data Processing Layer"]
+        subgraph SPARK_CLUSTER ["Apache Spark Cluster"]
+            SparkStreaming[📡 Spark Streaming]
+            SparkBatch[� Spark Batch]
+            SparkML[🤖 Spark MLlib]
+            SparkSQL[🗃️ Spark SQL]
+        end
+        
+        subgraph DATABRICKS ["Azure Databricks"]
+            DatabricksWorkspace[🏢 Databricks Workspace]
+            DatabricksNotebooks[📝 Notebooks]
+            DatabricksJobs[⚙️ Automated Jobs]
+            MLFlow[🧪 MLflow]
+        end
+    end
+
+    subgraph DATA_STORAGE ["�💾 Data Storage Layer"]
+        subgraph OPERATIONAL_DB ["Operational Databases"]
+            Database[(🗄️ Azure SQL Database)]
+            Cache[(⚡ Redis Cache)]
+            UserDB[(👤 User Database)]
+            OrderDB[(📦 Order Database)]
+            ProductDB[(🛍️ Product Database)]
+        end
+        
+        subgraph LAKEHOUSE ["Azure Lakehouse Architecture"]
+            DataLake[(🏞️ Azure Data Lake Gen2)]
+            DeltaLake[(🔺 Delta Lake)]
+            SynapseSQL[(🔗 Azure Synapse SQL)]
+            CosmosDB[(🌐 Cosmos DB)]
+        end
+    end
+
+    subgraph BI_LAYER ["📊 Business Intelligence Layer"]
+        subgraph VISUALIZATION ["Data Visualization"]
+            PowerBI[📈 Power BI]
+            Grafana[📉 Grafana]
+            Superset[📊 Apache Superset]
+            CustomDash[🎛️ Custom Dashboard]
+        end
+        
+        subgraph ANALYTICS ["Advanced Analytics"]
+            RealTimeAnalytics[⚡ Real-Time Analytics]
+            NearRealTime[🕐 Near Real-Time Analytics]
+            BatchAnalytics[📦 Batch Analytics]
+            MLPredictions[🔮 ML Predictions]
+        end
     end
 
     subgraph AZURE_SERVICES ["☁️ Azure Services"]
@@ -67,12 +124,19 @@ graph TB
         Monitor[📈 Azure Monitor]
         ServiceBus[🚌 Azure Service Bus]
         EventGrid[⚡ Azure Event Grid]
+        EventHubs[🎯 Azure Event Hubs]
+        StreamAnalytics[🌊 Azure Stream Analytics]
     end
 
     %% Client to External Gateway
     Web --> APIM
     Mobile --> APIM
     Desktop --> APIM
+
+    %% BI Users Access
+    BIUsers --> PowerBI
+    DataAnalysts --> DatabricksWorkspace
+    BIUsers --> CustomDash
 
     %% External Gateway to Frontend
     APIM --> NextJS
@@ -102,16 +166,60 @@ graph TB
     LoadBalancer --> AsyncProcessor
     LoadBalancer --> GraphQLGateway
 
-    %% Async Processing Flow
+    %% Real-Time Data Streaming
+    SpringBoot --> KafkaProducer
+    WebSocketServer --> KafkaProducer
+    AsyncProcessor --> KafkaProducer
+    KafkaProducer --> KafkaBroker
+    KafkaBroker --> KafkaConsumer
+
+    %% Stream Processing Flows
+    KafkaConsumer --> FlinkStreaming
+    FlinkStreaming --> FlinkCEP
+    FlinkStreaming --> FlinkSQL
+    KafkaConsumer --> SparkStreaming
+
+    %% Batch Processing
+    Database --> SparkBatch
+    UserDB --> SparkBatch
+    OrderDB --> SparkBatch
+    ProductDB --> SparkBatch
+
+    %% Databricks Integration
+    SparkBatch --> DatabricksWorkspace
+    SparkStreaming --> DatabricksWorkspace
+    DatabricksWorkspace --> DatabricksNotebooks
+    DatabricksWorkspace --> DatabricksJobs
+    DatabricksWorkspace --> MLFlow
+
+    %% Data Lake Storage
+    FlinkStreaming --> DataLake
+    SparkStreaming --> DataLake
+    SparkBatch --> DeltaLake
+    DatabricksJobs --> DeltaLake
+
+    %% Analytics Processing
+    DeltaLake --> SynapseSQL
+    DataLake --> RealTimeAnalytics
+    FlinkSQL --> NearRealTime
+    SparkSQL --> BatchAnalytics
+    MLFlow --> MLPredictions
+
+    %% BI Visualization
+    SynapseSQL --> PowerBI
+    RealTimeAnalytics --> Grafana
+    NearRealTime --> Superset
+    BatchAnalytics --> CustomDash
+    MLPredictions --> PowerBI
+
+    %% Traditional Data Flow
     AsyncProcessor --> MessageQueue
     MessageQueue --> ServiceBus
-
-    %% GraphQL Resolution
     GraphQLGateway --> UserResolver
     GraphQLGateway --> OrderResolver
     GraphQLGateway --> ProductResolver
 
-    %% Backend to Data Layer
+    %% Backend to Operational Databases
     SpringBoot --> Database
     SpringBoot --> Cache
     WebSocketServer --> Database
@@ -132,15 +240,17 @@ graph TB
     InternalAPIM --> KeyVault
     InternalAPIM --> AppInsights
 
-    %% Backend to Azure Services
+    %% Streaming to Azure Services
+    KafkaBroker --> EventHubs
+    FlinkStreaming --> StreamAnalytics
     AsyncProcessor --> ServiceBus
     AsyncProcessor --> EventGrid
-    MessageQueue --> ServiceBus
 
     %% Management and Monitoring
     DevPortal --> APIM
     Analytics --> APIM
     Analytics --> InternalAPIM
+    Monitor --> PowerBI
 
     %% Styling
     style APIM fill:#0078d4,stroke:#005a9e,stroke-width:3px,color:#fff
@@ -148,6 +258,12 @@ graph TB
     style GraphQLGateway fill:#e91e63,stroke:#c2185b,stroke-width:2px,color:#fff
     style AsyncProcessor fill:#ff9800,stroke:#f57c00,stroke-width:2px,color:#fff
     style MessageQueue fill:#4caf50,stroke:#388e3c,stroke-width:2px,color:#fff
+    style KafkaBroker fill:#000000,stroke:#333333,stroke-width:3px,color:#fff
+    style FlinkStreaming fill:#e6193c,stroke:#b71c1c,stroke-width:2px,color:#fff
+    style SparkBatch fill:#e25a00,stroke:#d84315,stroke-width:2px,color:#fff
+    style DatabricksWorkspace fill:#ff3621,stroke:#d32f2f,stroke-width:3px,color:#fff
+    style DataLake fill:#0078d4,stroke:#005a9e,stroke-width:2px,color:#fff
+    style PowerBI fill:#f2c811,stroke:#f57f17,stroke-width:2px,color:#000
 ```
 
 ## 🔄 API Management Flow Diagrams
