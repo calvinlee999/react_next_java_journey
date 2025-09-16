@@ -1,9 +1,79 @@
 # Azure Data & AI Platform Architecture
 
-## � High-Level Data & AI Platform Overview
+## 🎯 High-Level Data & AI Platform Overview
 
 ```mermaid
-%%{init: {'theme':'base', 'themeVa#### 💻 **For Developers**
+%%{init: {'theme':'base', 'themeVariables': {'fontSize': '14px', 'fontFamily': 'Arial, sans-serif'}}}%%
+graph TB
+    subgraph "🤖 Foundation Models Layer"
+        GPT4[GPT-4 Turbo]
+        Claude[Claude 3]
+        LLaMA[LLaMA 2]
+        Domain[Domain Models]
+    end
+    
+    subgraph "💾 Vector & RAG Systems"
+        Pinecone[Pinecone]
+        Weaviate[Weaviate]
+        ChromaDB[ChromaDB]
+        RAGEngine[RAG Engine]
+    end
+    
+    subgraph "🤝 Agentic AI Platform"
+        MCP[Model Context Protocol]
+        Agents[AI Agents]
+        MultiAgent[Multi-Agent Coordination]
+        Tools[Tool Integration]
+    end
+    
+    subgraph "☁️ Azure AI Services"
+        OpenAI[Azure OpenAI]
+        CognitiveServices[Cognitive Services]
+        MLStudio[ML Studio]
+        AISearch[AI Search]
+    end
+    
+    subgraph "📊 Data Platform"
+        DataLake[Data Lake]
+        Synapse[Azure Synapse]
+        CosmosDB[Cosmos DB]
+        Redis[Redis Cache]
+    end
+    
+    subgraph "🔧 MLOps & Deployment"
+        MLFlow[MLFlow]
+        AzureML[Azure ML]
+        ContainerApps[Container Apps]
+        Functions[Azure Functions]
+    end
+    
+    GPT4 --> RAGEngine
+    Claude --> RAGEngine
+    LLaMA --> RAGEngine
+    Domain --> RAGEngine
+    
+    RAGEngine --> MCP
+    Pinecone --> RAGEngine
+    Weaviate --> RAGEngine
+    ChromaDB --> RAGEngine
+    
+    MCP --> Agents
+    Agents --> MultiAgent
+    MultiAgent --> Tools
+    
+    OpenAI --> GPT4
+    CognitiveServices --> AISearch
+    MLStudio --> AzureML
+    AISearch --> RAGEngine
+    
+    DataLake --> Synapse
+    Synapse --> MLFlow
+    CosmosDB --> RAGEngine
+    Redis --> RAGEngine
+    
+    AzureML --> ContainerApps
+    MLFlow --> Functions
+```
 - **API-first architecture** enabling rapid integration
 - **Event-driven patterns** for responsive applications
 - **Monitoring & observability** for production reliability
@@ -402,7 +472,10 @@ sequenceDiagram
     Note over User,LLM: 🤖 Multi-agent collaboration<br/>🔌 MCP-enabled resource access<br/>🧠 Foundation model orchestration
 ```
 
-## 🏗️ Comprehensive Data & AI Platform Overview': {'fontSize': '14px', 'fontFamily': 'Arial, sans-serif'}}}%%
+## 🏗️ Comprehensive Data & AI Platform Overview
+
+```mermaid
+%%{init: {'theme':'base', 'themeVariables': {'fontSize': '14px', 'fontFamily': 'Arial, sans-serif'}}}%%
 graph TB
     subgraph BUSINESS_LAYER ["🏢 Business Applications & Users"]
         Executives[👔 Executives & Leadership]
@@ -534,7 +607,7 @@ graph TB
 - **Monitoring & observability** for production reliability
 - **Microservices support** for scalable architectures
 
-## �🏗️ Comprehensive Data & AI Platform Overview
+## 🏗️ Comprehensive Data & AI Platform Overview
 
 ```mermaid
 %%{init: {'theme':'base', 'themeVariables': {'fontSize': '12px', 'fontFamily': 'Arial, sans-serif'}}}%%
