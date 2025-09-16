@@ -4,66 +4,150 @@
 
 ```mermaid
 graph TB
-    subgraph "Client Applications"
-        Web[Web Browser]
-        Mobile[Mobile App]
-        Desktop[Desktop App]
+    subgraph CLIENT_APPS ["📱 Client Applications"]
+        Web[🌐 Web Browser]
+        Mobile[📱 Mobile App]
+        Desktop[🖥️ Desktop App]
     end
 
-    subgraph "Azure API Management Gateway"
-        APIM[API Management Gateway]
-        DevPortal[Developer Portal]
-        Analytics[Analytics & Monitoring]
+    subgraph EXTERNAL_APIM ["🌍 Azure API Management Gateway"]
+        APIM[🚪 API Management Gateway]
+        DevPortal[👥 Developer Portal]
+        Analytics[📊 Analytics & Monitoring]
     end
 
-    subgraph "Frontend Layer"
-        NextJS[Next.js Frontend]
-        WSClient[WebSocket Client]
-        WebhookClient[WebHook Client]
-        RestClient[REST Client]
+    subgraph FRONTEND_LAYER ["🎨 Frontend Layer"]
+        NextJS[⚛️ Next.js Frontend]
+        WSClient[🔌 WebSocket Client]
+        WebhookClient[🪝 WebHook Client]
+        RestClient[🔄 REST Client]
+        AsyncClient[⏳ Async API Client]
+        GraphQLClient[🔍 GraphQL Client]
     end
 
-    subgraph "Backend Services"
-        SpringBoot[Spring Boot API]
-        WebSocketServer[WebSocket Server]
-        WebhookHandler[WebHook Handler]
-        Database[(Azure SQL Database)]
-        Cache[(Redis Cache)]
+    subgraph INTERNAL_GATEWAY ["🏢 Internal API Management Gateway"]
+        InternalAPIM[🔐 Internal API Gateway]
+        LoadBalancer[⚖️ Load Balancer]
+        RateLimit[⏱️ Rate Limiter]
+        AuthProxy[🔑 Auth Proxy]
     end
 
-    subgraph "Azure Services"
-        AAD[Azure Active Directory]
-        KeyVault[Key Vault]
-        AppInsights[Application Insights]
-        Monitor[Azure Monitor]
+    subgraph BACKEND_SERVICES ["⚙️ Backend Services"]
+        subgraph CORE_APIS ["Core APIs"]
+            SpringBoot[☕ Spring Boot API]
+            WebSocketServer[🔌 WebSocket Server]
+            WebhookHandler[🪝 WebHook Handler]
+        end
+        
+        subgraph MODERN_APIS ["Modern APIs"]
+            AsyncProcessor[⏳ Async Processor]
+            GraphQLGateway[🔍 GraphQL Gateway]
+            MessageQueue[📬 Message Queue]
+        end
+        
+        subgraph RESOLVERS ["GraphQL Resolvers"]
+            UserResolver[👤 User Resolver]
+            OrderResolver[📦 Order Resolver]
+            ProductResolver[🛍️ Product Resolver]
+        end
     end
 
+    subgraph DATA_LAYER ["💾 Data Layer"]
+        Database[(🗄️ Azure SQL Database)]
+        Cache[(⚡ Redis Cache)]
+        UserDB[(👤 User Database)]
+        OrderDB[(📦 Order Database)]
+        ProductDB[(🛍️ Product Database)]
+    end
+
+    subgraph AZURE_SERVICES ["☁️ Azure Services"]
+        AAD[🔐 Azure Active Directory]
+        KeyVault[🔑 Key Vault]
+        AppInsights[📊 Application Insights]
+        Monitor[📈 Azure Monitor]
+        ServiceBus[🚌 Azure Service Bus]
+        EventGrid[⚡ Azure Event Grid]
+    end
+
+    %% Client to External Gateway
     Web --> APIM
     Mobile --> APIM
     Desktop --> APIM
 
+    %% External Gateway to Frontend
     APIM --> NextJS
     APIM --> WSClient
     APIM --> WebhookClient
     APIM --> RestClient
+    APIM --> AsyncClient
+    APIM --> GraphQLClient
 
-    NextJS --> SpringBoot
-    WSClient --> WebSocketServer
-    WebhookClient --> WebhookHandler
-    RestClient --> SpringBoot
+    %% Frontend to Internal Gateway
+    NextJS --> InternalAPIM
+    WSClient --> InternalAPIM
+    WebhookClient --> InternalAPIM
+    RestClient --> InternalAPIM
+    AsyncClient --> InternalAPIM
+    GraphQLClient --> InternalAPIM
 
+    %% Internal Gateway Components
+    InternalAPIM --> LoadBalancer
+    InternalAPIM --> RateLimit
+    InternalAPIM --> AuthProxy
+
+    %% Internal Gateway to Backend Services
+    LoadBalancer --> SpringBoot
+    LoadBalancer --> WebSocketServer
+    LoadBalancer --> WebhookHandler
+    LoadBalancer --> AsyncProcessor
+    LoadBalancer --> GraphQLGateway
+
+    %% Async Processing Flow
+    AsyncProcessor --> MessageQueue
+    MessageQueue --> ServiceBus
+
+    %% GraphQL Resolution
+    GraphQLGateway --> UserResolver
+    GraphQLGateway --> OrderResolver
+    GraphQLGateway --> ProductResolver
+
+    %% Backend to Data Layer
     SpringBoot --> Database
     SpringBoot --> Cache
     WebSocketServer --> Database
     WebhookHandler --> Database
+    AsyncProcessor --> Database
+    UserResolver --> UserDB
+    OrderResolver --> OrderDB
+    ProductResolver --> ProductDB
 
+    %% External Gateway to Azure Services
     APIM --> AAD
     APIM --> KeyVault
     APIM --> AppInsights
     APIM --> Monitor
 
+    %% Internal Gateway to Azure Services
+    InternalAPIM --> AAD
+    InternalAPIM --> KeyVault
+    InternalAPIM --> AppInsights
+
+    %% Backend to Azure Services
+    AsyncProcessor --> ServiceBus
+    AsyncProcessor --> EventGrid
+    MessageQueue --> ServiceBus
+
+    %% Management and Monitoring
     DevPortal --> APIM
     Analytics --> APIM
+    Analytics --> InternalAPIM
+
+    %% Styling
+    style APIM fill:#0078d4,stroke:#005a9e,stroke-width:3px,color:#fff
+    style InternalAPIM fill:#d13438,stroke:#a10e13,stroke-width:3px,color:#fff
+    style GraphQLGateway fill:#e91e63,stroke:#c2185b,stroke-width:2px,color:#fff
+    style AsyncProcessor fill:#ff9800,stroke:#f57c00,stroke-width:2px,color:#fff
+    style MessageQueue fill:#4caf50,stroke:#388e3c,stroke-width:2px,color:#fff
 ```
 
 ## 🔄 API Management Flow Diagrams
