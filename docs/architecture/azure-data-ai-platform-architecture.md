@@ -3,7 +3,406 @@
 ## � High-Level Data & AI Platform Overview
 
 ```mermaid
+%%{init: {'theme':'base', 'themeVa#### 💻 **For Developers**
+- **API-first architecture** enabling rapid integration
+- **Event-driven patterns** for responsive applications
+- **Monitoring & observability** for production reliability
+- **Microservices support** for scalable architectures
+
+## 🏛️ Enhanced Foundation Models & AI Architecture
+
+### 🤖 Foundation Models & Large Language Models
+
+```mermaid
 %%{init: {'theme':'base', 'themeVariables': {'fontSize': '14px', 'fontFamily': 'Arial, sans-serif'}}}%%
+graph TB
+    subgraph FOUNDATION_MODELS_LAYER ["🏛️ Foundation Models Layer"]
+        subgraph LANGUAGE_MODELS ["💬 Language Models"]
+            GPT4[🧠 GPT-4 Turbo]
+            GPT4Vision[👁️ GPT-4 Vision]
+            GPT35Turbo[⚡ GPT-3.5 Turbo]
+            Claude3[🔮 Claude 3 Opus]
+            LLaMA2[🦙 LLaMA 2]
+            CodeLLaMA[💻 Code Llama]
+        end
+        
+        subgraph MULTIMODAL_MODELS ["🎭 Multimodal Models"]
+            DALLE3[🎨 DALL-E 3]
+            Midjourney[🖼️ Midjourney]
+            StableDiffusion[🌟 Stable Diffusion]
+            WhisperASR[🎙️ Whisper ASR]
+            ElevenLabsTTS[🔊 ElevenLabs TTS]
+        end
+        
+        subgraph SPECIALIZED_MODELS ["🎯 Specialized Models"]
+            BioGPT[🧬 BioGPT]
+            FinGPT[💰 FinGPT]
+            CodeT5[🔧 CodeT5]
+            SciBERT[🔬 SciBERT]
+            LegalBERT[⚖️ LegalBERT]
+        end
+    end
+
+    subgraph MODEL_OPTIMIZATION ["⚡ Model Optimization Layer"]
+        subgraph FINE_TUNING ["🎯 Fine-Tuning Strategies"]
+            FullFineTune[🔄 Full Fine-Tuning]
+            LoRA[🎛️ LoRA (Low-Rank Adaptation)]
+            AdaLoRA[🔧 AdaLoRA]
+            QLoRA[⚡ QLoRA (Quantized LoRA)]
+            PeftTuning[🎨 PEFT Methods]
+        end
+        
+        subgraph PROMPT_ENGINEERING ["💡 Prompt Engineering"]
+            ZeroShotPrompt[0️⃣ Zero-Shot Prompting]
+            FewShotPrompt[🔢 Few-Shot Prompting]
+            ChainOfThought[🔗 Chain-of-Thought]
+            TreeOfThoughts[🌳 Tree of Thoughts]
+            ReActPrompting[🔄 ReAct Prompting]
+        end
+        
+        subgraph MODEL_COMPRESSION ["📦 Model Compression"]
+            Quantization[🔢 Quantization]
+            Pruning[✂️ Model Pruning]
+            Distillation[🧪 Knowledge Distillation]
+            ONNX[🔄 ONNX Optimization]
+            TensorRT[⚡ TensorRT]
+        end
+    end
+
+    %% Connections
+    GPT4 --> FullFineTune
+    GPT4Vision --> LoRA
+    Claude3 --> AdaLoRA
+    LLaMA2 --> QLoRA
+    
+    FullFineTune --> ZeroShotPrompt
+    LoRA --> FewShotPrompt
+    AdaLoRA --> ChainOfThought
+    QLoRA --> TreeOfThoughts
+    
+    ZeroShotPrompt --> Quantization
+    FewShotPrompt --> Pruning
+    ChainOfThought --> Distillation
+    TreeOfThoughts --> ONNX
+    
+    style GPT4 fill:#10a37f,stroke:#0d8267,stroke-width:3px,color:#fff
+    style Claude3 fill:#ff6b35,stroke:#e55a2b,stroke-width:2px,color:#fff
+    style LLaMA2 fill:#4285f4,stroke:#3367d6,stroke-width:2px,color:#fff
+    style LoRA fill:#9c27b0,stroke:#7b1fa2,stroke-width:2px,color:#fff
+    style ChainOfThought fill:#ff9800,stroke:#f57c00,stroke-width:2px,color:#fff
+```
+
+### 🔍 Vector Database & RAG Architecture
+
+```mermaid
+%%{init: {'theme':'base', 'themeVariables': {'fontSize': '14px', 'fontFamily': 'Arial, sans-serif'}}}%%
+graph TB
+    subgraph VECTOR_INFRASTRUCTURE ["🔍 Vector Database Infrastructure"]
+        subgraph VECTOR_DATABASES ["💾 Vector Databases"]
+            Pinecone[🌲 Pinecone]
+            Weaviate[🕸️ Weaviate]
+            ChromaDB[🎨 ChromaDB]
+            Qdrant[⚡ Qdrant]
+            Milvus[🚀 Milvus]
+            AzureAISearch[🔍 Azure AI Search]
+        end
+        
+        subgraph EMBEDDING_MODELS ["🧬 Embedding Models"]
+            OpenAIEmbeddings[🤖 OpenAI Embeddings]
+            SentenceTransformers[📝 Sentence Transformers]
+            BGEEmbeddings[🌐 BGE Embeddings]
+            E5Embeddings[5️⃣ E5 Embeddings]
+            InstructorEmbeddings[👨‍🏫 Instructor Embeddings]
+        end
+        
+        subgraph VECTOR_OPERATIONS ["⚙️ Vector Operations"]
+            SemanticSearch[🔍 Semantic Search]
+            SimilaritySearch[📊 Similarity Search]
+            HybridSearch[🔄 Hybrid Search]
+            VectorClustering[📈 Vector Clustering]
+            DimensionalityReduction[📉 Dimensionality Reduction]
+        end
+    end
+
+    subgraph RAG_ARCHITECTURE ["🧠 RAG (Retrieval-Augmented Generation)"]
+        subgraph DATA_INGESTION ["📥 Data Ingestion & Processing"]
+            DocumentLoader[📄 Document Loader]
+            TextSplitter[✂️ Text Splitter]
+            MetadataExtractor[🏷️ Metadata Extractor]
+            DocumentPreprocessor[🔧 Document Preprocessor]
+        end
+        
+        subgraph RETRIEVAL_STRATEGIES ["🎯 Retrieval Strategies"]
+            DenseRetrieval[🔍 Dense Retrieval]
+            SparseRetrieval[📊 Sparse Retrieval]
+            HybridRetrieval[🔄 Hybrid Retrieval]
+            ReRanking[🏆 Re-ranking]
+            ContextualRetrieval[🎭 Contextual Retrieval]
+        end
+        
+        subgraph GENERATION_LAYER ["✨ Generation Layer"]
+            ContextAugmentation[🔗 Context Augmentation]
+            PromptTemplate[📝 Prompt Templates]
+            ResponseGeneration[💬 Response Generation]
+            FactualityCheck[✅ Factuality Check]
+            CitationGeneration[📚 Citation Generation]
+        end
+    end
+
+    subgraph ADVANCED_RAG ["🚀 Advanced RAG Techniques"]
+        subgraph RAG_FUSION ["🔄 RAG Fusion"]
+            MultiQueryRetrieval[🔍 Multi-Query Retrieval]
+            RecursiveRetrieval[🔄 Recursive Retrieval]
+            GraphRAG[🕸️ Graph RAG]
+            HierarchicalRAG[🏗️ Hierarchical RAG]
+        end
+        
+        subgraph AGENTIC_RAG ["🤖 Agentic RAG"]
+            SelfCorrectingRAG[🔧 Self-Correcting RAG]
+            IterativeRefinement[🔄 Iterative Refinement]
+            ToolAugmentedRAG[🛠️ Tool-Augmented RAG]
+            MultiModalRAG[🎭 Multi-Modal RAG]
+        end
+    end
+
+    %% Data Flow Connections
+    DocumentLoader --> TextSplitter
+    TextSplitter --> MetadataExtractor
+    MetadataExtractor --> OpenAIEmbeddings
+    OpenAIEmbeddings --> Pinecone
+    
+    Pinecone --> DenseRetrieval
+    DenseRetrieval --> HybridRetrieval
+    HybridRetrieval --> ReRanking
+    ReRanking --> ContextAugmentation
+    
+    ContextAugmentation --> PromptTemplate
+    PromptTemplate --> ResponseGeneration
+    ResponseGeneration --> FactualityCheck
+    FactualityCheck --> CitationGeneration
+    
+    %% Advanced RAG Connections
+    ReRanking --> MultiQueryRetrieval
+    ContextAugmentation --> RecursiveRetrieval
+    ResponseGeneration --> SelfCorrectingRAG
+    CitationGeneration --> ToolAugmentedRAG
+
+    style Pinecone fill:#ff6b35,stroke:#e55a2b,stroke-width:2px,color:#fff
+    style OpenAIEmbeddings fill:#10a37f,stroke:#0d8267,stroke-width:2px,color:#fff
+    style HybridRetrieval fill:#9c27b0,stroke:#7b1fa2,stroke-width:2px,color:#fff
+    style SelfCorrectingRAG fill:#4caf50,stroke:#388e3c,stroke-width:2px,color:#fff
+```
+
+### 🤖 Agentic AI & Multi-Agent Systems with MCP
+
+```mermaid
+%%{init: {'theme':'base', 'themeVariables': {'fontSize': '14px', 'fontFamily': 'Arial, sans-serif'}}}%%
+graph TB
+    subgraph AGENTIC_LAYER ["🤖 Agentic AI Layer"]
+        subgraph AGENT_TYPES ["🎭 Agent Types"]
+            ReasoningAgent[🧠 Reasoning Agent]
+            ToolAgent[🛠️ Tool-Using Agent]
+            PlanningAgent[📋 Planning Agent]
+            CodeAgent[💻 Code Agent]
+            ResearchAgent[🔍 Research Agent]
+            CreativeAgent[🎨 Creative Agent]
+        end
+        
+        subgraph AGENT_CAPABILITIES ["⚙️ Agent Capabilities"]
+            SelfReflection[🪞 Self-Reflection]
+            MemoryManagement[🧠 Memory Management]
+            GoalDecomposition[🎯 Goal Decomposition]
+            ErrorRecovery[🔧 Error Recovery]
+            LearningAdaptation[📚 Learning & Adaptation]
+        end
+        
+        subgraph AGENT_FRAMEWORKS ["🏗️ Agent Frameworks"]
+            LangChainAgents[🦜 LangChain Agents]
+            AutoGPT[🚗 AutoGPT]
+            LangGraph[📊 LangGraph]
+            CrewAI[👥 CrewAI]
+            AutoGen[🔄 AutoGen]
+        end
+    end
+
+    subgraph MULTI_AGENT_SYSTEMS ["👥 Multi-Agent Systems"]
+        subgraph COORDINATION_PATTERNS ["🔄 Coordination Patterns"]
+            HierarchicalCoordination[🏗️ Hierarchical]
+            PeerToPeerCoordination[🤝 Peer-to-Peer]
+            MarketBasedCoordination[💰 Market-Based]
+            ConsensusCoordination[🗳️ Consensus-Based]
+            SwarmCoordination[🐝 Swarm Intelligence]
+        end
+        
+        subgraph COMMUNICATION_PROTOCOLS ["💬 Communication Protocols"]
+            MessagePassing[📨 Message Passing]
+            SharedMemory[🧠 Shared Memory]
+            EventDriven[⚡ Event-Driven]
+            PublishSubscribe[📢 Publish-Subscribe]
+            RequestResponse[🔄 Request-Response]
+        end
+        
+        subgraph COLLABORATION_PATTERNS ["🤝 Collaboration Patterns"]
+            TaskDecomposition[📋 Task Decomposition]
+            WorkflowOrchestration[🎼 Workflow Orchestration]
+            CompetitiveNegotiation[💼 Competitive Negotiation]
+            CooperativeProblemSolving[🤝 Cooperative Problem Solving]
+            KnowledgeSharing[📚 Knowledge Sharing]
+        end
+    end
+
+    subgraph MCP_LAYER ["🔌 Model Context Protocol (MCP)"]
+        subgraph MCP_CORE ["🏗️ MCP Core Components"]
+            MCPServer[🖥️ MCP Server]
+            MCPClient[💻 MCP Client]
+            MCPProtocol[🔌 MCP Protocol]
+            MCPResources[📦 MCP Resources]
+            MCPTools[🛠️ MCP Tools]
+        end
+        
+        subgraph MCP_CAPABILITIES ["⚙️ MCP Capabilities"]
+            ResourceAccess[📁 Resource Access]
+            ToolInvocation[🔧 Tool Invocation]
+            ContextSharing[🔄 Context Sharing]
+            StateManagement[📊 State Management]
+            SecurityModel[🔒 Security Model]
+        end
+        
+        subgraph MCP_INTEGRATIONS ["🔗 MCP Integrations"]
+            VSCodeMCP[💻 VS Code MCP]
+            ClaudeMCP[🤖 Claude MCP]
+            CustomMCPServers[⚙️ Custom MCP Servers]
+            APIGatewayMCP[🚪 API Gateway MCP]
+            DatabaseMCP[🗄️ Database MCP]
+        end
+    end
+
+    subgraph AGENT_ORCHESTRATION ["🎼 Agent Orchestration Platform"]
+        subgraph WORKFLOW_ENGINE ["⚙️ Workflow Engine"]
+            TaskScheduler[📅 Task Scheduler]
+            WorkflowDefinition[📋 Workflow Definition]
+            ExecutionEngine[🚀 Execution Engine]
+            StateTracker[📊 State Tracker]
+            ErrorHandler[❌ Error Handler]
+        end
+        
+        subgraph MONITORING_OBSERVABILITY ["📊 Monitoring & Observability"]
+            AgentMetrics[📈 Agent Metrics]
+            PerformanceTracking[⏱️ Performance Tracking]
+            ConversationLogs[💬 Conversation Logs]
+            SystemHealth[❤️ System Health]
+            AlertingSystem[🚨 Alerting System]
+        end
+    end
+
+    %% Agent Type Connections
+    ReasoningAgent --> SelfReflection
+    ToolAgent --> MemoryManagement
+    PlanningAgent --> GoalDecomposition
+    CodeAgent --> ErrorRecovery
+    ResearchAgent --> LearningAdaptation
+    
+    %% Framework Connections
+    SelfReflection --> LangChainAgents
+    MemoryManagement --> AutoGPT
+    GoalDecomposition --> LangGraph
+    ErrorRecovery --> CrewAI
+    LearningAdaptation --> AutoGen
+    
+    %% Multi-Agent Coordination
+    LangChainAgents --> HierarchicalCoordination
+    AutoGPT --> PeerToPeerCoordination
+    CrewAI --> MarketBasedCoordination
+    AutoGen --> ConsensusCoordination
+    
+    %% Communication Protocol Connections
+    HierarchicalCoordination --> MessagePassing
+    PeerToPeerCoordination --> SharedMemory
+    MarketBasedCoordination --> EventDriven
+    ConsensusCoordination --> PublishSubscribe
+    
+    %% MCP Integration
+    MessagePassing --> MCPServer
+    SharedMemory --> MCPClient
+    EventDriven --> MCPProtocol
+    PublishSubscribe --> MCPResources
+    
+    %% MCP Capabilities
+    MCPServer --> ResourceAccess
+    MCPClient --> ToolInvocation
+    MCPProtocol --> ContextSharing
+    MCPResources --> StateManagement
+    
+    %% MCP Integrations
+    ResourceAccess --> VSCodeMCP
+    ToolInvocation --> ClaudeMCP
+    ContextSharing --> CustomMCPServers
+    StateManagement --> APIGatewayMCP
+    
+    %% Orchestration Connections
+    VSCodeMCP --> TaskScheduler
+    ClaudeMCP --> WorkflowDefinition
+    CustomMCPServers --> ExecutionEngine
+    APIGatewayMCP --> StateTracker
+    
+    %% Monitoring Connections
+    TaskScheduler --> AgentMetrics
+    WorkflowDefinition --> PerformanceTracking
+    ExecutionEngine --> ConversationLogs
+    StateTracker --> SystemHealth
+
+    style ReasoningAgent fill:#9c27b0,stroke:#7b1fa2,stroke-width:2px,color:#fff
+    style MCPServer fill:#ff6b35,stroke:#e55a2b,stroke-width:2px,color:#fff
+    style CrewAI fill:#4caf50,stroke:#388e3c,stroke-width:2px,color:#fff
+    style VSCodeMCP fill:#007acc,stroke:#005a99,stroke-width:2px,color:#fff
+    style TaskScheduler fill:#2196f3,stroke:#1976d2,stroke-width:2px,color:#fff
+```
+
+### 🔄 AI Agent Workflow Patterns
+
+```mermaid
+%%{init: {'theme':'base', 'themeVariables': {'fontSize': '12px', 'fontFamily': 'Arial, sans-serif'}}}%%
+sequenceDiagram
+    participant User as 👤 User
+    participant Orchestrator as 🎼 Agent Orchestrator
+    participant PlanningAgent as 📋 Planning Agent
+    participant ResearchAgent as 🔍 Research Agent
+    participant CodeAgent as 💻 Code Agent
+    participant MCPServer as 🔌 MCP Server
+    participant VectorDB as 🔍 Vector Database
+    participant LLM as 🧠 Foundation Model
+
+    User->>Orchestrator: Complex Task Request
+    Orchestrator->>PlanningAgent: Decompose task
+    PlanningAgent->>PlanningAgent: Create execution plan
+    PlanningAgent->>Orchestrator: Task breakdown
+
+    par Research Phase
+        Orchestrator->>ResearchAgent: Research requirements
+        ResearchAgent->>MCPServer: Access external resources
+        MCPServer->>VectorDB: Semantic search
+        VectorDB-->>MCPServer: Relevant context
+        MCPServer-->>ResearchAgent: Contextual information
+        ResearchAgent->>LLM: Generate insights
+        LLM-->>ResearchAgent: Research findings
+    and Code Generation Phase
+        Orchestrator->>CodeAgent: Generate code solution
+        CodeAgent->>MCPServer: Access code repositories
+        MCPServer-->>CodeAgent: Code examples & patterns
+        CodeAgent->>LLM: Generate code
+        LLM-->>CodeAgent: Code solution
+    end
+
+    ResearchAgent-->>Orchestrator: Research complete
+    CodeAgent-->>Orchestrator: Code complete
+    
+    Orchestrator->>Orchestrator: Validate & integrate results
+    Orchestrator->>User: Final solution delivery
+
+    Note over User,LLM: 🤖 Multi-agent collaboration<br/>🔌 MCP-enabled resource access<br/>🧠 Foundation model orchestration
+```
+
+## 🏗️ Comprehensive Data & AI Platform Overview': {'fontSize': '14px', 'fontFamily': 'Arial, sans-serif'}}}%%
 graph TB
     subgraph BUSINESS_LAYER ["🏢 Business Applications & Users"]
         Executives[👔 Executives & Leadership]
