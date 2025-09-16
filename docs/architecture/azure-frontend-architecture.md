@@ -1,6 +1,6 @@
 # Azure Frontend Development Architecture
 
-## � High-Level Enterprise Frontend Architecture
+## 🏗️ High-Level Enterprise Frontend Architecture
 
 ```mermaid
 %%{init: {'theme':'base', 'themeVariables': {'fontSize': '16px', 'fontFamily': 'Arial, sans-serif'}}}%%
@@ -68,6 +68,38 @@ graph TB
         end
     end
 
+    subgraph DESIGN_SYSTEM_LAYER ["🎨 Design System & UI/UX Layer"]
+        subgraph DESIGN_FOUNDATION ["🎯 Design Foundation"]
+            DesignTokens[🎨 Design Tokens<br/>Colors, Typography, Spacing]
+            FigmaIntegration[🎨 Figma Integration<br/>Design Handoff & Assets]
+            BrandGuidelines[📏 Brand Guidelines<br/>Logo, Voice, Iconography]
+            ThemeManagement[🌙 Theme Management<br/>Light/Dark/Custom Themes]
+        end
+        
+        subgraph COMPONENT_LIBRARY ["🧩 Component Library"]
+            AtomicComponents[⚛️ Atomic Components<br/>Buttons, Inputs, Labels]
+            MoleculeComponents[🔗 Molecule Components<br/>Forms, Cards, Navigation]
+            OrganismComponents[🏛️ Organism Components<br/>Headers, Sidebars, Layouts]
+            TemplateComponents[📐 Template Components<br/>Page Layouts & Structures]
+        end
+    end
+
+    subgraph ACCESSIBILITY_LAYER ["♿ Accessibility & Inclusive Design Layer"]
+        subgraph SEMANTIC_HTML ["🏷️ Semantic HTML Foundation"]
+            SemanticElements[📝 Semantic Elements<br/>Article, Section, Nav, Main]
+            AccessibleForms[📋 Accessible Forms<br/>Labels, Fieldsets, Validation]
+            LandmarkElements[🗺️ Landmark Elements<br/>Header, Footer, Aside, Main]
+            StructuredContent[📚 Structured Content<br/>Headings, Lists, Tables]
+        end
+        
+        subgraph ARIA_IMPLEMENTATION ["🔊 ARIA Implementation"]
+            ARIALabels[🏷️ ARIA Labels<br/>aria-label, aria-labelledby]
+            ARIAStates[⚡ ARIA States<br/>aria-expanded, aria-selected]
+            ARIAProperties[📋 ARIA Properties<br/>aria-describedby, aria-controls]
+            LiveRegions[📢 Live Regions<br/>aria-live, aria-atomic]
+        end
+    end
+
     %% Layer Connections
     WebUI --> ReactCore
     MobileUI --> NextJSFramework
@@ -103,17 +135,44 @@ graph TB
     ContainerHost --> BuildOptimization
     CDNDistribution --> Monitoring
 
+    %% Design System Connections
+    DesignTokens --> AtomicComponents
+    FigmaIntegration --> DesignTokens
+    BrandGuidelines --> ThemeManagement
+    ThemeManagement --> StyledComponents
+    
+    AtomicComponents --> MoleculeComponents
+    MoleculeComponents --> OrganismComponents
+    OrganismComponents --> TemplateComponents
+    TemplateComponents --> WebUI
+    
+    %% Accessibility Connections
+    SemanticElements --> ReactCore
+    AccessibleForms --> MoleculeComponents
+    LandmarkElements --> TemplateComponents
+    StructuredContent --> OrganismComponents
+    
+    ARIALabels --> AtomicComponents
+    ARIAStates --> MoleculeComponents
+    ARIAProperties --> OrganismComponents
+    LiveRegions --> WebUI
+
     %% Styling for better visibility
     style PRESENTATION_LAYER fill:#e3f2fd,stroke:#1976d2,stroke-width:3px
     style APPLICATION_LAYER fill:#f3e5f5,stroke:#7b1fa2,stroke-width:3px
     style COMMUNICATION_LAYER fill:#e8f5e8,stroke:#388e3c,stroke-width:3px
     style INFRASTRUCTURE_LAYER fill:#fff3e0,stroke:#f57c00,stroke-width:3px
+    style DESIGN_SYSTEM_LAYER fill:#fce4ec,stroke:#c2185b,stroke-width:3px
+    style ACCESSIBILITY_LAYER fill:#e8f5e8,stroke:#4caf50,stroke-width:3px
     
     style ReactCore fill:#61dafb,stroke:#21a0c4,stroke-width:2px,color:#000
     style NextJSFramework fill:#000000,stroke:#333333,stroke-width:2px,color:#fff
     style TypeScriptLang fill:#3178c6,stroke:#2d5aa0,stroke-width:2px,color:#fff
     style GraphQLAPI fill:#e10098,stroke:#c51077,stroke-width:2px,color:#fff
     style StaticWebApps fill:#0078d4,stroke:#005a9e,stroke-width:2px,color:#fff
+    style FigmaIntegration fill:#f24e1e,stroke:#e03d00,stroke-width:2px,color:#fff
+    style DesignTokens fill:#ff6f00,stroke:#e65100,stroke-width:2px,color:#fff
+    style SemanticElements fill:#4caf50,stroke:#388e3c,stroke-width:2px,color:#fff
 ```
 
 ## 🏗️ Executive Architecture Summary
@@ -192,7 +251,7 @@ mindmap
 | **📰 Blog/News** | ISR | ⭐⭐⭐⭐⭐ | ⭐⭐⭐⭐⭐ | ⭐⭐⭐ |
 | **💬 Real-time Apps** | Hybrid | ⭐⭐⭐⭐ | ⭐⭐⭐ | ⭐⭐⭐⭐⭐ |
 
-## �🌐 Frontend Architecture Overview
+## 🌐 Frontend Architecture Overview
 
 ```mermaid
 %%{init: {'theme':'base', 'themeVariables': {'fontSize': '14px', 'fontFamily': 'Arial, sans-serif'}}}%%
@@ -366,6 +425,395 @@ graph TB
     style StaticSites fill:#0078d4,stroke:#005a9e,stroke-width:3px,color:#fff
     style CDN fill:#ff9800,stroke:#f57c00,stroke-width:2px,color:#fff
     style AppInsights fill:#9c27b0,stroke:#7b1fa2,stroke-width:2px,color:#fff
+```
+
+## 🎨 Enterprise Design System Architecture
+
+### 🎯 Design System Foundation & Figma Integration
+
+```mermaid
+%%{init: {'theme':'base', 'themeVariables': {'fontSize': '14px', 'fontFamily': 'Arial, sans-serif'}}}%%
+graph TB
+    subgraph DESIGN_TOOLS ["🎨 Design Tools & Workflow"]
+        subgraph FIGMA_ECOSYSTEM ["🎨 Figma Ecosystem"]
+            FigmaDesigns[🎨 Figma Design Files<br/>UI Components & Layouts]
+            FigmaTokens[🎯 Figma Design Tokens<br/>Colors, Typography, Spacing]
+            FigmaComponents[🧩 Figma Component Library<br/>Master Components]
+            FigmaDevMode[🔧 Figma Dev Mode<br/>Design Handoff & Specs]
+        end
+        
+        subgraph DESIGN_TOKENS ["🎯 Design Token System"]
+            ColorTokens[🎨 Color Tokens<br/>Primary, Secondary, Semantic]
+            TypographyTokens[📝 Typography Tokens<br/>Fonts, Sizes, Line Heights]
+            SpacingTokens[📏 Spacing Tokens<br/>Margins, Padding, Grid]
+            RadiusTokens[🔵 Border Radius Tokens<br/>Corner Styles]
+            ShadowTokens[🌑 Shadow Tokens<br/>Elevation Levels]
+            MotionTokens[⚡ Motion Tokens<br/>Transitions, Animations]
+        end
+    end
+
+    subgraph IMPLEMENTATION_LAYER ["⚙️ Implementation Layer"]
+        subgraph TOKEN_GENERATION ["🔄 Token Generation"]
+            StyleDictionary[📚 Style Dictionary<br/>Token Transformation]
+            CSSVariables[🎨 CSS Custom Properties<br/>Runtime Tokens]
+            JSTokens[📝 JavaScript Tokens<br/>Typed Token Objects]
+            TailwindConfig[🎨 Tailwind Config<br/>Utility Classes]
+        end
+        
+        subgraph BRAND_SYSTEM ["🏢 Brand System"]
+            BrandGuidelines[📏 Brand Guidelines<br/>Logo, Voice, Messaging]
+            IconLibrary[🎯 Icon Library<br/>SVG Icon System]
+            IllustrationSystem[🎨 Illustration System<br/>Brand Illustrations]
+            PhotographyGuidelines[📸 Photography Guidelines<br/>Style & Treatment]
+        end
+    end
+
+    subgraph THEME_MANAGEMENT ["🌙 Theme Management"]
+        subgraph THEME_SYSTEM ["🎨 Multi-Theme System"]
+            LightTheme[☀️ Light Theme<br/>Default Brand Colors]
+            DarkTheme[🌙 Dark Theme<br/>Dark Mode Variants]
+            HighContrastTheme[🔆 High Contrast<br/>Accessibility Theme]
+            CustomThemes[🎨 Custom Themes<br/>White Label Brands]
+        end
+        
+        subgraph THEME_SWITCHING ["🔄 Dynamic Theme Switching"]
+            ThemeProvider[🎯 Theme Provider<br/>React Context]
+            ThemeStorage[💾 Theme Persistence<br/>Local Storage]
+            SystemPreference[⚙️ System Preference<br/>OS Theme Detection]
+            ThemeToggle[🔄 Theme Toggle<br/>User Controls]
+        end
+    end
+
+    %% Design Workflow Connections
+    FigmaDesigns --> FigmaTokens
+    FigmaTokens --> StyleDictionary
+    FigmaComponents --> FigmaDevMode
+    FigmaDevMode --> CSSVariables
+    
+    %% Token System Connections
+    ColorTokens --> CSSVariables
+    TypographyTokens --> CSSVariables
+    SpacingTokens --> TailwindConfig
+    RadiusTokens --> CSSVariables
+    ShadowTokens --> CSSVariables
+    MotionTokens --> JSTokens
+    
+    StyleDictionary --> CSSVariables
+    StyleDictionary --> JSTokens
+    StyleDictionary --> TailwindConfig
+    
+    %% Brand System Connections
+    BrandGuidelines --> ColorTokens
+    IconLibrary --> JSTokens
+    IllustrationSystem --> FigmaComponents
+    PhotographyGuidelines --> BrandGuidelines
+    
+    %% Theme System Connections
+    CSSVariables --> LightTheme
+    CSSVariables --> DarkTheme
+    CSSVariables --> HighContrastTheme
+    CSSVariables --> CustomThemes
+    
+    LightTheme --> ThemeProvider
+    DarkTheme --> ThemeProvider
+    HighContrastTheme --> ThemeProvider
+    CustomThemes --> ThemeProvider
+    
+    ThemeProvider --> ThemeStorage
+    SystemPreference --> ThemeToggle
+    ThemeToggle --> ThemeProvider
+
+    %% Styling
+    style DESIGN_TOOLS fill:#fce4ec,stroke:#c2185b,stroke-width:3px
+    style IMPLEMENTATION_LAYER fill:#e3f2fd,stroke:#1976d2,stroke-width:3px
+    style THEME_MANAGEMENT fill:#f3e5f5,stroke:#7b1fa2,stroke-width:3px
+    
+    style FigmaDesigns fill:#f24e1e,stroke:#e03d00,stroke-width:2px,color:#fff
+    style StyleDictionary fill:#ff6f00,stroke:#e65100,stroke-width:2px,color:#fff
+    style ThemeProvider fill:#9c27b0,stroke:#7b1fa2,stroke-width:2px,color:#fff
+```
+
+### 🧩 Atomic Design Component Architecture
+
+```mermaid
+%%{init: {'theme':'base', 'themeVariables': {'fontSize': '14px', 'fontFamily': 'Arial, sans-serif'}}}%%
+graph TB
+    subgraph ATOMIC_DESIGN ["⚛️ Atomic Design Methodology"]
+        subgraph ATOMS ["⚛️ Atoms - Basic Building Blocks"]
+            Button[🔘 Button<br/>Primary, Secondary, Tertiary]
+            Input[📝 Input<br/>Text, Email, Password]
+            Label[🏷️ Label<br/>Form Labels & Descriptions]
+            Icon[🎯 Icon<br/>SVG Icon Components]
+            Avatar[👤 Avatar<br/>User Profile Images]
+            Badge[🏷️ Badge<br/>Status & Notification]
+            Spinner[⏳ Spinner<br/>Loading Indicators]
+            Tooltip[💬 Tooltip<br/>Contextual Help]
+        end
+        
+        subgraph MOLECULES ["🔗 Molecules - Component Combinations"]
+            SearchBox[🔍 Search Box<br/>Input + Button + Icon]
+            FormField[📋 Form Field<br/>Label + Input + Validation]
+            CardHeader[📋 Card Header<br/>Title + Subtitle + Actions]
+            NavigationItem[🔗 Navigation Item<br/>Icon + Label + Badge]
+            UserProfile[👤 User Profile<br/>Avatar + Name + Status]
+            Pagination[📄 Pagination<br/>Numbers + Navigation]
+            ProgressBar[📊 Progress Bar<br/>Indicator + Label]
+            Breadcrumb[🍞 Breadcrumb<br/>Navigation Path]
+        end
+        
+        subgraph ORGANISMS ["🏛️ Organisms - Complex Components"]
+            Header[📋 Header<br/>Navigation + Logo + User Menu]
+            Sidebar[📂 Sidebar<br/>Navigation + User Info]
+            DataTable[📊 Data Table<br/>Headers + Rows + Actions]
+            Modal[📱 Modal<br/>Header + Content + Actions]
+            Card[📋 Card<br/>Header + Content + Footer]
+            Form[📝 Form<br/>Fields + Validation + Actions]
+            Chart[📊 Chart<br/>Data Visualization]
+            Calendar[📅 Calendar<br/>Date Selection Interface]
+        end
+        
+        subgraph TEMPLATES ["📐 Templates - Layout Structures"]
+            DashboardTemplate[📊 Dashboard Template<br/>Header + Sidebar + Content]
+            FormTemplate[📝 Form Template<br/>Multi-step Form Layout]
+            ListTemplate[📋 List Template<br/>Searchable Data Lists]
+            DetailTemplate[📋 Detail Template<br/>Item Detail Views]
+            LandingTemplate[🏠 Landing Template<br/>Marketing Page Layout]
+            AuthTemplate[🔐 Auth Template<br/>Login/Register Pages]
+        end
+    end
+
+    subgraph COMPONENT_FEATURES ["🔧 Component Features & Patterns"]
+        subgraph COMPOSITION ["🧩 Component Composition"]
+            CompoundComponents[🔗 Compound Components<br/>Flexible API Design]
+            RenderProps[⚛️ Render Props<br/>Flexible Rendering]
+            PolymorphicComponents[🔄 Polymorphic Components<br/>Element Type Flexibility]
+            ForwardRef[↗️ Forward Ref<br/>Ref Forwarding]
+        end
+        
+        subgraph ACCESSIBILITY ["♿ Accessibility Features"]
+            KeyboardNavigation[⌨️ Keyboard Navigation<br/>Tab Order & Focus]
+            ScreenReaderSupport[👁️ Screen Reader Support<br/>ARIA Labels & Descriptions]
+            FocusManagement[🎯 Focus Management<br/>Trap & Restoration]
+            ColorContrast[🎨 Color Contrast<br/>WCAG Compliance]
+        end
+        
+        subgraph PERFORMANCE ["⚡ Performance Optimization"]
+            LazyLoading[📦 Lazy Loading<br/>Code Splitting]
+            Memoization[💾 Memoization<br/>React.memo & useMemo]
+            VirtualScrolling[📜 Virtual Scrolling<br/>Large Lists]
+            TreeShaking[🌳 Tree Shaking<br/>Bundle Optimization]
+        end
+    end
+
+    %% Atomic Design Flow
+    Button --> SearchBox
+    Input --> SearchBox
+    Icon --> SearchBox
+    
+    Label --> FormField
+    Input --> FormField
+    
+    Icon --> NavigationItem
+    Label --> NavigationItem
+    Badge --> NavigationItem
+    
+    Avatar --> UserProfile
+    Label --> UserProfile
+    Badge --> UserProfile
+    
+    SearchBox --> Header
+    NavigationItem --> Header
+    UserProfile --> Header
+    
+    NavigationItem --> Sidebar
+    UserProfile --> Sidebar
+    
+    FormField --> Form
+    Button --> Form
+    
+    CardHeader --> Card
+    Button --> Card
+    
+    Header --> DashboardTemplate
+    Sidebar --> DashboardTemplate
+    Card --> DashboardTemplate
+    
+    Form --> FormTemplate
+    Button --> FormTemplate
+    
+    %% Feature Integration
+    CompoundComponents --> Card
+    RenderProps --> DataTable
+    PolymorphicComponents --> Button
+    ForwardRef --> Input
+    
+    KeyboardNavigation --> Modal
+    ScreenReaderSupport --> Form
+    FocusManagement --> Modal
+    ColorContrast --> Button
+    
+    LazyLoading --> Chart
+    Memoization --> DataTable
+    VirtualScrolling --> DataTable
+    TreeShaking --> Icon
+
+    %% Styling
+    style ATOMIC_DESIGN fill:#e8f5e8,stroke:#4caf50,stroke-width:3px
+    style COMPONENT_FEATURES fill:#fff3e0,stroke:#ff9800,stroke-width:3px
+    
+    style Button fill:#2196f3,stroke:#1976d2,stroke-width:2px,color:#fff
+    style SearchBox fill:#4caf50,stroke:#388e3c,stroke-width:2px,color:#fff
+    style Header fill:#9c27b0,stroke:#7b1fa2,stroke-width:2px,color:#fff
+    style DashboardTemplate fill:#ff5722,stroke:#d84315,stroke-width:2px,color:#fff
+```
+
+### ♿ Semantic HTML & ARIA Architecture
+
+```mermaid
+%%{init: {'theme':'base', 'themeVariables': {'fontSize': '14px', 'fontFamily': 'Arial, sans-serif'}}}%%
+graph TB
+    subgraph SEMANTIC_HTML ["🏷️ Semantic HTML Foundation"]
+        subgraph DOCUMENT_STRUCTURE ["📄 Document Structure"]
+            HTMLDocument[📄 HTML Document<br/>lang, dir, role]
+            HeaderElement[📋 Header Element<br/>Site/Page Header]
+            MainElement[📄 Main Element<br/>Primary Content]
+            FooterElement[📋 Footer Element<br/>Site/Page Footer]
+            AsideElement[📂 Aside Element<br/>Sidebar Content]
+            NavElement[🔗 Nav Element<br/>Navigation Menus]
+            SectionElement[📋 Section Element<br/>Content Sections]
+            ArticleElement[📄 Article Element<br/>Standalone Content]
+        end
+        
+        subgraph FORM_ELEMENTS ["📝 Accessible Form Elements"]
+            FormElement[📝 Form Element<br/>action, method, novalidate]
+            FieldsetElement[🔲 Fieldset Element<br/>Related Form Controls]
+            LegendElement[📋 Legend Element<br/>Fieldset Description]
+            LabelElement[🏷️ Label Element<br/>for, aria-labelledby]
+            InputElement[📝 Input Element<br/>type, required, aria-*]
+            TextareaElement[📝 Textarea Element<br/>rows, cols, maxlength]
+            SelectElement[📋 Select Element<br/>multiple, size]
+            ButtonElement[🔘 Button Element<br/>type, disabled]
+        end
+        
+        subgraph CONTENT_ELEMENTS ["📚 Content Elements"]
+            HeadingElements[📋 Heading Elements<br/>h1, h2, h3, h4, h5, h6]
+            ListElements[📋 List Elements<br/>ul, ol, dl]
+            TableElements[📊 Table Elements<br/>table, thead, tbody, tfoot]
+            MediaElements[🎥 Media Elements<br/>img, video, audio]
+            LinkElements[🔗 Link Elements<br/>a, href, target]
+        end
+    end
+
+    subgraph ARIA_IMPLEMENTATION ["🔊 ARIA Implementation"]
+        subgraph ARIA_ROLES ["🎭 ARIA Roles"]
+            LandmarkRoles[🗺️ Landmark Roles<br/>banner, main, navigation]
+            WidgetRoles[🔧 Widget Roles<br/>button, dialog, menu]
+            DocumentRoles[📄 Document Roles<br/>article, document, img]
+            CompositeRoles[🧩 Composite Roles<br/>grid, listbox, tablist]
+        end
+        
+        subgraph ARIA_PROPERTIES ["📋 ARIA Properties"]
+            LabelProperties[🏷️ Label Properties<br/>aria-label, aria-labelledby]
+            DescriptionProperties[📄 Description Properties<br/>aria-describedby, aria-details]
+            RelationshipProperties[🔗 Relationship Properties<br/>aria-controls, aria-owns]
+            DragDropProperties[🎯 Drag & Drop Properties<br/>aria-grabbed, aria-dropeffect]
+        end
+        
+        subgraph ARIA_STATES ["⚡ ARIA States"]
+            InteractionStates[🔄 Interaction States<br/>aria-expanded, aria-selected]
+            VisibilityStates[👁️ Visibility States<br/>aria-hidden, aria-modal]
+            ValidationStates[✅ Validation States<br/>aria-invalid, aria-required]
+            BusyStates[⏳ Busy States<br/>aria-busy, aria-live]
+        end
+        
+        subgraph LIVE_REGIONS ["📢 Live Regions"]
+            LiveRegionTypes[📢 Live Region Types<br/>polite, assertive, off]
+            LiveRegionUpdates[🔄 Live Updates<br/>aria-atomic, aria-relevant]
+            StatusAnnouncements[📢 Status Announcements<br/>Success, Error Messages]
+            ProgressAnnouncements[📊 Progress Updates<br/>Loading, Completion States]
+        end
+    end
+
+    subgraph ACCESSIBILITY_PATTERNS ["♿ Accessibility Patterns"]
+        subgraph NAVIGATION_PATTERNS ["🔗 Navigation Patterns"]
+            SkipLinks[⏭️ Skip Links<br/>Skip to Main Content]
+            FocusManagement[🎯 Focus Management<br/>Tab Order & Focus Trap]
+            KeyboardNavigation[⌨️ Keyboard Navigation<br/>Arrow Keys, Enter, Escape]
+            Breadcrumbs[🍞 Breadcrumb Navigation<br/>Hierarchical Path]
+        end
+        
+        subgraph INTERACTION_PATTERNS ["🔄 Interaction Patterns"]
+            ModalDialogs[📱 Modal Dialogs<br/>Focus Trap & Restoration]
+            DropdownMenus[📋 Dropdown Menus<br/>ARIA Menu Pattern]
+            TabPanels[📑 Tab Panels<br/>ARIA Tablist Pattern]
+            Accordions[📂 Accordions<br/>Collapsible Content]
+        end
+        
+        subgraph FEEDBACK_PATTERNS ["📢 Feedback Patterns"]
+            ErrorHandling[❌ Error Handling<br/>Inline & Summary Errors]
+            LoadingStates[⏳ Loading States<br/>Spinner & Progress]
+            SuccessMessages[✅ Success Messages<br/>Action Confirmations]
+            NotificationSystem[📢 Notifications<br/>Toast & Alert Messages]
+        end
+    end
+
+    %% Document Structure Flow
+    HTMLDocument --> HeaderElement
+    HTMLDocument --> MainElement
+    HTMLDocument --> FooterElement
+    HeaderElement --> NavElement
+    MainElement --> SectionElement
+    MainElement --> ArticleElement
+    SectionElement --> AsideElement
+    
+    %% Form Structure Flow
+    FormElement --> FieldsetElement
+    FieldsetElement --> LegendElement
+    FieldsetElement --> LabelElement
+    LabelElement --> InputElement
+    LabelElement --> TextareaElement
+    LabelElement --> SelectElement
+    FormElement --> ButtonElement
+    
+    %% ARIA Integration
+    HeaderElement --> LandmarkRoles
+    NavElement --> LandmarkRoles
+    MainElement --> LandmarkRoles
+    ButtonElement --> WidgetRoles
+    FormElement --> DocumentRoles
+    
+    LabelElement --> LabelProperties
+    InputElement --> DescriptionProperties
+    ButtonElement --> RelationshipProperties
+    
+    ButtonElement --> InteractionStates
+    ModalDialogs --> VisibilityStates
+    FormElement --> ValidationStates
+    LoadingStates --> BusyStates
+    
+    %% Accessibility Pattern Integration
+    HeaderElement --> SkipLinks
+    NavElement --> KeyboardNavigation
+    ButtonElement --> FocusManagement
+    
+    ModalDialogs --> WidgetRoles
+    DropdownMenus --> CompositeRoles
+    TabPanels --> CompositeRoles
+    Accordions --> InteractionStates
+    
+    ErrorHandling --> ValidationStates
+    LoadingStates --> LiveRegionTypes
+    SuccessMessages --> StatusAnnouncements
+    NotificationSystem --> LiveRegionUpdates
+
+    %% Styling
+    style SEMANTIC_HTML fill:#e8f5e8,stroke:#4caf50,stroke-width:3px
+    style ARIA_IMPLEMENTATION fill:#e3f2fd,stroke:#2196f3,stroke-width:3px
+    style ACCESSIBILITY_PATTERNS fill:#fce4ec,stroke:#e91e63,stroke-width:3px
+    
+    style HTMLDocument fill:#4caf50,stroke:#388e3c,stroke-width:2px,color:#fff
+    style LandmarkRoles fill:#2196f3,stroke:#1976d2,stroke-width:2px,color:#fff
+    style ModalDialogs fill:#e91e63,stroke:#c2185b,stroke-width:2px,color:#fff
 ```
 
 ## 🖼️ Rendering Architecture Patterns
@@ -1140,16 +1588,218 @@ graph TB
     style ImageOptimization fill:#ff9800,stroke:#f57c00,stroke-width:2px,color:#fff
 ```
 
+## 🎨 Comprehensive UI/UX Architecture & Best Practices
+
+### 🎯 User Experience Design Principles
+
+```mermaid
+%%{init: {'theme':'base', 'themeVariables': {'fontSize': '14px', 'fontFamily': 'Arial, sans-serif'}}}%%
+graph TB
+    subgraph UX_PRINCIPLES ["🎯 UX Design Principles"]
+        subgraph CORE_PRINCIPLES ["🎯 Core UX Principles"]
+            UserCentered[👤 User-Centered Design<br/>Research & Empathy]
+            Accessibility[♿ Accessibility First<br/>WCAG 2.1 Compliance]
+            Performance[⚡ Performance Focused<br/>Core Web Vitals]
+            Consistency[🔄 Design Consistency<br/>Pattern Library]
+            Simplicity[✨ Simplicity<br/>Progressive Disclosure]
+            Feedback[📢 User Feedback<br/>Clear Communication]
+        end
+        
+        subgraph INTERACTION_DESIGN ["🔄 Interaction Design"]
+            MicroInteractions[✨ Micro-interactions<br/>Hover, Focus, Loading]
+            TransitionDesign[🔄 Transition Design<br/>Smooth Animations]
+            GestureSupport[👆 Gesture Support<br/>Touch & Mouse Interactions]
+            KeyboardFirst[⌨️ Keyboard First<br/>Navigation & Shortcuts]
+        end
+        
+        subgraph VISUAL_HIERARCHY ["📐 Visual Hierarchy"]
+            TypographyScale[📝 Typography Scale<br/>Heading & Body Text]
+            ColorHierarchy[🎨 Color Hierarchy<br/>Primary, Secondary, Accent]
+            SpacingSystem[📏 Spacing System<br/>Consistent Margins & Padding]
+            GridSystem[📏 Grid System<br/>Layout & Alignment]
+        end
+    end
+
+    subgraph UX_PATTERNS ["🎨 UX Pattern Library"]
+        subgraph NAVIGATION_PATTERNS ["🔗 Navigation Patterns"]
+            GlobalNavigation[🌐 Global Navigation<br/>Primary Site Navigation]
+            LocalNavigation[📍 Local Navigation<br/>Section-specific Nav]
+            BreadcrumbNav[🍞 Breadcrumb Navigation<br/>Hierarchical Path]
+            PaginationNav[📄 Pagination<br/>Large Dataset Navigation]
+            TabNavigation[📑 Tab Navigation<br/>Content Organization]
+            SidebarNav[📂 Sidebar Navigation<br/>Persistent Side Menu]
+        end
+        
+        subgraph CONTENT_PATTERNS ["📚 Content Patterns"]
+            CardLayouts[📋 Card Layouts<br/>Information Containers]
+            ListViews[📋 List Views<br/>Data Presentation]
+            TableViews[📊 Table Views<br/>Structured Data]
+            DetailViews[📄 Detail Views<br/>Individual Item Views]
+            DashboardLayouts[📊 Dashboard Layouts<br/>Data Overview]
+            LandingPages[🏠 Landing Pages<br/>Marketing & Conversion]
+        end
+        
+        subgraph FORM_PATTERNS ["📝 Form Patterns"]
+            SimpleForm[📝 Simple Forms<br/>Single-step Forms]
+            MultiStepForm[📋 Multi-step Forms<br/>Wizard Pattern]
+            InlineEditing[✏️ Inline Editing<br/>Quick Data Updates]
+            FormValidation[✅ Form Validation<br/>Real-time Feedback]
+            FileUpload[📎 File Upload<br/>Drag & Drop Interface]
+            SearchForms[🔍 Search Forms<br/>Query Input & Filters]
+        end
+    end
+
+    subgraph DESIGN_WORKFLOW ["🔄 Design-Development Workflow"]
+        subgraph DESIGN_PROCESS ["🎨 Design Process"]
+            UserResearch[👥 User Research<br/>Interviews & Surveys]
+            UserPersonas[👤 User Personas<br/>Target Audience Profiles]
+            UserJourneys[🗺️ User Journeys<br/>Experience Mapping]
+            Wireframing[📐 Wireframing<br/>Structure & Layout]
+            Prototyping[🎮 Prototyping<br/>Interactive Mockups]
+            UsabilityTesting[🧪 Usability Testing<br/>Validation & Iteration]
+        end
+        
+        subgraph DESIGN_HANDOFF ["🤝 Design Handoff"]
+            DesignSpecs[📋 Design Specifications<br/>Detailed Requirements]
+            AssetExport[📦 Asset Export<br/>Optimized Graphics]
+            ComponentSpecs[🧩 Component Specs<br/>Behavior Documentation]
+            InteractionSpecs[🔄 Interaction Specs<br/>Animation & Transitions]
+            ResponsiveSpecs[📱 Responsive Specs<br/>Breakpoint Definitions]
+            AccessibilitySpecs[♿ Accessibility Specs<br/>ARIA & Semantic Requirements]
+        end
+        
+        subgraph QUALITY_ASSURANCE ["✅ Quality Assurance"]
+            DesignReview[👁️ Design Review<br/>Cross-functional Review]
+            CodeReview[💻 Code Review<br/>Implementation Validation]
+            AccessibilityAudit[♿ Accessibility Audit<br/>Compliance Testing]
+            PerformanceAudit[⚡ Performance Audit<br/>Speed & Optimization]
+            BrowserTesting[🌐 Browser Testing<br/>Cross-platform Validation]
+            DeviceTesting[📱 Device Testing<br/>Responsive Validation]
+        end
+    end
+
+    subgraph RESPONSIVE_DESIGN ["📱 Responsive Design Architecture"]
+        subgraph BREAKPOINT_SYSTEM ["📏 Breakpoint System"]
+            MobileFirst[📱 Mobile First<br/>320px - 768px]
+            TabletView[📱 Tablet View<br/>768px - 1024px]
+            DesktopView[🖥️ Desktop View<br/>1024px - 1440px]
+            LargeDesktop[🖥️ Large Desktop<br/>1440px+]
+        end
+        
+        subgraph LAYOUT_STRATEGIES ["📐 Layout Strategies"]
+            FluidGrid[📏 Fluid Grid<br/>Flexible Columns]
+            FlexboxLayout[📐 Flexbox Layout<br/>1D Layout System]
+            GridLayout[📊 CSS Grid<br/>2D Layout System]
+            ContainerQueries[📦 Container Queries<br/>Component-based Responsive]
+        end
+        
+        subgraph CONTENT_STRATEGY ["📚 Content Strategy"]
+            ProgressiveDisclosure[📂 Progressive Disclosure<br/>Information Hierarchy]
+            ContentPriority[🎯 Content Priority<br/>Mobile Content Strategy]
+            ImageOptimization[🖼️ Image Optimization<br/>Responsive Images]
+            TypographyScaling[📝 Typography Scaling<br/>Fluid Typography]
+        end
+    end
+
+    %% UX Principle Connections
+    UserCentered --> UserResearch
+    Accessibility --> AccessibilityAudit
+    Performance --> PerformanceAudit
+    Consistency --> ComponentSpecs
+    Simplicity --> ProgressiveDisclosure
+    Feedback --> MicroInteractions
+    
+    MicroInteractions --> TransitionDesign
+    TransitionDesign --> InteractionSpecs
+    GestureSupport --> DeviceTestingc
+    KeyboardFirst --> AccessibilitySpecs
+    
+    %% Pattern Connections
+    GlobalNavigation --> SidebarNav
+    BreadcrumbNav --> LocalNavigation
+    TabNavigation --> ContentPriority
+    
+    CardLayouts --> ResponsiveSpecs
+    ListViews --> TableViews
+    DashboardLayouts --> GridLayout
+    
+    SimpleForm --> FormValidation
+    MultiStepForm --> UserJourneys
+    InlineEditing --> MicroInteractions
+    
+    %% Workflow Connections
+    UserResearch --> UserPersonas
+    UserPersonas --> UserJourneys
+    UserJourneys --> Wireframing
+    Wireframing --> Prototyping
+    Prototyping --> UsabilityTesting
+    
+    DesignSpecs --> AssetExport
+    ComponentSpecs --> InteractionSpecs
+    ResponsiveSpecs --> AccessibilitySpecs
+    
+    DesignReview --> CodeReview
+    AccessibilityAudit --> BrowserTesting
+    PerformanceAudit --> DeviceTestingtion
+    
+    %% Responsive Design Connections
+    MobileFirst --> TabletView
+    TabletView --> DesktopView
+    DesktopView --> LargeDesktop
+    
+    FluidGrid --> FlexboxLayout
+    FlexboxLayout --> GridLayout
+    GridLayout --> ContainerQueries
+    
+    ProgressiveDisclosure --> ContentPriority
+    ImageOptimization --> TypographyScaling
+
+    %% Styling
+    style UX_PRINCIPLES fill:#e8f5e8,stroke:#4caf50,stroke-width:3px
+    style UX_PATTERNS fill:#e3f2fd,stroke:#2196f3,stroke-width:3px
+    style DESIGN_WORKFLOW fill:#fce4ec,stroke:#e91e63,stroke-width:3px
+    style RESPONSIVE_DESIGN fill:#fff3e0,stroke:#ff9800,stroke-width:3px
+    
+    style UserCentered fill:#4caf50,stroke:#388e3c,stroke-width:2px,color:#fff
+    style GlobalNavigation fill:#2196f3,stroke:#1976d2,stroke-width:2px,color:#fff
+    style UserResearch fill:#e91e63,stroke:#c2185b,stroke-width:2px,color:#fff
+    style MobileFirst fill:#ff9800,stroke:#f57c00,stroke-width:2px,color:#fff
+```
+
+### 🎨 Design System Implementation Guide
+
+| Component Type | Figma Integration | Development Approach | Accessibility Priority |
+|----------------|-------------------|---------------------|------------------------|
+| **🎨 Design Tokens** | Auto-sync with Figma Variables | Style Dictionary transformation | Color contrast validation |
+| **⚛️ Atomic Components** | Component library sync | TypeScript + Storybook | ARIA patterns implementation |
+| **🔗 Molecule Components** | Figma variant mapping | Compound component patterns | Keyboard navigation support |
+| **🏛️ Organism Components** | Responsive behavior specs | Layout composition patterns | Screen reader optimization |
+| **📐 Templates** | Breakpoint specifications | Grid system implementation | Focus management |
+
+### 🔄 Design-Development Workflow
+
+| Phase | Design Activity | Development Activity | Quality Gates |
+|-------|----------------|---------------------|---------------|
+| **🎯 Discovery** | User research & personas | Technical feasibility | Accessibility requirements |
+| **📐 Ideation** | Wireframes & user flows | Architecture planning | Performance targets |
+| **🎨 Design** | High-fidelity mockups | Component planning | Design system compliance |
+| **🔧 Development** | Design QA & feedback | Implementation & testing | Code review & accessibility audit |
+| **🚀 Launch** | Usage analytics setup | Performance monitoring | User feedback collection |
+
 This comprehensive Frontend Development Architecture document provides detailed patterns and flows for modern frontend development using React, Next.js, and Azure services. The architecture covers all the patterns you requested and more, providing a complete guide for building scalable, performant, and maintainable frontend applications.
 
 ## 🎯 Key Takeaways
 
-- **Multi-Pattern Support**: CSR, SSR, SSG, ISR, and Hybrid rendering patterns
-- **Real-Time Communication**: WebSocket and WebHook integration patterns
-- **Modern State Management**: Client and server state with caching strategies
-- **Developer Experience**: SDK patterns and comprehensive testing strategies
-- **Mobile-First**: Responsive design and PWA capabilities
-- **Azure Integration**: Full Azure service integration for enterprise-grade applications
+- **🎨 Design System Integration**: Comprehensive Figma integration with design tokens, component libraries, and automated design-to-code workflows
+- **♿ Accessibility-First Architecture**: Complete semantic HTML and ARIA implementation with WCAG 2.1 compliance patterns
+- **🧩 Atomic Design Methodology**: Scalable component architecture from atoms to templates with composition patterns
+- **🎯 UI/UX Best Practices**: User-centered design principles with responsive design and interaction patterns
+- **📱 Multi-Pattern Support**: CSR, SSR, SSG, ISR, and Hybrid rendering patterns for optimal performance
+- **⚡ Real-Time Communication**: WebSocket and WebHook integration patterns for dynamic applications
+- **📊 Modern State Management**: Client and server state with advanced caching strategies
+- **🔧 Developer Experience**: Comprehensive SDK patterns and testing strategies
+- **📱 Mobile-First Design**: Progressive Web App capabilities with responsive breakpoint systems
+- **☁️ Azure Integration**: Full Azure service integration for enterprise-grade frontend applications
 
 ## 📚 Additional Resources
 
