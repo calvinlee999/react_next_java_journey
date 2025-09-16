@@ -46,9 +46,9 @@ graph TB
     subgraph MODEL_OPTIMIZATION ["⚡ Model Optimization Layer"]
         subgraph FINE_TUNING ["🎯 Fine-Tuning Strategies"]
             FullFineTune[🔄 Full Fine-Tuning]
-            LoRA[🎛️ LoRA (Low-Rank Adaptation)]
+            LoRA[🎛️ LoRA Low-Rank Adaptation]
             AdaLoRA[🔧 AdaLoRA]
-            QLoRA[⚡ QLoRA (Quantized LoRA)]
+            QLoRA[⚡ QLoRA Quantized LoRA]
             PeftTuning[🎨 PEFT Methods]
         end
         
@@ -124,7 +124,7 @@ graph TB
         end
     end
 
-    subgraph RAG_ARCHITECTURE ["🧠 RAG (Retrieval-Augmented Generation)"]
+    subgraph RAG_ARCHITECTURE ["🧠 RAG Retrieval-Augmented Generation"]
         subgraph DATA_INGESTION ["📥 Data Ingestion & Processing"]
             DocumentLoader[📄 Document Loader]
             TextSplitter[✂️ Text Splitter]
@@ -251,7 +251,7 @@ graph TB
         end
     end
 
-    subgraph MCP_LAYER ["🔌 Model Context Protocol (MCP)"]
+    subgraph MCP_LAYER ["🔌 Model Context Protocol MCP"]
         subgraph MCP_CORE ["🏗️ MCP Core Components"]
             MCPServer[🖥️ MCP Server]
             MCPClient[💻 MCP Client]
