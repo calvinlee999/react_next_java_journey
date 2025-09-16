@@ -1,6 +1,198 @@
 # Azure Frontend Development Architecture
 
-## 🌐 Frontend Architecture Overview
+## � High-Level Enterprise Frontend Architecture
+
+```mermaid
+%%{init: {'theme':'base', 'themeVariables': {'fontSize': '16px', 'fontFamily': 'Arial, sans-serif'}}}%%
+graph TB
+    subgraph PRESENTATION_LAYER ["🎨 Presentation Layer"]
+        subgraph USER_INTERFACES ["👥 User Interfaces"]
+            WebUI[🌐 Web Application<br/>React + Next.js]
+            MobileUI[📱 Mobile App<br/>React Native / PWA]
+            DesktopUI[🖥️ Desktop App<br/>Electron / Tauri]
+        end
+        
+        subgraph UI_FRAMEWORKS ["⚛️ UI Framework Stack"]
+            ReactCore[⚛️ React 18+<br/>Concurrent Features]
+            NextJSFramework[▲ Next.js 14+<br/>App Router]
+            TypeScriptLang[📝 TypeScript<br/>Type Safety]
+            StyledComponents[🎨 Styled System<br/>Tailwind CSS]
+        end
+    end
+
+    subgraph APPLICATION_LAYER ["⚙️ Application Layer"]
+        subgraph RENDERING_STRATEGIES ["🖼️ Rendering Strategies"]
+            SSRStrategy[🏢 Server-Side Rendering<br/>Dynamic Content]
+            SSGStrategy[📄 Static Site Generation<br/>Marketing Pages]
+            CSRStrategy[⚛️ Client-Side Rendering<br/>Interactive Features]
+            ISRStrategy[🔄 Incremental Static Regeneration<br/>Hybrid Content]
+        end
+        
+        subgraph STATE_ARCHITECTURE ["📊 State Architecture"]
+            ClientStateManager[💾 Client State<br/>Zustand / Redux]
+            ServerStateManager[🏢 Server State<br/>React Query / SWR]
+            CacheManager[⚡ Cache Management<br/>Multi-layer Caching]
+            OfflineManager[📴 Offline State<br/>Service Workers]
+        end
+    end
+
+    subgraph COMMUNICATION_LAYER ["💬 Communication Layer"]
+        subgraph API_STRATEGIES ["🔌 API Communication"]
+            RESTfulAPIs[🔄 RESTful APIs<br/>Traditional HTTP]
+            GraphQLAPI[🔍 GraphQL<br/>Unified Data Layer]
+            WebSocketAPI[🔌 WebSocket<br/>Real-time Updates]
+            WebHooksAPI[🪝 WebHooks<br/>Event Notifications]
+        end
+        
+        subgraph SECURITY_LAYER ["🔐 Security & Auth"]
+            Authentication[🔑 Authentication<br/>Azure AD B2C]
+            Authorization[🛡️ Authorization<br/>RBAC / Claims]
+            TokenManagement[🎫 Token Management<br/>JWT + Refresh]
+            SecurityHeaders[🔒 Security Headers<br/>CSP / CORS]
+        end
+    end
+
+    subgraph INFRASTRUCTURE_LAYER ["☁️ Infrastructure Layer"]
+        subgraph HOSTING_PLATFORMS ["🚀 Hosting Platforms"]
+            StaticWebApps[📄 Azure Static Web Apps<br/>JAMstack Hosting]
+            AppServiceHost[☁️ Azure App Service<br/>Server-side Hosting]
+            ContainerHost[📦 Container Apps<br/>Microservices]
+            CDNDistribution[🌐 Azure CDN + Front Door<br/>Global Distribution]
+        end
+        
+        subgraph DEVOPS_PIPELINE ["🔄 DevOps Pipeline"]
+            SourceControl[📚 GitHub<br/>Version Control]
+            CICDPipeline[⚙️ GitHub Actions<br/>CI/CD Pipeline]
+            BuildOptimization[🏗️ Build Optimization<br/>Webpack / Vite]
+            Monitoring[📊 Application Insights<br/>Performance Monitoring]
+        end
+    end
+
+    %% Layer Connections
+    WebUI --> ReactCore
+    MobileUI --> NextJSFramework
+    DesktopUI --> TypeScriptLang
+    
+    ReactCore --> SSRStrategy
+    NextJSFramework --> SSGStrategy
+    TypeScriptLang --> CSRStrategy
+    StyledComponents --> ISRStrategy
+    
+    SSRStrategy --> ClientStateManager
+    SSGStrategy --> ServerStateManager
+    CSRStrategy --> CacheManager
+    ISRStrategy --> OfflineManager
+    
+    ClientStateManager --> RESTfulAPIs
+    ServerStateManager --> GraphQLAPI
+    CacheManager --> WebSocketAPI
+    OfflineManager --> WebHooksAPI
+    
+    RESTfulAPIs --> Authentication
+    GraphQLAPI --> Authorization
+    WebSocketAPI --> TokenManagement
+    WebHooksAPI --> SecurityHeaders
+    
+    Authentication --> StaticWebApps
+    Authorization --> AppServiceHost
+    TokenManagement --> ContainerHost
+    SecurityHeaders --> CDNDistribution
+    
+    StaticWebApps --> SourceControl
+    AppServiceHost --> CICDPipeline
+    ContainerHost --> BuildOptimization
+    CDNDistribution --> Monitoring
+
+    %% Styling for better visibility
+    style PRESENTATION_LAYER fill:#e3f2fd,stroke:#1976d2,stroke-width:3px
+    style APPLICATION_LAYER fill:#f3e5f5,stroke:#7b1fa2,stroke-width:3px
+    style COMMUNICATION_LAYER fill:#e8f5e8,stroke:#388e3c,stroke-width:3px
+    style INFRASTRUCTURE_LAYER fill:#fff3e0,stroke:#f57c00,stroke-width:3px
+    
+    style ReactCore fill:#61dafb,stroke:#21a0c4,stroke-width:2px,color:#000
+    style NextJSFramework fill:#000000,stroke:#333333,stroke-width:2px,color:#fff
+    style TypeScriptLang fill:#3178c6,stroke:#2d5aa0,stroke-width:2px,color:#fff
+    style GraphQLAPI fill:#e10098,stroke:#c51077,stroke-width:2px,color:#fff
+    style StaticWebApps fill:#0078d4,stroke:#005a9e,stroke-width:2px,color:#fff
+```
+
+## 🏗️ Executive Architecture Summary
+
+### 🎯 **Architecture Principles**
+
+| Principle | Implementation | Benefits |
+|-----------|---------------|----------|
+| **🚀 Performance First** | SSG + ISR + Edge Caching | Lightning-fast loading times |
+| **📱 Mobile-First Design** | Responsive + PWA capabilities | Universal device support |
+| **🔒 Security by Design** | Azure AD B2C + Zero Trust | Enterprise-grade security |
+| **⚡ Real-Time Capabilities** | WebSocket + Server-Sent Events | Live user experiences |
+| **🌐 Global Scale** | Azure CDN + Front Door | Worldwide performance |
+| **🛡️ Resilience & Reliability** | Multi-layer caching + Offline support | 99.9% availability |
+
+### 📊 **Technology Stack Overview**
+
+```mermaid
+%%{init: {'theme':'base', 'themeVariables': {'fontSize': '14px', 'fontFamily': 'Arial, sans-serif'}}}%%
+mindmap
+  root((🎯 Frontend<br/>Tech Stack))
+    ⚛️ Core Framework
+      React 18+
+        Concurrent Features
+        Suspense
+        Error Boundaries
+      Next.js 14+
+        App Router
+        Server Components
+        Middleware
+    📝 Language & Types  
+      TypeScript
+        Strict Mode
+        Advanced Types
+        Type Guards
+      JavaScript ES2023
+        Modern Syntax
+        Async/Await
+        Modules
+    🎨 Styling & UI
+      Tailwind CSS
+        Utility-First
+        Custom Components
+        Responsive Design
+      Styled Components
+        CSS-in-JS
+        Theming
+        Dynamic Styles
+    🔧 Development Tools
+      Vite/Webpack
+        Hot Reload
+        Tree Shaking
+        Code Splitting
+      ESLint + Prettier
+        Code Quality
+        Consistent Formatting
+        Best Practices
+    ☁️ Azure Services
+      Static Web Apps
+        Serverless Hosting
+        CI/CD Integration
+        Custom Domains
+      Front Door + CDN
+        Global Distribution
+        WAF Protection
+        SSL/TLS
+```
+
+### 🎭 **Rendering Strategy Matrix**
+
+| Use Case | Strategy | Performance | SEO | Complexity |
+|----------|----------|-------------|-----|------------|
+| **🏠 Marketing Pages** | SSG | ⭐⭐⭐⭐⭐ | ⭐⭐⭐⭐⭐ | ⭐⭐ |
+| **📊 User Dashboards** | CSR | ⭐⭐⭐ | ⭐ | ⭐⭐⭐ |
+| **🛍️ E-commerce** | SSR | ⭐⭐⭐⭐ | ⭐⭐⭐⭐ | ⭐⭐⭐⭐ |
+| **📰 Blog/News** | ISR | ⭐⭐⭐⭐⭐ | ⭐⭐⭐⭐⭐ | ⭐⭐⭐ |
+| **💬 Real-time Apps** | Hybrid | ⭐⭐⭐⭐ | ⭐⭐⭐ | ⭐⭐⭐⭐⭐ |
+
+## �🌐 Frontend Architecture Overview
 
 ```mermaid
 %%{init: {'theme':'base', 'themeVariables': {'fontSize': '14px', 'fontFamily': 'Arial, sans-serif'}}}%%
