@@ -3,6 +3,7 @@
 ## 🏗️ System Architecture Overview
 
 ```mermaid
+%%{init: {'theme':'base', 'themeVariables': {'fontSize': '12px', 'fontFamily': 'Arial, sans-serif'}}}%%
 graph TB
     subgraph CLIENT_APPS ["📱 Client Applications"]
         Web[🌐 Web Browser]
