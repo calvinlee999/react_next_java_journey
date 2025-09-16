@@ -158,68 +158,74 @@ flowchart TD
 
 ```mermaid
 graph TB
-    subgraph "External Threats"
+    subgraph THREATS ["🚨 External Threat Sources"]
         DDOS[🚨 DDoS Attacks]
         BOT[🤖 Bot Traffic]
         XSS[💉 XSS Attempts]
         CSRF[🔄 CSRF Attacks]
     end
     
-    subgraph "Security Layers"
-        subgraph "Layer 1: Azure Front Door WAF"
+    subgraph SECURITY ["🛡️ Security Defense Layers"]
+        subgraph WAF_LAYER ["Layer 1: Azure Front Door WAF"]
             WAF1[🛡️ OWASP Core Rules]
             WAF2[🤖 Bot Management]
             WAF3[🌍 Geo-filtering]
             WAF4[⏱️ Rate Limiting]
         end
         
-        subgraph "Layer 2: CDN Security"
+        subgraph CDN_LAYER ["Layer 2: CDN Security"]
             CDN_SEC[🔒 HTTPS Enforcement]
             CDN_COMP[🗜️ Compression Security]
             CDN_CACHE[💾 Secure Caching]
         end
         
-        subgraph "Layer 3: Storage Security"
+        subgraph STORAGE_LAYER ["Layer 3: Storage Security"]
             BLOB_SEC[🔐 Blob Access Control]
             BLOB_HTTPS[🔒 HTTPS Only]
             BLOB_CORS[🌐 CORS Configuration]
         end
         
-        subgraph "Layer 4: Monitoring & Alerts"
+        subgraph MONITOR_LAYER ["Layer 4: Monitoring & Alerts"]
             SEC_MON[👁️ Security Monitoring]
             ALERT[🚨 Real-time Alerts]
             LOG_SEC[📝 Security Logging]
         end
     end
     
-    subgraph "Protected Resources"
+    subgraph RESOURCES ["🎯 Protected Resources"]
         WEB_APP[🌐 Web Application]
         STATIC[📄 Static Content]
         ASSETS[🖼️ Media Assets]
     end
     
+    %% Threat to WAF connections
     DDOS --> WAF1
     BOT --> WAF2
     XSS --> WAF1
     CSRF --> WAF1
     
+    %% WAF to CDN connections
     WAF1 --> CDN_SEC
     WAF2 --> CDN_SEC
     WAF3 --> CDN_SEC
     WAF4 --> CDN_SEC
     
+    %% CDN to Storage connections
     CDN_SEC --> BLOB_SEC
     CDN_COMP --> BLOB_SEC
     CDN_CACHE --> BLOB_SEC
     
+    %% Storage to Resources connections
     BLOB_SEC --> WEB_APP
     BLOB_HTTPS --> STATIC
     BLOB_CORS --> ASSETS
     
+    %% Resources to Monitoring connections
     WEB_APP --> SEC_MON
     STATIC --> ALERT
     ASSETS --> LOG_SEC
     
+    %% Styling
     style WAF1 fill:#d13438,stroke:#a10e13,stroke-width:3px,color:#fff
     style WAF2 fill:#d13438,stroke:#a10e13,stroke-width:3px,color:#fff
     style CDN_SEC fill:#0078d4,stroke:#005a9e,stroke-width:2px,color:#fff
