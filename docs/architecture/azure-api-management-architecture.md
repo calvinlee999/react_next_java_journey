@@ -9,8 +9,6 @@ graph TB
         Web[🌐 Web Browser]
         Mobile[📱 Mobile App]
         Desktop[🖥️ Desktop App]
-        BIUsers[👥 Business Users]
-        DataAnalysts[📊 Data Analysts]
     end
 
     subgraph EXTERNAL_APIM ["🌍 Azure API Management Gateway"]
@@ -55,67 +53,12 @@ graph TB
         end
     end
 
-    subgraph STREAMING_LAYER ["🌊 Real-Time Streaming Layer"]
-        subgraph KAFKA_CLUSTER ["Apache Kafka Cluster"]
-            KafkaProducer[📤 Kafka Producer]
-            KafkaBroker[🔄 Kafka Broker]
-            KafkaConsumer[📥 Kafka Consumer]
-        end
-        
-        subgraph STREAM_PROCESSING ["Stream Processing"]
-            FlinkStreaming[⚡ Apache Flink]
-            FlinkCEP[🧠 Flink CEP Engine]
-            FlinkSQL[📊 Flink SQL]
-        end
-    end
-
-    subgraph DATA_PROCESSING ["🔧 Data Processing Layer"]
-        subgraph SPARK_CLUSTER ["Apache Spark Cluster"]
-            SparkStreaming[📡 Spark Streaming]
-            SparkBatch[� Spark Batch]
-            SparkML[🤖 Spark MLlib]
-            SparkSQL[🗃️ Spark SQL]
-        end
-        
-        subgraph DATABRICKS ["Azure Databricks"]
-            DatabricksWorkspace[🏢 Databricks Workspace]
-            DatabricksNotebooks[📝 Notebooks]
-            DatabricksJobs[⚙️ Automated Jobs]
-            MLFlow[🧪 MLflow]
-        end
-    end
-
-    subgraph DATA_STORAGE ["�💾 Data Storage Layer"]
-        subgraph OPERATIONAL_DB ["Operational Databases"]
-            Database[(🗄️ Azure SQL Database)]
-            Cache[(⚡ Redis Cache)]
-            UserDB[(👤 User Database)]
-            OrderDB[(📦 Order Database)]
-            ProductDB[(🛍️ Product Database)]
-        end
-        
-        subgraph LAKEHOUSE ["Azure Lakehouse Architecture"]
-            DataLake[(🏞️ Azure Data Lake Gen2)]
-            DeltaLake[(🔺 Delta Lake)]
-            SynapseSQL[(🔗 Azure Synapse SQL)]
-            CosmosDB[(🌐 Cosmos DB)]
-        end
-    end
-
-    subgraph BI_LAYER ["📊 Business Intelligence Layer"]
-        subgraph VISUALIZATION ["Data Visualization"]
-            PowerBI[📈 Power BI]
-            Grafana[📉 Grafana]
-            Superset[📊 Apache Superset]
-            CustomDash[🎛️ Custom Dashboard]
-        end
-        
-        subgraph ANALYTICS ["Advanced Analytics"]
-            RealTimeAnalytics[⚡ Real-Time Analytics]
-            NearRealTime[🕐 Near Real-Time Analytics]
-            BatchAnalytics[📦 Batch Analytics]
-            MLPredictions[🔮 ML Predictions]
-        end
+    subgraph DATA_LAYER ["💾 Data Layer"]
+        Database[(🗄️ Azure SQL Database)]
+        Cache[(⚡ Redis Cache)]
+        UserDB[(👤 User Database)]
+        OrderDB[(📦 Order Database)]
+        ProductDB[(🛍️ Product Database)]
     end
 
     subgraph AZURE_SERVICES ["☁️ Azure Services"]
@@ -125,19 +68,12 @@ graph TB
         Monitor[📈 Azure Monitor]
         ServiceBus[🚌 Azure Service Bus]
         EventGrid[⚡ Azure Event Grid]
-        EventHubs[🎯 Azure Event Hubs]
-        StreamAnalytics[🌊 Azure Stream Analytics]
     end
 
     %% Client to External Gateway
     Web --> APIM
     Mobile --> APIM
     Desktop --> APIM
-
-    %% BI Users Access
-    BIUsers --> PowerBI
-    DataAnalysts --> DatabricksWorkspace
-    BIUsers --> CustomDash
 
     %% External Gateway to Frontend
     APIM --> NextJS
@@ -167,60 +103,16 @@ graph TB
     LoadBalancer --> AsyncProcessor
     LoadBalancer --> GraphQLGateway
 
-    %% Real-Time Data Streaming
-    SpringBoot --> KafkaProducer
-    WebSocketServer --> KafkaProducer
-    AsyncProcessor --> KafkaProducer
-    KafkaProducer --> KafkaBroker
-    KafkaBroker --> KafkaConsumer
-
-    %% Stream Processing Flows
-    KafkaConsumer --> FlinkStreaming
-    FlinkStreaming --> FlinkCEP
-    FlinkStreaming --> FlinkSQL
-    KafkaConsumer --> SparkStreaming
-
-    %% Batch Processing
-    Database --> SparkBatch
-    UserDB --> SparkBatch
-    OrderDB --> SparkBatch
-    ProductDB --> SparkBatch
-
-    %% Databricks Integration
-    SparkBatch --> DatabricksWorkspace
-    SparkStreaming --> DatabricksWorkspace
-    DatabricksWorkspace --> DatabricksNotebooks
-    DatabricksWorkspace --> DatabricksJobs
-    DatabricksWorkspace --> MLFlow
-
-    %% Data Lake Storage
-    FlinkStreaming --> DataLake
-    SparkStreaming --> DataLake
-    SparkBatch --> DeltaLake
-    DatabricksJobs --> DeltaLake
-
-    %% Analytics Processing
-    DeltaLake --> SynapseSQL
-    DataLake --> RealTimeAnalytics
-    FlinkSQL --> NearRealTime
-    SparkSQL --> BatchAnalytics
-    MLFlow --> MLPredictions
-
-    %% BI Visualization
-    SynapseSQL --> PowerBI
-    RealTimeAnalytics --> Grafana
-    NearRealTime --> Superset
-    BatchAnalytics --> CustomDash
-    MLPredictions --> PowerBI
-
-    %% Traditional Data Flow
+    %% Async Processing Flow
     AsyncProcessor --> MessageQueue
     MessageQueue --> ServiceBus
+
+    %% GraphQL Resolution
     GraphQLGateway --> UserResolver
     GraphQLGateway --> OrderResolver
     GraphQLGateway --> ProductResolver
 
-    %% Backend to Operational Databases
+    %% Backend to Data Layer
     SpringBoot --> Database
     SpringBoot --> Cache
     WebSocketServer --> Database
@@ -241,17 +133,15 @@ graph TB
     InternalAPIM --> KeyVault
     InternalAPIM --> AppInsights
 
-    %% Streaming to Azure Services
-    KafkaBroker --> EventHubs
-    FlinkStreaming --> StreamAnalytics
+    %% Backend to Azure Services
     AsyncProcessor --> ServiceBus
     AsyncProcessor --> EventGrid
+    MessageQueue --> ServiceBus
 
     %% Management and Monitoring
     DevPortal --> APIM
     Analytics --> APIM
     Analytics --> InternalAPIM
-    Monitor --> PowerBI
 
     %% Styling
     style APIM fill:#0078d4,stroke:#005a9e,stroke-width:3px,color:#fff
@@ -259,573 +149,263 @@ graph TB
     style GraphQLGateway fill:#e91e63,stroke:#c2185b,stroke-width:2px,color:#fff
     style AsyncProcessor fill:#ff9800,stroke:#f57c00,stroke-width:2px,color:#fff
     style MessageQueue fill:#4caf50,stroke:#388e3c,stroke-width:2px,color:#fff
-    style KafkaBroker fill:#000000,stroke:#333333,stroke-width:3px,color:#fff
-    style FlinkStreaming fill:#e6193c,stroke:#b71c1c,stroke-width:2px,color:#fff
-    style SparkBatch fill:#e25a00,stroke:#d84315,stroke-width:2px,color:#fff
-    style DatabricksWorkspace fill:#ff3621,stroke:#d32f2f,stroke-width:3px,color:#fff
-    style DataLake fill:#0078d4,stroke:#005a9e,stroke-width:2px,color:#fff
-    style PowerBI fill:#f2c811,stroke:#f57f17,stroke-width:2px,color:#000
 ```
 
 ## 🔄 API Management Flow Diagrams
 
-### REST API Flow
+### 🔧 REST API Flow
 
 ```mermaid
+%%{init: {'theme':'base', 'themeVariables': {'fontSize': '12px', 'fontFamily': 'Arial, sans-serif'}}}%%
 sequenceDiagram
     participant Client
-    participant APIM as External API Management
-    participant Frontend as Next.js Frontend
-    participant InternalGW as Internal API Gateway
-    participant LoadBalancer as Load Balancer
-    participant Auth as Auth Proxy
-    participant RateLimit as Rate Limiter
-    participant Backend as Spring Boot API
+    participant APIM as Azure API Management
+    participant InternalGW as Internal Gateway
+    participant SpringBoot as Spring Boot API
+    participant DB as Azure SQL DB
     participant Cache as Redis Cache
-    participant DB as Azure SQL Database
+    participant AAD as Azure AD
 
-    Note over Client, DB: Enhanced REST API Processing Flow
-    
-    Client->>APIM: REST Request + Subscription Key
-    APIM->>APIM: Validate Subscription
-    APIM->>APIM: Apply External Rate Limiting
-    APIM->>APIM: Check External Cache
-    
-    alt External Cache Hit
-        APIM-->>Client: Cached Response
-    else External Cache Miss
-        APIM->>Frontend: Forward Request
-        Frontend->>InternalGW: API Call with Auth Token
-        
-        InternalGW->>Auth: Validate Internal Auth
-        Auth-->>InternalGW: Auth Valid
-        InternalGW->>RateLimit: Check Internal Rate Limits
-        RateLimit-->>InternalGW: Rate Limit OK
-        InternalGW->>LoadBalancer: Route Request
-        
-        LoadBalancer->>LoadBalancer: Select Healthy Backend Instance
-        LoadBalancer->>Backend: Forward Request
-        
-        Backend->>Cache: Check Redis Cache
-        alt Backend Cache Hit
-            Cache-->>Backend: Cached Data
-        else Backend Cache Miss
-            Backend->>DB: Query Database
-            DB-->>Backend: Return Data
-            Backend->>Cache: Store in Cache
-        end
-        
-        Backend-->>LoadBalancer: API Response
-        LoadBalancer-->>InternalGW: Forward Response
-        InternalGW-->>Frontend: Response
-        Frontend-->>APIM: Response with Metrics
-        APIM->>APIM: Cache Response
-        APIM-->>Client: Response + Analytics
+    Client->>APIM: HTTP Request (GET/POST/PUT/DELETE)
+    APIM->>AAD: Validate JWT Token
+    AAD-->>APIM: Token Valid
+    APIM->>APIM: Apply Rate Limiting
+    APIM->>APIM: Apply Policies (transformation, validation)
+    APIM->>InternalGW: Route to Internal Gateway
+    InternalGW->>InternalGW: Load Balancing
+    InternalGW->>InternalGW: Internal Rate Limiting
+    InternalGW->>SpringBoot: Forward Request
+    SpringBoot->>Cache: Check Cache
+    alt Cache Hit
+        Cache-->>SpringBoot: Return Cached Data
+    else Cache Miss
+        SpringBoot->>DB: Query Database
+        DB-->>SpringBoot: Return Data
+        SpringBoot->>Cache: Update Cache
     end
-
-    APIM->>APIM: Log Request/Response
-    APIM->>APIM: Update Metrics
+    SpringBoot-->>InternalGW: Response Data
+    InternalGW-->>APIM: Response Data
+    APIM->>APIM: Apply Response Policies
+    APIM-->>Client: HTTP Response
 ```
 
-### WebSocket Flow
+### 🔌 WebSocket Flow
 
 ```mermaid
+%%{init: {'theme':'base', 'themeVariables': {'fontSize': '12px', 'fontFamily': 'Arial, sans-serif'}}}%%
 sequenceDiagram
     participant Client
-    participant APIM as External API Management
-    participant WSClient as WebSocket Client
-    participant InternalGW as Internal API Gateway
-    participant LoadBalancer as Load Balancer
-    participant Auth as Auth Proxy
+    participant APIM as Azure API Management
+    participant InternalGW as Internal Gateway
     participant WSServer as WebSocket Server
-    participant Cache as Redis Cache
-    participant DB as Azure SQL Database
+    participant DB as Azure SQL DB
+    participant EventGrid as Azure Event Grid
 
-    Note over Client, DB: Enhanced WebSocket Connection Flow
-    
-    Client->>APIM: WebSocket Upgrade Request + Subscription Key
-    APIM->>APIM: Validate Subscription Key
-    APIM->>APIM: Authenticate User (JWT)
-    APIM->>APIM: Apply Connection Rate Limiting
-    APIM->>WSClient: Establish External WebSocket
-    WSClient->>InternalGW: Internal WebSocket Upgrade
-    
-    InternalGW->>Auth: Validate Internal Auth Token
-    Auth-->>InternalGW: Auth Valid
-    InternalGW->>LoadBalancer: Route WebSocket Connection
-    LoadBalancer->>LoadBalancer: Select Available WebSocket Server
-    LoadBalancer->>WSServer: Establish WebSocket Connection
-    WSServer-->>LoadBalancer: Connection Established
-    LoadBalancer-->>InternalGW: Connection Ready
-    InternalGW-->>WSClient: Internal Connection Ready
-    WSClient-->>APIM: Connection Established
+    Client->>APIM: WebSocket Handshake
+    APIM->>APIM: Validate Connection
+    APIM->>InternalGW: Establish Connection
+    InternalGW->>WSServer: WebSocket Connection
+    WSServer-->>InternalGW: Connection Established
+    InternalGW-->>APIM: Connection Confirmed
     APIM-->>Client: WebSocket Connected
 
-    loop Real-time Message Exchange
+    loop Real-time Communication
         Client->>APIM: WebSocket Message
-        APIM->>APIM: Apply Message Policies
-        APIM->>WSClient: Forward Message
-        WSClient->>InternalGW: Internal Message
-        InternalGW->>LoadBalancer: Route Message
-        LoadBalancer->>WSServer: Process Message
-        
-        WSServer->>Cache: Check/Update Cache
-        WSServer->>DB: Update/Query Data
+        APIM->>InternalGW: Forward Message
+        InternalGW->>WSServer: Process Message
+        WSServer->>DB: Store/Retrieve Data
         DB-->>WSServer: Data Response
-        Cache-->>WSServer: Cache Response
-        
-        WSServer-->>LoadBalancer: Response Message
-        LoadBalancer-->>InternalGW: Forward Response
-        InternalGW-->>WSClient: Internal Response
-        WSClient-->>APIM: Forward Response
-        APIM-->>Client: WebSocket Message
+        WSServer->>EventGrid: Publish Event
+        WSServer-->>InternalGW: Response Message
+        InternalGW-->>APIM: Forward Response
+        APIM-->>Client: WebSocket Response
     end
-
-    APIM->>APIM: Log Connection Metrics
-    InternalGW->>InternalGW: Log Internal WebSocket Metrics
-    LoadBalancer->>LoadBalancer: Update Connection Health
 ```
 
-### WebHook Flow
+### 🪝 WebHook Flow
 
 ```mermaid
+%%{init: {'theme':'base', 'themeVariables': {'fontSize': '12px', 'fontFamily': 'Arial, sans-serif'}}}%%
 sequenceDiagram
-    participant External as External Service
-    participant APIM as External API Management
-    participant WHClient as WebHook Client
-    participant InternalGW as Internal API Gateway
-    participant LoadBalancer as Load Balancer
-    participant Auth as Auth Proxy
-    participant WHHandler as WebHook Handler
-    participant Backend as Spring Boot API
-    participant Cache as Redis Cache
-    participant DB as Azure SQL Database
-
-    Note over External, DB: Enhanced WebHook Processing Flow
-    
-    External->>APIM: WebHook Event + Signature
-    APIM->>APIM: Validate Request Format
-    APIM->>APIM: Verify Webhook Signature (GitHub/Stripe)
-    APIM->>APIM: Apply Security Policies
-    APIM->>WHClient: Forward Validated Event
-    WHClient->>InternalGW: Internal WebHook Request
-    
-    InternalGW->>Auth: Validate Internal Service Auth
-    Auth-->>InternalGW: Auth Valid
-    InternalGW->>LoadBalancer: Route WebHook Event
-    LoadBalancer->>LoadBalancer: Select Available Handler Instance
-    LoadBalancer->>WHHandler: Forward Event
-    
-    WHHandler->>WHHandler: Parse Event Data
-    WHHandler->>WHHandler: Validate Event Schema
-    
-    alt Event Processing Success
-        WHHandler->>Backend: Update Application State
-        Backend->>Cache: Check/Update Cache
-        Backend->>DB: Store Event Data
-        DB-->>Backend: Storage Confirmation
-        Cache-->>Backend: Cache Updated
-        Backend-->>WHHandler: Processing Complete
-        WHHandler-->>LoadBalancer: Success Response
-        LoadBalancer-->>InternalGW: Forward Success
-        InternalGW-->>WHClient: Internal Success
-        WHClient-->>APIM: Success Response
-        APIM-->>External: HTTP 200 OK
-    else Event Processing Error
-        WHHandler->>WHHandler: Log Error Details
-        WHHandler-->>LoadBalancer: Error Response
-        LoadBalancer-->>InternalGW: Forward Error
-        InternalGW-->>WHClient: Internal Error
-        WHClient-->>APIM: Error Response
-        APIM-->>External: HTTP 400/500 Error
-    end
-
-    APIM->>APIM: Log Event Processing
-    APIM->>APIM: Update Analytics
-    InternalGW->>InternalGW: Log Internal WebHook Metrics
-    LoadBalancer->>LoadBalancer: Update Handler Health
-```
-
-### Async API Flow
-
-```mermaid
-sequenceDiagram
-    participant Client
-    participant APIM as External API Management
-    participant AsyncClient as Async API Client
-    participant InternalGW as Internal API Gateway
-    participant LoadBalancer as Load Balancer
-    participant Auth as Auth Proxy
-    participant AsyncProcessor as Async Processor
-    participant Queue as Message Queue
-    participant Backend as Spring Boot API
+    participant External as External System
+    participant APIM as Azure API Management
+    participant InternalGW as Internal Gateway
+    participant WebHookHandler as WebHook Handler
+    participant DB as Azure SQL DB
     participant ServiceBus as Azure Service Bus
-    participant EventGrid as Azure Event Grid
-    participant NotifyService as Notification Service
-    participant Cache as Redis Cache
-    participant DB as Azure SQL Database
 
-    Note over Client, DB: Enhanced Asynchronous API Processing Flow
-    
-    Client->>APIM: Async Request + Subscription Key
-    APIM->>APIM: Validate Subscription & Auth
-    APIM->>APIM: Generate Unique Request ID
-    APIM-->>Client: HTTP 202 Accepted + Request ID
-    
-    APIM->>AsyncClient: Forward Async Request
-    AsyncClient->>InternalGW: Internal Async Request
-    InternalGW->>Auth: Validate Internal Auth Token
-    Auth-->>InternalGW: Auth Valid
-    InternalGW->>LoadBalancer: Route Async Request
-    LoadBalancer->>Queue: Enqueue Request Message
-    Queue->>AsyncProcessor: Dequeue Message for Processing
-    
-    AsyncProcessor->>AsyncProcessor: Validate Message Format
-    AsyncProcessor->>AsyncProcessor: Parse Request Parameters
-    
-    alt Processing Success Path
-        AsyncProcessor->>Backend: Execute Business Logic
-        Backend->>Cache: Check/Update Cache
-        Backend->>DB: Execute Database Operations
-        DB-->>Backend: Operation Results
-        Cache-->>Backend: Cache Response
-        Backend-->>AsyncProcessor: Processing Complete
-        
-        par Notification Broadcasting
-            AsyncProcessor->>ServiceBus: Send Success Message
-            ServiceBus->>NotifyService: Trigger Notification
-            NotifyService->>Client: Push Notification/Email
-        and
-            AsyncProcessor->>EventGrid: Publish Success Event
-            EventGrid->>NotifyService: Event-driven Notification
-        end
-        
-        AsyncProcessor->>InternalGW: Update Request Status (Completed)
-        InternalGW->>APIM: Status Update with Results
-        
-    else Processing Error Path
-        AsyncProcessor->>AsyncProcessor: Handle Error & Log Details
-        
-        alt Retryable Error
-            AsyncProcessor->>Queue: Retry Message (with backoff)
-            Queue->>AsyncProcessor: Requeue for Later Processing
-        else Non-retryable Error
-            AsyncProcessor->>ServiceBus: Send Error Message
-            ServiceBus->>NotifyService: Trigger Error Notification
-            NotifyService->>Client: Error Notification
-            AsyncProcessor->>InternalGW: Update Request Status (Failed)
-            InternalGW->>APIM: Status Update with Error Details
-        end
-    end
-    
-    Note over Client: Client can poll status using Request ID
-    Client->>APIM: GET /status/{requestId}
-    APIM->>InternalGW: Forward Status Request
-    InternalGW-->>APIM: Current Status + Results
-    APIM-->>Client: Status Response
-    
-    APIM->>APIM: Log Async Metrics
-    APIM->>APIM: Update Analytics Dashboard
-    InternalGW->>InternalGW: Log Internal Async Metrics
-    LoadBalancer->>LoadBalancer: Update Queue Health Metrics
+    External->>APIM: Incoming WebHook
+    APIM->>APIM: Validate Signature
+    APIM->>APIM: Apply Security Policies
+    APIM->>InternalGW: Route to Handler
+    InternalGW->>WebHookHandler: Process WebHook
+    WebHookHandler->>WebHookHandler: Validate Payload
+    WebHookHandler->>DB: Store WebHook Data
+    WebHookHandler->>ServiceBus: Queue Processing
+    WebHookHandler-->>InternalGW: Acknowledgment
+    InternalGW-->>APIM: Success Response
+    APIM-->>External: HTTP 200 OK
+
+    ServiceBus->>WebHookHandler: Process Queued Item
+    WebHookHandler->>DB: Update Processing Status
 ```
 
-### GraphQL API Flow
+### ⏳ Async API Flow
 
 ```mermaid
+%%{init: {'theme':'base', 'themeVariables': {'fontSize': '12px', 'fontFamily': 'Arial, sans-serif'}}}%%
 sequenceDiagram
     participant Client
-    participant APIM as External API Management
-    participant GraphQLClient as GraphQL Client
-    participant InternalGW as Internal API Gateway
-    participant LoadBalancer as Load Balancer
-    participant Auth as Auth Proxy
-    participant GraphQLGateway as GraphQL Gateway
+    participant APIM as Azure API Management
+    participant InternalGW as Internal Gateway
+    participant AsyncProcessor as Async Processor
+    participant MessageQueue as Message Queue
+    participant ServiceBus as Azure Service Bus
+    participant DB as Azure SQL DB
+
+    Client->>APIM: Submit Async Request
+    APIM->>APIM: Generate Request ID
+    APIM->>InternalGW: Route to Async Processor
+    InternalGW->>AsyncProcessor: Queue Request
+    AsyncProcessor->>MessageQueue: Add to Queue
+    MessageQueue->>ServiceBus: Persist Message
+    AsyncProcessor-->>InternalGW: Request ID
+    InternalGW-->>APIM: Request Queued
+    APIM-->>Client: 202 Accepted + Request ID
+
+    ServiceBus->>AsyncProcessor: Process Message
+    AsyncProcessor->>DB: Perform Operations
+    DB-->>AsyncProcessor: Operation Results
+    AsyncProcessor->>DB: Update Status
+    
+    Client->>APIM: Poll Status (Request ID)
+    APIM->>InternalGW: Check Status
+    InternalGW->>AsyncProcessor: Query Status
+    AsyncProcessor->>DB: Get Status
+    DB-->>AsyncProcessor: Current Status
+    AsyncProcessor-->>InternalGW: Status Response
+    InternalGW-->>APIM: Status Response
+    APIM-->>Client: Status + Results (if complete)
+```
+
+### 🔍 GraphQL API Flow
+
+```mermaid
+%%{init: {'theme':'base', 'themeVariables': {'fontSize': '12px', 'fontFamily': 'Arial, sans-serif'}}}%%
+sequenceDiagram
+    participant Client
+    participant APIM as Azure API Management
+    participant InternalGW as Internal Gateway
+    participant GraphQLGW as GraphQL Gateway
     participant UserResolver as User Resolver
     participant OrderResolver as Order Resolver
     participant ProductResolver as Product Resolver
-    participant UserService as User Service
-    participant OrderService as Order Service
-    participant ProductService as Product Service
-    participant Cache as Redis Cache
-    participant UserDB as User Database
-    participant OrderDB as Order Database
-    participant ProductDB as Product Database
+    participant UserDB as User DB
+    participant OrderDB as Order DB
+    participant ProductDB as Product DB
 
-    Note over Client, ProductDB: Enhanced GraphQL Federated Query Processing
+    Client->>APIM: GraphQL Query
+    APIM->>APIM: Validate Query
+    APIM->>InternalGW: Route to GraphQL Gateway
+    InternalGW->>GraphQLGW: Execute Query
     
-    Client->>APIM: GraphQL Query + Subscription Key
-    APIM->>APIM: Validate API Key & Rate Limits
-    APIM->>APIM: Parse GraphQL Query Schema
-    APIM->>GraphQLClient: Forward Validated Query
-    GraphQLClient->>InternalGW: Internal GraphQL Request
+    GraphQLGW->>GraphQLGW: Parse & Plan Query
     
-    InternalGW->>Auth: Validate Internal Auth Token
-    Auth-->>InternalGW: Auth Valid
-    InternalGW->>LoadBalancer: Route GraphQL Query
-    LoadBalancer->>GraphQLGateway: Forward to GraphQL Gateway
-    
-    GraphQLGateway->>GraphQLGateway: Query Analysis & Field Extraction
-    GraphQLGateway->>GraphQLGateway: Check Query Complexity & Depth
-    GraphQLGateway->>Cache: Check Redis for Cached Results
-    
-    alt Query Complexity Valid
-        alt Partial Cache Hit
-            Cache-->>GraphQLGateway: Partial Cached Data
-            GraphQLGateway->>GraphQLGateway: Identify Missing Fields
-        else Cache Miss
-            GraphQLGateway->>GraphQLGateway: Plan Full Resolution
-        end
-        
-        par Parallel Federated Resolution
-            alt User Fields Requested
-                GraphQLGateway->>UserResolver: Resolve User Fields
-                UserResolver->>UserService: Fetch User Data
-                UserService->>UserDB: Query User Database
-                UserDB-->>UserService: User Results
-                UserService-->>UserResolver: User Data
-                UserResolver-->>GraphQLGateway: Resolved User Fields
-            end
-        and
-            alt Order Fields Requested
-                GraphQLGateway->>OrderResolver: Resolve Order Fields
-                OrderResolver->>OrderService: Fetch Order Data
-                OrderService->>OrderDB: Query Order Database
-                OrderDB-->>OrderService: Order Results
-                OrderService-->>OrderResolver: Order Data
-                OrderResolver-->>GraphQLGateway: Resolved Order Fields
-            end
-        and
-            alt Product Fields Requested
-                GraphQLGateway->>ProductResolver: Resolve Product Fields
-                ProductResolver->>ProductService: Fetch Product Data
-                ProductService->>ProductDB: Query Product Database
-                ProductDB-->>ProductService: Product Results
-                ProductService-->>ProductResolver: Product Data
-                ProductResolver-->>GraphQLGateway: Resolved Product Fields
-            end
-        end
-        
-        GraphQLGateway->>GraphQLGateway: Merge All Resolved Data
-        GraphQLGateway->>GraphQLGateway: Apply Field-Level Security
-        GraphQLGateway->>Cache: Cache Resolved Results by Query Hash
-        GraphQLGateway-->>LoadBalancer: Complete GraphQL Response
-        LoadBalancer-->>InternalGW: Forward Response
-        InternalGW-->>GraphQLClient: Internal Response
-        GraphQLClient-->>APIM: GraphQL Response with Metadata
-        APIM-->>Client: JSON Response
-        
-    else Query Too Complex
-        GraphQLGateway-->>LoadBalancer: Query Complexity Error
-        LoadBalancer-->>InternalGW: Forward Error
-        InternalGW-->>GraphQLClient: Internal Error
-        GraphQLClient-->>APIM: Complexity Error
-        APIM-->>Client: HTTP 400 - Query Too Complex
+    par User Data
+        GraphQLGW->>UserResolver: Resolve User Fields
+        UserResolver->>UserDB: Query User Data
+        UserDB-->>UserResolver: User Results
+        UserResolver-->>GraphQLGW: User Data
+    and Order Data
+        GraphQLGW->>OrderResolver: Resolve Order Fields
+        OrderResolver->>OrderDB: Query Order Data
+        OrderDB-->>OrderResolver: Order Results
+        OrderResolver-->>GraphQLGW: Order Data
+    and Product Data
+        GraphQLGW->>ProductResolver: Resolve Product Fields
+        ProductResolver->>ProductDB: Query Product Data
+        ProductDB-->>ProductResolver: Product Results
+        ProductResolver-->>GraphQLGW: Product Data
     end
     
-    APIM->>APIM: Log GraphQL Query Metrics
-    APIM->>APIM: Track Field Usage Analytics
-    APIM->>APIM: Monitor Resolver Performance
-    InternalGW->>InternalGW: Log Internal GraphQL Metrics
-    LoadBalancer->>LoadBalancer: Update Resolver Health Status
-    GraphQLGateway->>GraphQLGateway: Update Schema Usage Statistics
+    GraphQLGW->>GraphQLGW: Combine Results
+    GraphQLGW-->>InternalGW: GraphQL Response
+    InternalGW-->>APIM: Response Data
+    APIM-->>Client: JSON Response
 ```
 
-## 🏛️ Azure Well-Architected Framework Implementation
+## 🔐 Security Architecture
 
-### 🛡️ Security Pillar
+This system implements enterprise-grade security with multiple layers:
 
-```mermaid
-graph TB
-    subgraph "Identity & Access"
-        AAD[Azure Active Directory]
-        JWT[JWT Token Validation]
-        RBAC[Role-Based Access Control]
-    end
+### Authentication & Authorization
+- **Azure Active Directory**: Central identity provider
+- **JWT Tokens**: Stateless authentication
+- **OAuth 2.0**: Secure authorization flows
+- **API Keys**: Service-to-service authentication
 
-    subgraph "API Security"
-        SubKeys[Subscription Keys]
-        RateLimit[Rate Limiting]
-        IPFilter[IP Filtering]
-        CORS[CORS Policies]
-    end
+### Gateway Security
+- **Rate Limiting**: Configurable per client/endpoint
+- **IP Filtering**: Restrict access by IP ranges
+- **Request Validation**: Schema and payload validation
+- **Response Filtering**: Remove sensitive data
 
-    subgraph "Data Protection"
-        TLS[TLS 1.3 Encryption]
-        Signatures[WebHook Signatures]
-        KeyVault[Azure Key Vault]
-    end
+### Data Protection
+- **TLS 1.3**: All communications encrypted
+- **Azure Key Vault**: Secure secret management
+- **Database Encryption**: Data at rest protection
+- **Redis Security**: In-memory data protection
 
-    subgraph "Network Security"
-        WAF[Web Application Firewall]
-        DDoS[DDoS Protection]
-        VNet[Virtual Network]
-    end
+## 📊 Monitoring & Analytics
 
-    AAD --> JWT
-    JWT --> RBAC
-    SubKeys --> RateLimit
-    RateLimit --> IPFilter
-    IPFilter --> CORS
-    TLS --> Signatures
-    Signatures --> KeyVault
-    WAF --> DDoS
-    DDoS --> VNet
-```
+Comprehensive monitoring across all layers:
 
-### ⚡ Performance Pillar
+### API Analytics
+- **Request/Response Metrics**: Latency, throughput, errors
+- **Usage Analytics**: API consumption patterns
+- **Performance Monitoring**: Real-time performance data
+- **Custom Dashboards**: Business-specific metrics
 
-```mermaid
-graph TB
-    subgraph "Caching Strategy"
-        L1[Browser Cache]
-        L2[CDN Cache]
-        L3[API Gateway Cache]
-        L4[Application Cache]
-        L5[Database Cache]
-    end
+### Azure Integration
+- **Application Insights**: APM and distributed tracing
+- **Azure Monitor**: Infrastructure monitoring
+- **Log Analytics**: Centralized logging
+- **Alerts**: Proactive issue detection
 
-    subgraph "Auto-Scaling"
-        HPA[Horizontal Pod Autoscaler]
-        ACA[Azure Container Apps]
-        VMSS[VM Scale Sets]
-    end
+## 🚀 Performance Optimization
 
-    subgraph "Load Balancing"
-        GLB[Global Load Balancer]
-        RLB[Regional Load Balancer]
-        ALB[Application Load Balancer]
-    end
+Multi-layer caching and optimization:
 
-    L1 --> L2
-    L2 --> L3
-    L3 --> L4
-    L4 --> L5
+### Caching Strategy
+- **Redis Cache**: Database query caching
+- **API Response Caching**: Gateway-level caching
+- **CDN Integration**: Static content delivery
+- **GraphQL Caching**: Query result caching
 
-    HPA --> ACA
-    ACA --> VMSS
+### Load Balancing
+- **Internal Load Balancer**: Backend service distribution
+- **Health Checks**: Automatic failover
+- **Circuit Breakers**: Fault tolerance
+- **Auto-scaling**: Dynamic capacity management
 
-    GLB --> RLB
-    RLB --> ALB
-```
+## 🔧 Development Guidelines
 
-### 📊 Operational Excellence
+### API Design Principles
+- **RESTful Design**: Standard HTTP methods and status codes
+- **GraphQL Federation**: Domain-driven schema design
+- **Async Patterns**: Non-blocking operations for long-running tasks
+- **WebSocket Standards**: Real-time communication protocols
 
-```mermaid
-graph TB
-    subgraph "Infrastructure as Code"
-        Bicep[Bicep Templates]
-        ARM[ARM Templates]
-        Terraform[Terraform]
-    end
+### Error Handling
+- **Standardized Errors**: Consistent error response format
+- **Graceful Degradation**: Fallback mechanisms
+- **Retry Logic**: Automatic retry with exponential backoff
+- **Circuit Breakers**: Prevent cascade failures
 
-    subgraph "CI/CD Pipeline"
-        GitHub[GitHub Actions]
-        Build[Build & Test]
-        Deploy[Deploy to Azure]
-        Validate[Validation Tests]
-    end
+### Documentation
+- **OpenAPI Specifications**: API documentation
+- **GraphQL Schema**: Type definitions and resolvers
+- **Developer Portal**: Interactive API documentation
+- **Code Examples**: Multiple language samples
 
-    subgraph "Monitoring & Observability"
-        AppInsights[Application Insights]
-        Monitor[Azure Monitor]
-        Logs[Log Analytics]
-        Alerts[Smart Alerts]
-    end
-
-    Bicep --> ARM
-    ARM --> Terraform
-
-    GitHub --> Build
-    Build --> Deploy
-    Deploy --> Validate
-
-    AppInsights --> Monitor
-    Monitor --> Logs
-    Logs --> Alerts
-```
-
-## 🚀 Deployment Architecture
-
-### Multi-Environment Strategy
-
-```mermaid
-graph TB
-    subgraph "Development Environment"
-        DevAPIM[Dev API Management]
-        DevFrontend[Dev Frontend]
-        DevBackend[Dev Backend]
-        DevDB[(Dev Database)]
-    end
-
-    subgraph "Staging Environment"
-        StageAPIM[Staging API Management]
-        StageFrontend[Staging Frontend]
-        StageBackend[Staging Backend]
-        StageDB[(Staging Database)]
-    end
-
-    subgraph "Production Environment"
-        ProdAPIM[Production API Management]
-        ProdFrontend[Production Frontend]
-        ProdBackend[Production Backend]
-        ProdDB[(Production Database)]
-    end
-
-    subgraph "Shared Services"
-        AAD[Azure AD]
-        KeyVault[Key Vault]
-        Monitor[Azure Monitor]
-        Registry[Container Registry]
-    end
-
-    DevAPIM --> DevFrontend
-    DevFrontend --> DevBackend
-    DevBackend --> DevDB
-
-    StageAPIM --> StageFrontend
-    StageFrontend --> StageBackend
-    StageBackend --> StageDB
-
-    ProdAPIM --> ProdFrontend
-    ProdFrontend --> ProdBackend
-    ProdBackend --> ProdDB
-
-    DevAPIM --> AAD
-    StageAPIM --> AAD
-    ProdAPIM --> AAD
-
-    DevAPIM --> KeyVault
-    StageAPIM --> KeyVault
-    ProdAPIM --> KeyVault
-
-    DevAPIM --> Monitor
-    StageAPIM --> Monitor
-    ProdAPIM --> Monitor
-
-    DevFrontend --> Registry
-    StageFrontend --> Registry
-    ProdFrontend --> Registry
-```
-
-## 📈 Benefits of Azure API Management Integration
-
-### 🎯 Business Value
-- **Cost Reduction**: 40% reduction in API development time
-- **Security Enhancement**: Enterprise-grade security with zero breaches
-- **Performance Improvement**: 60% faster response times with caching
-- **Developer Productivity**: 50% faster feature delivery with self-service portal
-
-### 🔧 Technical Benefits
-- **Unified Gateway**: Single entry point for all API traffic
-- **Policy Management**: Centralized policies across all environments
-- **Analytics & Insights**: Real-time API usage and performance metrics
-- **Version Management**: Blue-green deployments with traffic splitting
-
-### 👥 Developer Experience
-- **Interactive Documentation**: OpenAPI-based developer portal
-- **Self-Service Access**: Automated API key generation and management
-- **Testing Tools**: Built-in API testing and validation
-- **Multi-Language SDKs**: Generated client libraries for all major languages
-
-This architecture ensures enterprise-grade scalability, security, and maintainability while providing an excellent developer experience for both API consumers and providers.
+This architecture provides a robust, scalable, and secure foundation for modern API management, supporting multiple communication patterns while maintaining high performance and reliability.
