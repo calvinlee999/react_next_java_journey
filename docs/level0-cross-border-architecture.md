@@ -43,7 +43,7 @@ graph TB
         A1[Portal API] 
         A2[Initiation Service]
         A3[Fee Calculator]
-        A4[Bronze Data Lake]
+        A4[Event Store]
     end
 
     %% Stage 2: Compliance
@@ -51,7 +51,7 @@ graph TB
         B1[Compliance Engine]
         B2[ML Fraud Detection]
         B3[Approval Service]
-        B4[Silver Data Lake]
+        B4[Operational DB]
     end
 
     %% Stage 3: Gateway
@@ -70,9 +70,9 @@ graph TB
     end
 
     %% Stage 5: Analytics
-    subgraph "Stage 5: Analytics"
-        E1[Gold Data Lake]
-        E2[Analytics Engine]
+    subgraph "Stage 5: Data Platform"
+        E1[Operational Data Store]
+        E2[Analytics Data Lake]
         E3[Notification Hub]
     end
 
@@ -149,7 +149,7 @@ Enable comprehensive business analytics and data visualization for trend analysi
 - **Trend Analysis**: Currency flows, corridor performance, and seasonal patterns
 - **Reconciliation**: End-to-end payment matching and exception resolution
 
-### 🏛️ Data Platform Architecture Overview
+### 🏛️ Use Case-Driven Data Architecture
 
 ```mermaid
 graph TB
@@ -157,57 +157,54 @@ graph TB
     subgraph "Data Sources"
         SWIFT[SWIFT gpi Tracker API]
         KE[Kafka Events]
-        ODS[Operational Data Store]
+        PS[Payment Services]
     end
 
-    %% Ingestion Layer
-    subgraph "Data Ingestion"
+    %% Data Processing
+    subgraph "Data Processing Layer"
         SB[Spring Batch]
         RT[Real-time API]
-        SC[Scheduled Refresh - 4hrs]
+        EP[Event Processing]
     end
 
-    %% Medallion Architecture
-    subgraph "Bronze Layer - Landing Zone"
-        BZ[Raw Payment Events]
-        BL[Audit & Lineage]
-        BI[Immutable Storage]
+    %% Use Case 1: Operational Data Store
+    subgraph "Use Case 1: Real-Time Payment Status"
+        ODS[Operational Data Store]
+        API[Status APIs]
+        CACHE[Redis Cache]
+        CS[Client Servicing]
     end
 
-    subgraph "Silver Layer - Trusted Data"
-        SC1[Data Cleansing]
-        SC2[Validation & Enrichment]
-        SC3[Quality Checks]
-        SC4[Compliance Screening]
+    %% Use Case 2: Analytics Platform
+    subgraph "Use Case 2: Business Analytics"
+        BZ[Bronze: Raw Events]
+        SV[Silver: Enriched Data]
+        GD[Gold: Business Metrics]
+        DASH[Analytics Dashboards]
     end
 
-    subgraph "Gold Layer - Unified Data Lake"
-        GDL[Gold Data Lake - Unified Lakehouse]
-        OT[Operational Tables]
-        AT[Analytical Tables]
-        CS[Client Servicing APIs]
-        DS[Analytics Dashboards]
-    end
-
-    %% Data Flow
-    SWIFT --> SB
+    %% Data Flow - Use Case 1 (Real-time)
     SWIFT --> RT
-    KE --> BZ
-    SB --> BZ
-    RT --> BZ
-    BZ --> SC1
-    SC1 --> SC2
-    SC2 --> SC3
-    SC3 --> SC4
-    SC4 --> GDL
-    GDL --> OT
-    GDL --> AT
-    OT --> CS
-    AT --> DS
+    KE --> EP
+    PS --> EP
+    RT --> ODS
+    EP --> ODS
+    ODS --> CACHE
+    CACHE --> API
+    API --> CS
 
-    %% Fallback Logic
-    CS -.->|UETR Not Found| RT
-    SC -.->|Every 4 hours| SWIFT
+    %% Data Flow - Use Case 2 (Analytics)
+    SWIFT --> SB
+    KE --> BZ
+    EP --> BZ
+    SB --> BZ
+    BZ --> SV
+    SV --> GD
+    GD --> DASH
+
+    %% Cross-pollination
+    ODS -.->|Historical Data| SV
+    GD -.->|Insights| ODS
 ```
 
 ### 📋 Data Platform Implementation Details
@@ -263,102 +260,86 @@ batch_refresh:
     - "Real-time status validation request"
 ```
 
-### 🏛️ Medallion Data Architecture Implementation
+### 🏛️ Use Case-Driven Implementation Architecture
 
-#### **Bronze Layer: Landing Zone (Immutable Storage)**
+#### **Use Case 1: Real-Time Payment Status Visibility**
+
 ```yaml
-bronze_layer:
-  purpose: "Immutable ingestion of raw payment events"
-  storage: "Azure Data Lake Gen2 / S3"
-  format: "Parquet with schema evolution"
+operational_data_store:
+  technology: "Azure SQL Database / PostgreSQL"
+  purpose: "Sub-second payment status queries for client service"
   
-  audit_capabilities:
-    - "End-to-end data lineage tracking"
-    - "Source system attribution"
-    - "Ingestion timestamp metadata"
-    - "Data quality error logging"
+  data_model:
+    primary_table: "payment_status_current"
+    fields:
+      - "uetr (Primary Key)"
+      - "customer_id" 
+      - "payment_amount"
+      - "currency"
+      - "corridor (from_country/to_country)"
+      - "current_status"
+      - "last_updated_timestamp"
+      - "gpi_status_code"
+      - "correspondent_banks"
   
-  retention: "7 years for compliance"
-  compression: "GZIP with 85% reduction"
+  performance_targets:
+    query_response: "< 50ms P95"
+    availability: "99.95% uptime"
+    concurrent_users: "5,000+ client service agents"
+    
+  apis:
+    - "GET /api/v1/payments/{uetr}/status"
+    - "GET /api/v1/customers/{id}/payments/active"
+    - "POST /api/v1/payments/search"
+    - "GET /api/v1/payments/{uetr}/timeline"
+  
+  caching_strategy:
+    technology: "Redis Cluster"
+    hot_data: "Active payments (< 30 days)"
+    ttl: "15 minutes for status data"
+    cache_warming: "Predictive pre-loading for high-volume customers"
 ```
 
-#### **Silver Layer: Trusted Data (Cleansed & Enriched)**
-```yaml
-silver_layer:
-  purpose: "Cleansed, validated, and enriched payment data"
-  processing_engine: "Apache Spark on Databricks"
-  
-  data_quality_checks:
-    - "ISO 20022 message validation"
-    - "UETR format verification"
-    - "Currency and amount validation"
-    - "Correspondent bank verification"
-  
-  enrichment_processes:
-    - "Customer KYC data joining"
-    - "Corridor routing intelligence"
-    - "Historical trend analysis"
-    - "Risk scoring calculation"
-  
-  compliance_screening:
-    aml_screening: "Transaction pattern analysis"
-    ofac_screening: "Real-time sanctions list checking"
-    regulatory_reporting: "Automated filing preparation"
-```
+#### **Use Case 2: Business Analytics and Trend Analysis**
 
-#### **Gold Layer: Business-Ready Data Lake**
 ```yaml
-gold_layer:
-  technology: "Unified Gold Data Lake (Snowflake/Delta Lake)"
-  purpose: "Single source of truth for business-ready payment data"
-  architecture: "Lakehouse pattern with ACID transactions"
+analytics_platform:
+  architecture: "Modern Data Stack with Medallion Pattern"
   
-  data_organization:
-    operational_tables:
-      - "payments_current_status" # Real-time UETR tracking
-      - "customer_payment_history" # Client servicing queries
-      - "corridor_performance" # Cross-border analytics
-      - "compliance_audit_trail" # Regulatory reporting
-    
-    analytical_tables:
-      - "payment_trends_daily" # Executive dashboards
-      - "fraud_detection_metrics" # Risk analytics
-      - "revenue_analysis" # Financial reporting
-      - "sla_performance" # Operations metrics
+  bronze_layer:
+    purpose: "Raw event ingestion and audit trail"
+    storage: "Azure Data Lake Gen2 / S3"
+    format: "Parquet with Delta Lake"
+    sources:
+      - "SWIFT gpi Tracker events"
+      - "Kafka payment lifecycle events"
+      - "Core banking transaction logs"
+      - "Compliance screening results"
   
-  query_optimization:
-    clustering_keys: ["payment_date", "currency", "corridor"]
-    partitioning: "By currency and region for parallel processing"
-    materialized_views: "Pre-aggregated KPIs for sub-second response"
+  silver_layer:
+    purpose: "Cleansed and enriched business data"
+    processing: "Apache Spark / Databricks"
+    transformations:
+      - "Data quality validation"
+      - "Currency normalization"
+      - "Corridor performance calculations"
+      - "Customer segmentation enrichment"
+      - "Compliance risk scoring"
   
-  access_patterns:
-    operational_apis:
-      sla: "< 100ms query response time"
-      availability: "99.9% uptime"
-      endpoints:
-        - "GET /api/v1/payments/{uetr}/status"
-        - "GET /api/v1/customers/{id}/payments"
-        - "GET /api/v1/payments/search"
-        - "GET /api/v1/corridors/{from}/{to}/analytics"
-    
-    analytical_workloads:
-      dashboards:
-        - "Executive: Payment volume and revenue trends"
-        - "Operations: SLA performance and exceptions" 
-        - "Compliance: Screening results and risk metrics"
-        - "Customer Service: Real-time payment tracking"
-      
-      capabilities:
-        - "Multi-dimensional OLAP cubes"
-        - "Time-series payment trend analysis"
-        - "Cross-corridor performance comparison"
-        - "Revenue and cost analytics"
+  gold_layer:
+    purpose: "Business-ready analytics and KPIs"
+    storage: "Snowflake Data Cloud"
+    data_marts:
+      - "Executive dashboard (daily/monthly aggregations)"
+      - "Operations performance (SLA tracking)"
+      - "Compliance reporting (regulatory metrics)"
+      - "Revenue analytics (fee analysis)"
+      - "Customer insights (payment patterns)"
   
-  performance_optimization:
-    caching: "Redis for hot operational data"
-    indexing: "Bloom filters for UETR lookups"
-    compression: "Delta encoding with 90% reduction"
-    concurrent_access: "10,000+ simultaneous users"
+  refresh_strategy:
+    real_time: "Streaming for critical KPIs"
+    batch: "Daily for historical trend analysis"
+    near_real_time: "15-minute micro-batches for operational dashboards"
 ```
 
 ### 🔒 Compliance and Governance Framework
@@ -410,23 +391,116 @@ data_governance:
 
 ### 📈 Performance and Scalability Metrics
 
-#### **Data Platform KPIs**
+#### **Use Case-Specific Performance KPIs**
+
 ```yaml
-performance_targets:
-  ingestion_throughput: "100,000 events/second"
-  api_response_time: "< 100ms P95"
-  batch_processing_sla: "Complete within 2-hour window"
-  data_freshness: "< 4 hours for analytical data"
+use_case_1_operational_kpis:
+  purpose: "Real-time payment status visibility"
+  targets:
+    api_response_time: "< 50ms P95 for status queries"
+    database_query_time: "< 25ms for UETR lookups"
+    cache_hit_ratio: "> 95% for active payments"
+    availability: "99.95% uptime (4.38 hours downtime/year)"
+    concurrent_users: "5,000+ client service agents"
+    throughput: "10,000 status queries/second peak"
   
-  availability_targets:
-    operational_apis: "99.9% uptime"
-    analytical_platform: "99.5% uptime"
-    data_pipeline: "99.7% uptime"
+  performance_monitoring:
+    dashboards: "Real-time Grafana dashboards"
+    alerting: "PagerDuty for > 100ms response times"
+    sla_tracking: "Monthly business reviews"
+
+use_case_2_analytics_kpis:
+  purpose: "Business analytics and trend analysis"
+  targets:
+    batch_processing_sla: "< 2 hours for daily analytics refresh"
+    streaming_latency: "< 30 seconds for real-time KPIs"
+    data_freshness: "< 15 minutes for operational dashboards"
+    query_performance: "< 5 seconds for executive dashboards"
+    availability: "99.5% uptime for analytics platform"
+    concurrent_analysts: "500+ business users"
   
-  scalability:
-    storage: "Petabyte-scale with automatic partitioning"
-    compute: "Auto-scaling Spark clusters (10-100 nodes)"
-    concurrent_users: "10,000+ simultaneous dashboard users"
+  data_volume_targets:
+    ingestion_throughput: "100,000 payment events/second"
+    storage_scalability: "Petabyte-scale with auto-partitioning"
+    retention_management: "7 years compliance data"
+    compute_scaling: "Auto-scaling 10-100 Spark nodes"
+```
+
+### 🔄 Use Case Integration Patterns
+
+#### **Dual-Purpose Event Processing**
+
+```yaml
+event_flow_architecture:
+  shared_ingestion:
+    source: "Kafka payment lifecycle events"
+    partition_strategy: "By UETR for order preservation"
+    
+  branching_logic:
+    operational_path:
+      purpose: "Use Case 1 - Real-time status"
+      processing: "Stream to operational database immediately"
+      latency: "< 100ms from event to queryable"
+      technology: "Kafka Connect → Azure SQL Database"
+      
+    analytics_path:
+      purpose: "Use Case 2 - Business analytics"
+      processing: "Store in data lake for batch processing"
+      latency: "< 30 seconds to Bronze layer"
+      technology: "Kafka → Delta Lake → Databricks"
+
+data_consistency:
+  pattern: "Event-driven eventual consistency"
+  guarantee: "All events processed at least once"
+  ordering: "Partition-level ordering by UETR"
+  reconciliation: "Daily reconciliation jobs between operational and analytics"
+```
+
+#### **API Strategy by Use Case**
+
+```yaml
+api_design:
+  operational_apis:
+    base_url: "https://api.bank.com/payments/v1"
+    authentication: "OAuth 2.0 + mTLS"
+    rate_limits: "1000 req/sec per client service team"
+    
+    endpoints:
+      status_lookup:
+        path: "GET /payments/{uetr}/status"
+        response_time: "< 50ms P95"
+        cache_strategy: "Redis with 5-minute TTL"
+        
+      customer_payments:
+        path: "GET /customers/{id}/payments"
+        response_time: "< 100ms P95"
+        pagination: "Cursor-based, 50 records max"
+        
+      search_payments:
+        path: "POST /payments/search"
+        response_time: "< 200ms P95"
+        filters: "status, date range, corridor, amount"
+  
+  analytics_apis:
+    base_url: "https://analytics.bank.com/v1"
+    authentication: "OAuth 2.0 + RBAC"
+    rate_limits: "100 req/sec per analyst user"
+    
+    endpoints:
+      corridor_analytics:
+        path: "GET /corridors/{from}/{to}/metrics"
+        response_time: "< 5 seconds"
+        aggregation_level: "Daily, weekly, monthly"
+        
+      executive_dashboard:
+        path: "GET /dashboard/executive"
+        response_time: "< 3 seconds"
+        refresh_strategy: "Pre-computed with 1-hour cache"
+        
+      compliance_reports:
+        path: "GET /compliance/reports/{type}"
+        response_time: "< 10 seconds"
+        formats: "JSON, CSV, PDF"
 ```
 
 ## 🏛️ Enterprise System Components Detail
