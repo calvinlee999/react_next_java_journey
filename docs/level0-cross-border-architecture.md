@@ -158,6 +158,8 @@ graph TB
         SWIFT[SWIFT gpi Tracker API]
         KE[Kafka Events]
         PS[Payment Services]
+        MT[Legacy MT Messages]
+        MX[ISO 20022 MX Messages]
     end
 
     %% Data Processing
@@ -165,6 +167,7 @@ graph TB
         SB[Spring Batch]
         RT[Real-time API]
         EP[Event Processing]
+        MS[Message Mapping Service]
     end
 
     %% Use Case 1: Operational Data Store
@@ -181,6 +184,16 @@ graph TB
         SV[Silver: Enriched Data]
         GD[Gold: Business Metrics]
         DASH[Analytics Dashboards]
+    end
+
+    %% Use Case 3: ISO MT/MX Message Coexistence (Migration)
+    subgraph "Use Case 3: MT/MX Message Mapping"
+        FTE[Format Translation Engine]
+        DMS[Dual Message Store]
+        MTAPI[Legacy MT APIs]
+        MXAPI[Modern MX APIs]
+        LN[Legacy SWIFT Network]
+        MN[ISO 20022 Network]
     end
 
     %% Data Flow - Use Case 1 (Real-time)
@@ -202,9 +215,34 @@ graph TB
     SV --> GD
     GD --> DASH
 
+    %% Data Flow - Use Case 3 (Message Mapping)
+    MT --> MS
+    MX --> MS
+    MS --> FTE
+    FTE --> DMS
+    DMS --> MTAPI
+    DMS --> MXAPI
+    MTAPI --> LN
+    MXAPI --> MN
+
     %% Cross-pollination
     ODS -.->|Historical Data| SV
     GD -.->|Insights| ODS
+    MS -.->|Mapped Events| EP
+    DMS -.->|Dual Format Data| BZ
+    
+    %% Migration Timing (until Nov 2025)
+    MT -.->|Phase Out Nov 2025| MS
+    MX -.->|Full Migration Target| MS
+
+    %% Styling
+    classDef migration fill:#fff3e0
+    classDef legacy fill:#ffebee
+    classDef modern fill:#e8f5e8
+    
+    class MS,FTE,DMS migration
+    class MT,MTAPI,LN legacy
+    class MX,MXAPI,MN modern
 ```
 
 ### 📋 Data Platform Implementation Details
@@ -336,13 +374,53 @@ analytics_platform:
       - "Revenue analytics (fee analysis)"
       - "Customer insights (payment patterns)"
   
-  refresh_strategy:
-    real_time: "Streaming for critical KPIs"
-    batch: "Daily for historical trend analysis"
-    near_real_time: "15-minute micro-batches for operational dashboards"
-```
+#### **Use Case 3: ISO MT/MX Message Coexistence (Migration)**
 
-### 🔒 Compliance and Governance Framework
+```yaml
+message_mapping_service:
+  technology: "Spring Boot with Apache Camel"
+  purpose: "Dual format support during MT to MX migration until November 2025"
+  
+  data_model:
+    dual_message_store: "MongoDB for schema flexibility"
+    fields:
+      - "message_id (Primary Key)"
+      - "uetr"
+      - "source_format (MT103, MT200, pacs.008, pain.001)"
+      - "target_format (auto-mapped equivalent)"
+      - "original_message_content"
+      - "translated_message_content"
+      - "mapping_confidence_score"
+      - "validation_status"
+      - "processing_timestamp"
+      - "migration_phase (dual/mx_only)"
+  
+  performance_targets:
+    async_processing: "< 500ms for Kafka message mapping"
+    sync_api: "< 200ms for real-time translation API"
+    availability: "99.9% uptime (critical for migration)"
+    throughput: "50,000 message mappings/hour"
+    accuracy: "> 99.5% mapping confidence score"
+    
+  processing_modes:
+    async_kafka:
+      input_topic: "swift.mt.messages"
+      output_topic: "swift.mx.translated"
+      use_case: "Batch processing and analytics ingestion"
+      retry_policy: "3 attempts with exponential backoff"
+      
+    sync_api:
+      endpoint: "POST /api/v1/messages/translate"
+      use_case: "Real-time message transformation"
+      timeout: "10 seconds with circuit breaker"
+      caching: "Redis for common translation patterns"
+  
+  migration_timeline:
+    phase_1: "Sep 2025 - Dual format support (MT + MX)"
+    phase_2: "Oct 2025 - MX preference with MT fallback"
+    phase_3: "Nov 2025 - MX only (MT deprecated)"
+    rollback_plan: "MT reactivation capability until Dec 2025"
+```### 🔒 Compliance and Governance Framework
 
 #### **AML and OFAC Screening**
 ```yaml
@@ -424,6 +502,28 @@ use_case_2_analytics_kpis:
     storage_scalability: "Petabyte-scale with auto-partitioning"
     retention_management: "7 years compliance data"
     compute_scaling: "Auto-scaling 10-100 Spark nodes"
+
+use_case_3_migration_kpis:
+  purpose: "ISO MT/MX message coexistence and migration"
+  targets:
+    async_mapping_latency: "< 500ms for Kafka message transformation"
+    sync_api_response: "< 200ms for real-time translation API"
+    mapping_accuracy: "> 99.5% confidence score for MT to MX translation"
+    availability: "99.9% uptime (critical for migration period)"
+    throughput: "50,000 message mappings/hour"
+    error_rate: "< 0.1% for message transformation failures"
+  
+  migration_timeline:
+    phase_1_start: "September 2025 - Dual format support begins"
+    phase_2_transition: "October 2025 - MX preference with MT fallback"
+    phase_3_completion: "November 2025 - MX only (MT deprecated)"
+    rollback_capability: "December 2025 - MT reactivation if needed"
+  
+  compliance_tracking:
+    message_audit: "100% message transformation logging"
+    format_distribution: "Weekly MT vs MX volume reporting"
+    migration_progress: "Daily progress tracking to Nov 2025 target"
+    rollback_preparedness: "Monthly rollback scenario testing"
 ```
 
 ### 🔄 Use Case Integration Patterns
@@ -448,6 +548,12 @@ event_flow_architecture:
       processing: "Store in data lake for batch processing"
       latency: "< 30 seconds to Bronze layer"
       technology: "Kafka → Delta Lake → Databricks"
+      
+    mapping_path:
+      purpose: "Use Case 3 - MT/MX message mapping"
+      processing: "Dual format transformation and routing"
+      latency: "< 500ms for async, < 200ms for sync API"
+      technology: "Apache Camel → MongoDB → Dual APIs"
 
 data_consistency:
   pattern: "Event-driven eventual consistency"
@@ -501,6 +607,111 @@ api_design:
         path: "GET /compliance/reports/{type}"
         response_time: "< 10 seconds"
         formats: "JSON, CSV, PDF"
+  
+  message_mapping_apis:
+    base_url: "https://mapping.bank.com/v1"
+    authentication: "OAuth 2.0 + certificate-based auth"
+    rate_limits: "500 req/sec per mapping service client"
+    
+    endpoints:
+      translate_message:
+        path: "POST /messages/translate"
+        request_body: "source_format, target_format, message_content"
+        response_time: "< 200ms P95"
+        supported_formats: "MT103, MT200, pacs.008, pain.001"
+        
+      validate_mapping:
+        path: "POST /messages/validate"
+        response_time: "< 100ms P95"
+        validation_rules: "ISO 20022 schema compliance"
+        
+      mapping_confidence:
+        path: "GET /messages/{message_id}/confidence"
+        response_time: "< 50ms P95"
+        confidence_scoring: "ML-based accuracy prediction"
+        
+      migration_status:
+        path: "GET /migration/status"
+        response_time: "< 100ms P95"
+        metrics: "MT vs MX volume, migration progress"
+```
+
+#### **MT/MX Message Mapping Kafka Architecture**
+
+```yaml
+kafka_topics_mapping:
+  input_topics:
+    swift_mt_messages:
+      partitions: 8
+      replication_factor: 3
+      retention: "30 days"
+      key_schema: "mt_message_key.avsc"
+      value_schema: "mt_message_content.avsc"
+      
+    swift_mx_messages:
+      partitions: 12
+      replication_factor: 3
+      retention: "30 days"
+      key_schema: "mx_message_key.avsc" 
+      value_schema: "mx_message_content.avsc"
+  
+  processing_topics:
+    message_mapping_requests:
+      partitions: 6
+      replication_factor: 3
+      retention: "7 days"
+      use_case: "Async mapping job queue"
+      
+    mapping_results:
+      partitions: 6
+      replication_factor: 3
+      retention: "90 days"
+      use_case: "Completed translations for audit"
+      
+    mapping_errors:
+      partitions: 2
+      replication_factor: 3
+      retention: "90 days"
+      use_case: "Failed translations for manual review"
+  
+  output_topics:
+    dual_format_messages:
+      partitions: 12
+      replication_factor: 3
+      retention: "30 days"
+      content: "Both MT and MX versions for compatibility"
+      
+    migration_metrics:
+      partitions: 1
+      replication_factor: 3
+      retention: "365 days"
+      use_case: "Migration progress tracking"
+
+message_transformation_logic:
+  technology: "Apache Camel with custom processors"
+  
+  mapping_rules:
+    mt103_to_pacs008:
+      field_mappings:
+        - "MT103.20 → pacs.008.TxId"
+        - "MT103.23B → pacs.008.BkToCstmrDbtCdtNtfctn"
+        - "MT103.32A → pacs.008.IntrBkSttlmAmt"
+        - "MT103.50K → pacs.008.Dbtr"
+        - "MT103.59 → pacs.008.Cdtr"
+      
+    pain001_to_mt101:
+      field_mappings:
+        - "pain.001.GrpHdr.MsgId → MT101.20"
+        - "pain.001.PmtInf.PmtMtd → MT101.23"
+        - "pain.001.CdtTrfTxInf.Amt → MT101.32B"
+        - "pain.001.Dbtr → MT101.50"
+        - "pain.001.Cdtr → MT101.59"
+  
+  validation_engine:
+    schema_validation: "XSD validation for ISO 20022"
+    business_rules: "SWIFT gpi compliance checks"
+    data_quality: "Field completeness and format validation"
+    confidence_scoring: "ML model for translation accuracy"
 ```
 
 ## 🏛️ Enterprise System Components Detail
