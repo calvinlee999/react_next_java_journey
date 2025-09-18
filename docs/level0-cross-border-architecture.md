@@ -1,6 +1,6 @@
-# Level 0 - Enterprise Cross-Border Payment Architecture (Hybrid Event Mesh)
+# Level 0 - Enterprise Cross-Border Payment Architecture (Simplified)
 
-This Level 0 architecture provides a comprehensive enterprise-grade view of the cross-border payment lifecycle with Hybrid Event Mesh, Service Mesh, and distributed observability.
+This Level 0 architecture provides a clean, working enterprise-grade view of the cross-border payment lifecycle with Hybrid Event Mesh and enterprise components.
 
 ## 🎯 Enterprise Architecture Overview
 
@@ -23,119 +23,98 @@ Complete enterprise cross-border payment lifecycle incorporating:
 
 ```mermaid
 graph TB
-    %% Service Mesh Layer
-    subgraph "� Service Mesh (Istio) - Zero Trust Security"
-        SM[�️ Service Mesh Control Plane]
-        ST[📊 Distributed Tracing (Jaeger)]
-        SR[📋 Schema Registry]
-    end
-
-    %% API Gateway Layer
-    subgraph "🚪 Enterprise API Gateway (Kong)"
-        AG[🔌 API Gateway]
-        RL[⚡ Rate Limiting]
-        AU[🔑 OAuth 2.0/OIDC]
-        VER[📝 API Versioning]
+    %% Enterprise Infrastructure Layer
+    subgraph "Enterprise Infrastructure"
+        AG[API Gateway - Kong]
+        SM[Service Mesh - Istio]
+        ST[Distributed Tracing - Jaeger]
+        SR[Schema Registry]
     end
 
     %% Event Mesh Core
-    subgraph "📨 Hybrid Event Mesh"
-        K[🌊 Kafka Cluster]
-        N[⚡ NATS (Low Latency)]
-        R[💨 Redis Streams]
-        SR --> K
+    subgraph "Hybrid Event Mesh"
+        K[Kafka Cluster]
+        N[NATS Low Latency]
+        R[Redis Streams]
     end
 
-    %% Stage 1: Payment Initiation Namespace
-    subgraph "� K8s: payment-initiation"
-        A1[👤 Portal API] 
-        A2[💰 Initiation Service]
-        A3[💱 Fee Calculator]
-        A4[⚙️ Workflow Engine]
-        A5[🏛️ Bronze Data Lake]
+    %% Stage 1: Payment Initiation
+    subgraph "Stage 1: Payment Initiation"
+        A1[Portal API] 
+        A2[Initiation Service]
+        A3[Fee Calculator]
+        A4[Bronze Data Lake]
     end
 
-    %% Stage 2: Compliance Namespace  
-    subgraph "📋 K8s: payment-compliance"
-        B1[🛡️ Compliance Engine]
-        B2[🔍 ML Fraud Detection]
-        B3[✅ Approval Workflow]
-        B4[🏛️ Silver Data Lake]
+    %% Stage 2: Compliance
+    subgraph "Stage 2: Compliance"
+        B1[Compliance Engine]
+        B2[ML Fraud Detection]
+        B3[Approval Service]
+        B4[Silver Data Lake]
     end
 
-    %% Stage 3: Gateway Namespace
-    subgraph "🌐 K8s: payment-gateway"
-        C1[🔧 Message Formatter]
-        C2[✓ Schema Validator]
-        C3[🏦 Core Banking API]
-        C4[🌐 SWIFT Gateway]
+    %% Stage 3: Gateway
+    subgraph "Stage 3: Gateway"
+        C1[Message Formatter]
+        C2[Schema Validator]
+        C3[Core Banking]
+        C4[SWIFT Gateway]
     end
 
-    %% Stage 4: Network Namespace
-    subgraph "🔗 K8s: payment-network"
-        D1[🚀 Routing Engine]
-        D2[🏦 Correspondent APIs]
-        D3[📍 gpi Tracker]
-        D4[🔄 Network Orchestrator]
+    %% Stage 4: Network
+    subgraph "Stage 4: Network"
+        D1[Routing Engine]
+        D2[Correspondent Banks]
+        D3[gpi Tracker]
     end
 
-    %% Stage 5: Analytics Namespace
-    subgraph "📈 K8s: payment-analytics"
-        E1[🏛️ Gold Data Lake]
-        E2[📊 Analytics Engine]
-        E3[📧 Notification Hub]
-        E4[🎯 ML Insights]
+    %% Stage 5: Analytics
+    subgraph "Stage 5: Analytics"
+        E1[Gold Data Lake]
+        E2[Analytics Engine]
+        E3[Notification Hub]
     end
 
-    %% Shared Services Namespace
-    subgraph "🔧 K8s: shared-services"
-        SS1[�️ Config Server]
-        SS2[📊 Monitoring Stack]
-        SS3[🔒 Vault (Secrets)]
-        SS4[📜 Policy Engine (OPA)]
-    end
-
-    %% Connections - API Gateway
+    %% Primary Flow
     AG --> A1
-    AG --> A2
-    
-    %% Connections - Event Mesh
-    A2 -.->|payment.initiated| K
-    A4 -.->|workflow.started| K
-    B1 -.->|compliance.screened| K
-    B3 -.->|approval.decided| K
-    C1 -.->|message.formatted| K
-    C4 -.->|swift.transmitted| K
-    D3 -.->|gpi.status.updated| N
-    E3 -.->|notification.sent| R
+    A1 --> A2
+    A2 --> A4
+    A4 --> B1
+    B1 --> B2
+    B2 --> B3
+    B3 --> B4
+    B4 --> C1
+    C1 --> C2
+    C2 --> C3
+    C3 --> C4
+    C4 --> D1
+    D1 --> D2
+    D2 --> D3
+    D3 --> E1
+    E1 --> E2
+    E2 --> E3
 
-    %% Service Mesh Coverage
+    %% Event Mesh Integration
+    A2 -.->|events| K
+    B3 -.->|events| K
+    C4 -.->|events| K
+    D3 -.->|status| N
+    E3 -.->|notifications| R
+
+    %% Infrastructure Integration
     SM -.-> A1
-    SM -.-> A2
     SM -.-> B1
-    SM -.-> B2
     SM -.-> C1
-    SM -.-> C4
     SM -.-> D1
     SM -.-> E1
-
-    %% Distributed Tracing
     ST -.-> A2
     ST -.-> B1
     ST -.-> C1
     ST -.-> D1
-    ST -.-> E1
-
-    %% Schema Registry Integration
+    ST -.-> E2
     SR -.-> K
     SR -.-> C2
-
-    %% Data Flow
-    A5 -.-> B4
-    B4 -.-> E1
-    
-    %% Cross-stage Integration
-    E3 -.-> AG
 ```
 
 ## 🎯 Enhanced Target Benefits by Stage
@@ -151,6 +130,7 @@ graph TB
 ## 🏛️ Enterprise System Components Detail
 
 ### 🚪 Enterprise API Gateway Layer (Kong Enterprise)
+
 ```yaml
 api_gateway:
   technology: "Kong Enterprise"
@@ -170,6 +150,7 @@ api_gateway:
 ```
 
 ### 📨 Hybrid Event Mesh Architecture
+
 ```yaml
 event_mesh:
   primary_backbone: "Apache Kafka"
@@ -196,6 +177,7 @@ event_mesh:
 ```
 
 ### 🔐 Service Mesh Implementation (Istio)
+
 ```yaml
 service_mesh:
   technology: "Istio"
@@ -220,6 +202,7 @@ service_mesh:
 ```
 
 ### 📊 Distributed Tracing Strategy (Jaeger)
+
 ```yaml
 distributed_tracing:
   technology: "Jaeger"
@@ -247,6 +230,7 @@ distributed_tracing:
 ## 🗂️ Kubernetes Namespace & Domain Architecture
 
 ### Domain-Driven Namespace Strategy
+
 ```yaml
 # Namespace: payment-initiation (Domain: Customer Experience)
 payment_initiation:
@@ -327,6 +311,7 @@ payment_analytics:
 ## 📨 Enhanced Kafka Topic Architecture
 
 ### Production-Ready Topic Configuration
+
 ```yaml
 kafka_topics:
   # Stage 1: Customer Experience Events
@@ -405,9 +390,10 @@ kafka_topics:
     value_schema: "analytics_processed_v1.avsc"
 ```
 
-## � Enterprise Security & Compliance Framework
+## 🔒 Enterprise Security & Compliance Framework
 
 ### Zero-Trust Security Model
+
 ```yaml
 security_framework:
   identity_provider: "Keycloak / Azure AD"
@@ -424,6 +410,7 @@ security_framework:
 ```
 
 ### Monitoring & Observability Stack
+
 ```yaml
 observability:
   metrics: "Prometheus + Grafana"
@@ -441,6 +428,7 @@ observability:
 ## 📈 Performance & Scalability Targets
 
 ### Enterprise KPIs
+
 - **Transaction Throughput**: 10,000+ TPS sustained
 - **End-to-End Latency**: < 500ms P95
 - **Availability**: 99.9% (8.77 hours downtime/year)
@@ -449,6 +437,7 @@ observability:
 - **Customer Notification**: < 5 seconds delivery
 
 ### Auto-scaling Configuration
+
 ```yaml
 hpa_configuration:
   payment_initiation: "Scale 1-10 pods at 70% CPU"
@@ -481,208 +470,3 @@ hpa_configuration:
 ---
 
 **This enterprise architecture provides a production-ready foundation for scaling cross-border payments to millions of transactions while maintaining security, compliance, and operational excellence.**
-
-    subgraph "📈 STAGE 5: PAYMENT INTEGRATION"
-        D4 --> E1[🏛️ Gold Data Lake]
-        E1 --> E2[📊 Analytics Dashboard]
-        E2 --> E3[📧 Notification Service]
-        E3 --> E4[🌐 Customer Portal]
-        E4 --> A1
-    end
-
-    %% Data Flow Connections
-    A5 -.-> B4
-    B4 -.-> E1
-    
-    %% Cross-stage Integrations
-    D4 -.-> E2
-    E3 -.-> A1
-```
-
-## 🎯 Target Benefits by Stage
-
-| Stage | Primary Systems | Target Benefits Achieved | BIAN Domains |
-|-------|----------------|---------------------------|--------------|
-| **1. Initiation** | Frontend, Payment Core, Workflow | ✅ **Fee Transparency** | Payment Initiation |
-| **2. Approval** | Compliance, Fraud Detection | ✅ **Enhanced Fraud Screening** | Party Authentication, Fraud Detection |
-| **3. Gateway** | Formatter, Validation, SWIFT | ✅ **Payment Accuracy & Sender Clarity** | Payment Execution |
-| **4. Routing** | SWIFT Network, Correspondents | ✅ **Real-time Traceability** | Payment Execution (Network) |
-| **5. Integration** | Data Platform, Analytics | ✅ **Completion Alert & Investigation Reduction** | Customer Case Management |
-
-## 🏛️ System Components Detail
-
-### Stage 1: Payment Initiation Layer
-- **Customer Portal**: Multi-channel access (Web, Mobile, API)
-- **API Gateway**: Authentication, rate limiting, request routing
-- **Payment Initiation Service**: UETR generation, fee calculation, validation
-- **Workflow Engine (Camunda)**: BPMN 2.0 process orchestration
-- **Bronze Data Lake**: Raw event capture with immutable audit trail
-
-### Stage 2: Compliance & Approval Layer
-- **Compliance Engine**: AML/KYC screening, sanctions checking
-- **Fraud Detection Service**: ML-based risk assessment, behavioral analysis
-- **Approval Service**: Dual approval workflow, maker-checker controls
-- **Silver Data Lake**: Enriched data with compliance metadata
-
-### Stage 3: Message Processing Layer
-- **Payment Formatter**: ISO 20022 message assembly, MT fallback
-- **Message Validation**: Schema validation, business rule checking
-- **Core Banking Integration**: Account validation, balance checks
-- **SWIFT Gateway**: Message transmission, gpi integration
-
-### Stage 4: Network Execution Layer
-- **SWIFT Network**: Global messaging infrastructure
-- **Correspondent Banks**: Multi-hop routing, currency conversion
-- **Beneficiary Bank**: Final settlement, account crediting
-- **gpi Tracker**: Real-time status updates, end-to-end tracking
-
-### Stage 5: Analytics & Customer Experience Layer
-- **Gold Data Lake**: Analytics-ready data, operational metrics
-- **Analytics Dashboard**: Real-time KPIs, performance monitoring
-- **Notification Service**: Multi-channel alerts, status updates
-- **Customer Experience**: Portal updates, transaction history
-
-## 📊 Data Medallion Architecture
-
-### Bronze Layer (Stages 1-2)
-```json
-{
-  "layer": "bronze",
-  "purpose": "Raw event ingestion",
-  "content": [
-    "Payment requests with original payload",
-    "UETR generation events",
-    "Initial compliance screening results",
-    "Approval workflow state changes"
-  ],
-  "retention": "7 years (regulatory requirement)"
-}
-```
-
-### Silver Layer (Stages 2-3)
-```json
-{
-  "layer": "silver",
-  "purpose": "Validated and enriched data",
-  "content": [
-    "Enhanced compliance metadata",
-    "Risk scores and fraud indicators",
-    "Formatted ISO 20022 messages",
-    "SWIFT transmission confirmations"
-  ],
-  "retention": "5 years (operational requirement)"
-}
-```
-
-### Gold Layer (Stages 4-5)
-```json
-{
-  "layer": "gold",
-  "purpose": "Analytics-ready operational data",
-  "content": [
-    "End-to-end transaction records",
-    "Performance metrics and KPIs",
-    "Customer experience data",
-    "Regulatory reporting datasets"
-  ],
-  "retention": "3 years (business intelligence)"
-}
-```
-
-## 🔄 Message Flow Patterns
-
-### ISO 20022 Message Types
-- **pain.001**: Customer Credit Transfer Initiation (Stage 1 → 2)
-- **pacs.008**: Financial Institution Credit Transfer (Stage 3 → 4)
-- **pacs.002**: Payment Status Report (Stage 4 → 5)
-- **camt.056**: FI to FI Payment Cancellation Request (Exception handling)
-
-### Legacy MT Fallback
-- **MT101**: Customer Transfer Initiation → pain.001 conversion
-- **MT103**: Single Customer Credit Transfer → pacs.008 mapping
-- **MT910**: Confirmation of Credit → pacs.002 equivalent
-
-### API Integration Points
-```yaml
-payment_apis:
-  initiation: "POST /api/v1/payments/initiate"
-  status: "GET /api/v1/payments/{uetr}/status"
-  tracking: "GET /api/v1/payments/{uetr}/tracking"
-  
-gpi_apis:
-  status_update: "GET /gpi/v1/payments/{uetr}"
-  tracker: "POST /gpi/v1/tracker/updates"
-  
-notification_apis:
-  webhook: "POST /webhooks/payment/status"
-  alerts: "POST /api/v1/notifications/send"
-```
-
-## 🛡️ Security & Compliance Framework
-
-### Authentication & Authorization
-- **OAuth 2.0**: Customer and API authentication
-- **JWT Tokens**: Session management and authorization
-- **API Keys**: System-to-system authentication
-- **mTLS**: SWIFT network security
-
-### Regulatory Compliance
-- **PMPG Standards**: Use-Case 1a implementation
-- **BIAN Architecture**: Service domain alignment
-- **Data Protection**: GDPR, regional privacy laws
-- **Financial Regulations**: AML, KYC, sanctions compliance
-
-## 📈 Performance & Monitoring
-
-### Real-time Metrics (Gold Layer)
-- **Transaction Volume**: Payments per hour/day
-- **Success Rate**: End-to-end completion percentage
-- **Processing Time**: Average time per stage
-- **Cost Efficiency**: Cost per successful transaction
-- **Customer Satisfaction**: Real-time feedback scores
-
-### Operational Dashboards
-- **Executive Dashboard**: High-level KPIs and trends
-- **Operations Dashboard**: Real-time monitoring and alerts
-- **Compliance Dashboard**: Risk metrics and regulatory reporting
-- **Customer Dashboard**: Transaction status and history
-
-## 🔮 Future Architecture Considerations
-
-### Scalability Enhancements
-- **Microservices**: Further decomposition for scale
-- **Event Streaming**: Enhanced Kafka integration
-- **API Gateway**: Rate limiting and throttling improvements
-- **Database Optimization**: Sharding and read replicas
-
-### Technology Evolution
-- **Central Bank Digital Currencies (CBDC)**: Future integration points
-- **Blockchain Integration**: DLT for settlement optimization
-- **AI/ML Enhancement**: Advanced fraud detection and routing
-- **Real-time Gross Settlement**: RTGS integration capabilities
-
-## 📚 Related Documentation
-
-### Sequence Diagrams
-- [L0 Overview - 5 Stages](sequence-diagrams/l0-overview-5-stages.md) - High-level flow
-- [Stage 1: Payment Initiation](sequence-diagrams/stage1-payment-initiation.md) - Detailed customer experience
-- [Stage 2: Payment Approval](sequence-diagrams/stage2-payment-approval.md) - Compliance and fraud screening
-- [Stage 3: Payment Gateway](sequence-diagrams/stage3-payment-gateway.md) - Message formatting
-- [Stage 4: Routing & Execution](sequence-diagrams/stage4-routing-execution.md) - Network processing
-- [Stage 5: Payment Integration](sequence-diagrams/stage5-payment-integration.md) - Analytics and notifications
-
-### Implementation Guides
-- [Remittances Use-Case 1a Summary](remittances-use-case-1a-summary.md) - PMPG compliance guide
-- [BIAN Service Domain Mapping](bian-service-domains.md) - Enterprise architecture alignment
-
-### Reference Standards
-- [PMPG Market Guidance](references/20250115_pmpg-market-guidance_0.pdf) - Industry standards
-- [JPMorgan ISO 20022 Guides](references/) - Implementation experience and mapping guides
-
----
-
-**Next Steps:**
-1. Develop Level 1 architecture diagrams for each stage
-2. Create detailed integration specifications
-3. Define API contracts and data schemas
-4. Establish performance benchmarks and SLAs
