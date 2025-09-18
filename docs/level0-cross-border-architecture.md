@@ -181,11 +181,12 @@ graph TB
         SC4[Compliance Screening]
     end
 
-    subgraph "Gold Layer - Business Ready"
-        OD[Operational Data Store - Azure SQL]
-        DL[Data Lake - Snowflake]
-        DS[Analytics Dashboards]
+    subgraph "Gold Layer - Unified Data Lake"
+        GDL[Gold Data Lake - Unified Lakehouse]
+        OT[Operational Tables]
+        AT[Analytical Tables]
         CS[Client Servicing APIs]
+        DS[Analytics Dashboards]
     end
 
     %% Data Flow
@@ -198,10 +199,11 @@ graph TB
     SC1 --> SC2
     SC2 --> SC3
     SC3 --> SC4
-    SC4 --> OD
-    SC4 --> DL
-    OD --> CS
-    DL --> DS
+    SC4 --> GDL
+    GDL --> OT
+    GDL --> AT
+    OT --> CS
+    AT --> DS
 
     %% Fallback Logic
     CS -.->|UETR Not Found| RT
@@ -304,35 +306,59 @@ silver_layer:
     regulatory_reporting: "Automated filing preparation"
 ```
 
-#### **Gold Layer: Business-Ready Analytics**
+#### **Gold Layer: Business-Ready Data Lake**
 ```yaml
 gold_layer:
-  operational_data_store:
-    technology: "Azure SQL Database"
-    purpose: "Client servicing and support teams"
-    sla: "< 100ms query response time"
-    availability: "99.9% uptime"
-    
-    apis:
-      - "GET /api/v1/payments/{uetr}/status"
-      - "GET /api/v1/customers/{id}/payments"
-      - "GET /api/v1/payments/search"
-      - "GET /api/v1/corridors/{from}/{to}/analytics"
+  technology: "Unified Gold Data Lake (Snowflake/Delta Lake)"
+  purpose: "Single source of truth for business-ready payment data"
+  architecture: "Lakehouse pattern with ACID transactions"
   
-  analytics_platform:
-    technology: "Snowflake Data Cloud"
-    purpose: "Business analytics and reporting"
-    capabilities:
-      - "Multi-dimensional OLAP cubes"
-      - "Time-series payment trend analysis"
-      - "Cross-corridor performance comparison"
-      - "Revenue and cost analytics"
+  data_organization:
+    operational_tables:
+      - "payments_current_status" # Real-time UETR tracking
+      - "customer_payment_history" # Client servicing queries
+      - "corridor_performance" # Cross-border analytics
+      - "compliance_audit_trail" # Regulatory reporting
     
-    dashboards:
-      - "Executive: Payment volume and revenue trends"
-      - "Operations: SLA performance and exceptions"
-      - "Compliance: Screening results and risk metrics"
-      - "Customer Service: Real-time payment tracking"
+    analytical_tables:
+      - "payment_trends_daily" # Executive dashboards
+      - "fraud_detection_metrics" # Risk analytics
+      - "revenue_analysis" # Financial reporting
+      - "sla_performance" # Operations metrics
+  
+  query_optimization:
+    clustering_keys: ["payment_date", "currency", "corridor"]
+    partitioning: "By currency and region for parallel processing"
+    materialized_views: "Pre-aggregated KPIs for sub-second response"
+  
+  access_patterns:
+    operational_apis:
+      sla: "< 100ms query response time"
+      availability: "99.9% uptime"
+      endpoints:
+        - "GET /api/v1/payments/{uetr}/status"
+        - "GET /api/v1/customers/{id}/payments"
+        - "GET /api/v1/payments/search"
+        - "GET /api/v1/corridors/{from}/{to}/analytics"
+    
+    analytical_workloads:
+      dashboards:
+        - "Executive: Payment volume and revenue trends"
+        - "Operations: SLA performance and exceptions" 
+        - "Compliance: Screening results and risk metrics"
+        - "Customer Service: Real-time payment tracking"
+      
+      capabilities:
+        - "Multi-dimensional OLAP cubes"
+        - "Time-series payment trend analysis"
+        - "Cross-corridor performance comparison"
+        - "Revenue and cost analytics"
+  
+  performance_optimization:
+    caching: "Redis for hot operational data"
+    indexing: "Bloom filters for UETR lookups"
+    compression: "Delta encoding with 90% reduction"
+    concurrent_access: "10,000+ simultaneous users"
 ```
 
 ### 🔒 Compliance and Governance Framework
