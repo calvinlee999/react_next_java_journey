@@ -21,6 +21,7 @@ This repository contains enterprise-grade cross-border payment architecture docu
 | [PMPG Market Guidance v2.0](references/20250115_pmpg-market-guidance_0.pdf) | PMPG | ISO 20022 Market Practice and Implementation Guidelines (January 2025) |
 | [ISO 20022 Messaging Workflows on AWS](references/iso-20022-messaging-workflows-on-aws.pdf) | AWS | Cloud implementation patterns for ISO 20022 |
 | [JPMorgan ISO 20022: First 120 Days Live](references/jpmorgan-iso-20022-first-120-days-live-ebook.pdf) | JPMorgan | Practical implementation experience and lessons learned from live ISO 20022 deployment |
+| [Citibank ISO 20022 FAQs](references/citibank-iso-20022-faqs.pdf) | Citibank | Frequently asked questions and practical guidance for ISO 20022 migration |
 
 ## 🏗️ Architecture Overview
 
