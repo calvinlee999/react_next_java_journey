@@ -1,0 +1,3088 @@
+ISO 20022 Market Guidance
+January 2025 version 2.0
+1
+
+Introduction
+In 2020, the Payments Market Practice Group sponsored an
+initiative to produce payments market guidance for specific,
+agreed payments use-cases. The work group had the mission to
+create global ISO 20022 Market Practice and Implementation
+Guidelines in order to ensure a common implementation of ISO
+20022 for the agreed payment use-cases.
+The work compliments the ISO 20022 harmonisation initiative
+and will align with and build from the HVPS+ and CBPR+
+implementation guidelines as the basis to ensure end-to-end
+processing without data loss.
+This payments market practice will define, for the specified usecases, how ISO 20022 messages are to be validated and used
+on the SWIFT network. This work aims to encourage the use of
+new data elements in the ISO 20022 message, and to enable
+consistent usage of those elements internationally. This work will
+deliver documented and agreed market guidance for the
+specified use-cases.
+As a further deliverable, the working group will define and agree
+the ownership for the guidance on an on-going operational basis,
+with robust and transparent governance processes for version
+management and maintenance of these usage guidelines.
+The Payments Market Practice Working Group will operate
+through successive phases, each phase defined by the set of
+use-cases that are to be addressed, and each phase will be
+agreed with PMPG in advance of commencing.
+
+2
+
+Use Case Index
+Remittances Payments
+• Bank Account to Bank Account
+• Bank Account to Cheque
+• Bank Account to Cash
+• Bank Account to Digital wallet
+• Bank Account to Payment Card
+Security Settlement Payment
+• Versus Payment to a Central Security
+Depository (CSD)
+• Delivery-free – Payment to the Broker
+(Delivery Agent)
+Central Counterparty Payments
+• Correspondent/Private Settlement
+Model
+• Direct Settlement Model
+
+PMPG - ISO 20022 Market Guidance
+
+3
+
+Remittances Use-case
+
+PMPG - ISO 20022 Market Guidance
+
+4
+
+Remittances Use-Case: Introduction
+Remittances are defined as payments between two natural persons
+(P2P for short) and are separate and distinct from business to person
+or government to person payments.
+Our work on the Remittances use-case has considered 5 specific
+Remittances use-cases
+
+• 1a: bank account to bank account
+• 1b: bank account to cheque
+• 1c: bank account to cash
+• 1d: bank account to digital wallet
+• 1e: bank account to payment card
+For each of these specific use cases, there is a repeating pattern of 3
+slides:
+
+•
+•
+•
+•
+
+Use-case description
+Example scenario
+Example of key data elements
+This is followed by a summary slide setting out the
+proposed requirements (e.g. codes, or data fields) for
+guidance to be agreed and published
+
+5
+PMPG - ISO 20022 Market Guidance
+
+Remittances Use-Case: context, global volumes
+
+Outwards
+
+Absolute Largest 10
+
+1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+
+United States
+UAE
+Saudi Arabia
+Switzerland
+Germany
+Russia
+China
+France
+Kuwait
+Netherlands
+
+$m
+71,562
+44,959
+31,197
+28,180
+24,062
+22,217
+15,135
+15,088
+14,782
+14,548
+
+Inwards
+
+•
+Macro benefits for this Use-case
+• $717bn of remittances sent globally, 76% went to Low/Middle
+Income Countries (2019). >10% of world population are recipients
+• Average global remittance cost is currently 6.7% - more than 2x 3%
+target set in the UN Sustainable Development Goals for 2030
+• Steps to reduce frictions in remittance payments will promote
+competition across PSPs and reduce associated costs.
+• Clearer identification of payments and standardisation of ISO
+messages conventions could result in more efficient payments
+
+1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+
+India
+China
+Mexico
+Philippines
+Egypt
+France
+Nigeria
+Pakistan
+Bangladesh
+Germany
+
+83,131
+68,398
+38,520
+35,167
+26,791
+25,738
+23,800
+22,507
+18,348
+17,040
+
+Relative Largest 10
+%
+GDP
+0.3%
+10.7%
+3.9%
+4.0%
+0.6%
+1.3%
+0.1%
+0.6%
+11.0%
+1.6%
+
+1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+
+2.8%
+0.5%
+3.0%
+9.9%
+8.9%
+1.0%
+5.3%
+7.9%
+5.8%
+0.4%
+
+1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+
+Luxembourg
+Timor-Leste
+Oman
+Kuwait
+UAE
+Maldives
+Lebanon
+Kyrgyz Republic
+Qatar
+Tonga
+
+$m
+13,736
+293
+9,134
+14,782
+44,959
+594
+4,333
+574
+11,964
+29
+
+%
+GDP
+19.3%
+17.5%
+11.9%
+11.0%
+10.7%
+10.4%
+8.1%
+6.8%
+6.5%
+6.4%
+
+Tonga
+Haiti
+South Sudan
+Kyrgyz Republic
+Tajikistan
+Nepal
+Montenegro
+Honduras
+Lesotho
+El Salvador
+
+183
+3,274
+1,267
+2,410
+2,298
+8,128
+1,376
+5,369
+584
+5,647
+
+37.6%
+37.1%
+34.4%
+29.2%
+28.2%
+27.3%
+25.4%
+22.0%
+21.3%
+21.0%
+
+6
+PMPG - ISO 20022 Market Guidance
+
+Use-Case Remittance Payments: 1a Account to Account
+Description of Use-Case
+Account to Account Payments
+• Both the debtor and creditor are persons and not legal
+entities
+• The transfer takes place cross-border across accounts that
+the debtor and creditor own at their respective agents.
+• The transfer can take place between accounts
+denominated in the same currency or different currencies.
+Special Use Case
+• Movement of funds where Debtor and Creditor are the
+same person (e.g. IntraCompanyPayment, a new cat
+code, local instrument code or purp code might be
+required)
+
+Target Benefits (from effective market guidance)
+Debtor
+• Transparency of fees, rates and timing
+• Traceability
+• Completion Alert
+• Low likelihood of misrouted payments (payment accuracy)
+Creditor
+• Clarity who the payment is from
+• Transparency of fees, rates and timing
+Agents
+• Reduced investigation costs
+• Improved fraud screening
+• Improved product effectiveness will increase usage to
+compete with non-bank providers
+
+PMPG - ISO 20022 Market Guidance
+
+Opportunities from Standardisation and Richer Data
+Codewords (immutability)
+• Category Purpose Code/Local Instrument Code indicating
+remittance transactions
+• Purpose Code to indicate a sub-type (e.g. gift, balance
+transfer)
+Party Data
+• Structured address data
+• Additional party identification in structured form: DOB,
+Place of Birth
+Fee and FX Rate Transparency
+
+Industry Sectors involved: incl. primary ‘end users’
+Workers Remittance, Private banking, Overseas Banking,
+Non-Resident Banking
+End User
+• Debtor: Individual with a bank account
+• Creditor: Individual with a bank account
+
+Conclusions/ Recommendations
+Challenges in providing Guidance for the Use Case
+Creditor Agent
+• Feedback from agents needed in key remittance countries
+needed (e.g. Mexico, India, Philippines)
+Debtor Agent
+• Front Ends will need to be modified including systems in
+branches
+
+Examples of types of Payment Provider involved (bank &
+non-bank)
+•
+•
+
+Banks
+Any player who is fulfilling the traditional banking role in
+the payment journey (such as an intermediary, agent…)
+
+The following data characteristics represent this use case
+The payment (pacs.008)
+• Category Purpose Code (CtgyPurp): GP2P
+• Purpose Code (Purp): GIFT or INTP
+
+Example 1a - bank account to bank account
+Archibald Haddock residing in Mons, Belgium, is sending a monetary gift to his friend Filemon Mortadelo in Mexico. Archie
+and Filemon have bank accounts
+Element
+
+Key Sub-Elements
+
+Example
+
+Debtor
+
+Name
+Structured Address
+DtAndPlcOfBirth
+
+Capitaine Archibald
+Haddock
+
+Transaction
+Elec Banking Form
+
+Debtor Account
+Creditor Account
+
+Id
+
+Debtor Agent
+
+BICFI
+
+BBRUBEBBXXX
+
+Intermediary Agent
+
+BICFI
+
+PNBPUS3NNYC
+
+Creditor Agent
+
+BICFI
+
+BCMRMXMM
+
+Creditor
+
+Name
+Structured Address
+DtAndPlcOfBirth
+
+Filemon Mortadelo
+
+Purpose
+
+Code
+
+GIFT
+
+Pacs.008
+Pacs.002
+
+Pacs.008
+Pacs.002
+
+Debtor
+
+Debtor
+Agent
+
+Intermediary
+
+Creditor
+Agent
+
+Creditor
+
+Credit Confirm
+camt.053
+
+Optional
+
+PMPG - ISO 20022 Market Guidance
+
+8
+
+Example of key data elements for 1a bank account to bank account
+<FIToFICstmrCdtTrf>
+<GrpHdr>
+:
+<GrpHdr>
+<CdtTrfTxInf>
+:
+<PmtTpInf>
+<SvcLvl>
+<Cd>G001</Cd>
+</SvcLvl>
+<CtgyPurp>
+<Cd>GP2P</Cd>
+</CtgyPurp>
+</PmtTpInf>
+:
+<ChrgBr>DEBT</ChrgBr>
+<ChrgsInf>
+:
+</ChrgsInf>
+:
+<Dbtr>
+:
+</Dbtr>
+<DbtrAgt>
+
+<Nm>Capitaine Archibald Haddock</Nm>
+<PstlAdr>
+<StrtNm>Rue d' Harmignies</StrtNm>
+<BldgNb>4A</BldgNb>
+<PstCd>7032</PstCd>
+<TwnNm>Mons</TwnNm>
+<Ctry>BE</Ctry>
+</PstlAdr>
+<Id>
+<PrvtId>
+<DtAndPlcOfBirth>
+:
+</DtAndPlcOfBirth>
+</PrvtId>
+</Id>
+
+<FinInstnId>
+<BICFI>BBRUBEBBXXX</BICFI>
+</FinInstnId>
+</DbtrAgt>
+<CdtrAgt>
+
+<FinInstnId>
+<BICFI>BCMRMXMM</BICFI>
+</FinInstnId>
+</CdtrAgt>
+<Cdtr>
+:
+</Cdtr>
+<Purp>
+<Cd>GIFT</Cd>
+
+<Nm>Filemon Mortadello</Nm>
+<PstlAdr>
+<StrtNm>Circuito Balvanera</StrtNm>
+<BldgNb>2</BldgNb>
+<PstCd>76920</PstCd>
+<TwnNm>Quretaro</TwnNm>
+<Ctry>MX</Ctry>
+</PstlAdr>
+<Id>
+<PrvtId>
+<DtAndPlcOfBirth>
+:
+</DtAndPlcOfBirth>
+
+</Purp>
+</CdtTrfTxInf>
+</FIToFICstmrCdtTrf>
+
+PMPG - ISO 20022 Market Guidance
+
+</PrvtId>
+</Id>
+
+9
+
+Use-Case Remittance Payments: 1b Account to Cheque
+Description of Use-Case
+Account to Account Payments via cheque
+• Both the debtor and creditor are persons and not legal
+entities
+• The transfer takes place cross-border but the creditor’s
+bank account is not known and a cheque issuance is
+being requested from the instructed agent.
+• At the time of issuance it will not be known if and when the
+check will be deposited and if any currency conversion will
+be required by the agent of first deposit.
+
+Opportunities from Standardisation and Richer Data
+Codewords (immutability)
+• Category Purpose Code indicating remittance transactions
+• Purpose Code to indicate a sub-type
+Party Data
+• Structured address data (mandatory for a cheque)
+• Additional party identification in structured form: DOB,
+Place of Birth
+Fee and FX Rate Transparency
+Delivery confirmation (pacs.002) when cheque has been
+deposited.
+
+Industry Sectors involved: incl. primary ‘end users’
+Workers Remittance, Private banking, Overseas banking,
+Non-resident banking
+End User
+• Debtor: Individual with a bank account
+• Creditor: Individual with a bank account but the account or
+account servicer is not known to the debtor
+
+Conclusions/ Recommendations
+Challenges in providing Guidance for the Use Case
+
+Target Benefits (from effective market guidance)
+Debtor
+• Transparency of fees and rates
+• Traceability
+• Completion Alert when cheque has been deposited
+• Low likelihood of misrouted payments (payment accuracy)
+Creditor
+• Clarity who the payment is from
+• Transparency of fees and rates
+Agents
+• Reduced investigation costs
+
+PMPG - ISO 20022 Market Guidance
+
+Debtor Agent
+• Front Ends will need to be modified including systems in
+branches
+Instructed Agent
+• The instruction to issue a cheque is in the Instruction for
+creditor agent , but the cheque issuer is not the agent of the
+creditor
+• Needs to be able to send a notification when the cheque was
+issued and when it was deposited/cleared
+
+Examples of types of Payment Provider involved (bank &
+non-bank)
+Banks
+
+The following data characteristics represent this use case
+The payment (pacs.008)
+• Category Purpose Code (CtgyPurp): GP2P
+• Purpose Code (Purp): GIFT
+Should a payment status (pacs.002) be report the follow code
+are applicable.
+• Payment Transaction Status Code (TxSts):
+ACIS: Cheque has been issued but not yet been
+deposited or cleared. (existing code but change of
+definition);
+CHQC: Cheque has been presented in cheque clearing
+and settled on the creditor’s account (new code).
+Should the payment requesting a cheque to the issued be
+returned (pacs.004). Return Reason (Rsn) should be used:
+• Cheque Stale (DT02) should be used that indicates that
+funds are returned due to a stale cheque.
+
+10
+
+Example 1b bank account to cheque
+Archibald Haddock residing in Mons, Belgium, is sending a monetary gift to his friend Filemon Mortadelo in
+Mexico. Archie does no know Filemon’s account number and requests issuance of a cheque
+Element
+
+Key Sub-Elements
+
+Example
+
+Debtor
+
+Name
+Structured Address
+DtAndPlcOfBirth
+
+Capitaine Archibald
+Haddock
+
+Debtor Account
+
+Transaction
+
+Id
+
+EB Form
+Pacs.008
+
+Debtor Agent
+
+BICFI
+
+BBRUBEBBXXX
+
+Instructed Agent
+
+BICFI
+
+PNBPUS3NNYC
+
+Creditor
+
+Name
+Structured Address
+(M)
+DtAndPlcOfBirth
+
+Filemon Mortadelo
+
+Instruction for Creditor
+Agent
+
+InstrForCdtrAgt
+
+CHQB
+
+Purpose
+
+Code
+
+GIFT
+
+Cheque
+
+Pacs.002 (ACIS)
+
+Debtor
+
+Debtor
+Agent
+
+Pacs.002 (ACCC)
+
+Instructed
+Agent
+
+Creditor
+
+Credit Confirm
+
+The cheque issuance instruction is in the
+Instruction for creditor agent element
+
+Optional pacs.002
+
+PMPG - ISO 20022 Market Guidance
+
+11
+
+Example of key data elements for 1b account to cheque
+<FIToFICstmrCdtTrf>
+:
+<CdtTrfTxInf>
+:
+
+<PmtTpInf>
+<CtgyPurp>
+<Cd>GP2P</Cd>
+</CtgyPurp>
+</PmtTpInf>
+:
+<ChrgBr>DEBT</ChrgBr>
+<ChrgsInf>
+:
+</ChrgsInf>
+:
+<Dbtr>
+:
+</Dbtr>
+<DbtrAgt>
+
+<Nm>Capitaine Archibald Haddock</Nm>
+<PstlAdr>
+<StrtNm>Rue d' Harmignies</StrtNm>
+<BldgNb>4A</BldgNb>
+<PstCd>7032</PstCd>
+<TwnNm>Mons</TwnNm>
+<Ctry>BE</Ctry>
+</PstlAdr>
+<Id>
+<PrvtId>
+<DtAndPlcOfBirth>
+:
+</DtAndPlcOfBirth>
+</PrvtId>
+</Id>
+
+<FinInstnId>
+<BICFI>BBRUBEBBXXX</BICFI>
+</FinInstnId>
+</DbtrAgt>
+<Cdtr>
+:
+</Cdtr>
+<InstrForCdtrAgt>
+<Cd>CHQB</Cd>
+<InstrForCdtrAgt>
+<Purp>
+<Cd>GIFT</Cd>
+</Purp>
+</CdtTrfTxInf>
+</FIToFICstmrCdtTrf>
+
+<Nm>Filemon Mortadello</Nm>
+<PstlAdr>
+<StrtNm>Circuito Balvanera</StrtNm>
+<BldgNb>2</BldgNb>
+<PstCd>76920</PstCd>
+<TwnNm>Quretaro</TwnNm>
+<Ctry>MX</Ctry>
+</PstlAdr>
+<Id>
+<PrvtId>
+<DtAndPlcOfBirth>
+:
+</DtAndPlcOfBirth>
+</PrvtId>
+</Id>
+
+PMPG - ISO 20022 Market Guidance
+
+12
+
+Use-Case Remittance Payments: 1c Account to Cash
+Description of Use-Case
+Account to Cash Payments
+• Both the debtor and creditor are persons and not legal
+entities
+• The transfer takes place cross-border but the creditor does
+not have a bank account and cash pick-up is being
+requested
+• The cash pick-up will be most likely in the creditor agent’s
+local currency
+
+Opportunities from Standardisation and Richer Data
+Codewords (immutability)
+• Category Purpose Code indicating remittance transactions
+• Purpose Code to indicate a sub-type
+Party Data
+• Structured address data
+• Additional party identification in structured form: DOB,
+Place of Birth, Passport Number, National ID Number etc.
+Fee and FX Rate Transparency
+Delivery confirmation (pacs.002) plus cash pick up
+confirmation
+
+Industry Sectors involved: incl. primary ‘end users’
+Workers Remittance, Private banking, Overseas banking,
+Non-resident banking
+End User
+• Debtor: Individual with a bank account
+• Creditor: Individual that does not have a bank account
+
+Conclusions/ Recommendations
+Challenges in providing Guidance for the Use Case
+
+Target Benefits (from effective market guidance)
+Debtor
+• Transparency of fees and rates
+• Traceability
+• Completion Alert when cash has been picked up
+• Low likelihood of misrouted payments (payment accuracy)
+Creditor
+• Clarity who the payment is from
+• Transparency of fees and rates before cash pick-up
+Agents
+• Reduced investigation costs
+
+PMPG - ISO 20022 Market Guidance
+
+Debtor Agent
+• Front Ends will need to be modified including systems in
+branches
+Creditor Agent
+• Has to support cash pick up and confirmation of cash pickup
+
+Examples of types of Payment Provider involved (bank &
+non-bank)
+Banks
+• That are willing to support non-customers
+Non-Bank
+• Licensed Money Service Bureau
+
+The following data characteristics represent this use case
+• Category Purpose Code (CtgyPurp): GP2P
+• Purpose Code (Purp): GIFT
+Should a payment status (pacs.002) be report the follow code
+are applicable.
+• Payment Transaction Status Code (TxSts): Cash Picked
+Up (CPUC)
+Should the payment be subsequently returned the following
+Return Reason (pacs.004) the following codes may be
+considered:
+• Cash not picked up (CNPC), to indicate that the return of
+funds is due to cash not being picked up
+• Private ID/ Organisation ID invalid (BE01) used if the
+private id or organization id not matching.
+
+13
+
+Example 1c Account to Cash
+Archibald Haddock residing in Mons, Belgium, is sending a monetary gift to his friend Filemon Mortadelo in
+Mexico. Filemon does not have a bank account and wants to be able to pick up cash.
+Element
+
+Key Sub-Elements
+
+Example
+
+Debtor
+
+Name
+Structured Address
+DtAndPlcOfBirth
+
+Capitaine Archibald
+Haddock
+
+Debtor Account
+
+Transaction
+
+Id
+
+EB Form
+Pacs.008
+
+Debtor Agent
+
+BICFI
+
+BBRUBEBBXXX
+
+Creditor Agent
+
+BICFI
+
+BCMRMXMM
+
+Creditor
+
+Name
+Structured Address
+(M)
+DtAndPlcOfBirth
+Passport Number
+
+Filemon Mortadelo
+
+Instruction for Creditor
+Agent
+
+InstrForCdtrAgt
+
+HOLD
+
+Purpose
+
+Code
+
+GIFT
+
+Pacs.002
+
+Debtor
+
+Debtor
+Agent
+
+Cash
+
+Cash picked-up
+
+Creditor
+Agent
+
+Creditor
+
+Credit Confirm
+
+Optional pacs.002
+
+PMPG - ISO 20022 Market Guidance
+
+14
+
+Example of key data elements for 1c Account to Cash
+<FIToFICstmrCdtTrf>
+:
+<CdtTrfTxInf>
+:
+
+<PmtTpInf>
+<CtgyPurp>
+<Cd>GP2P</Cd>
+
+<Nm>Capitaine Archibald Haddock</Nm>
+<PstlAdr>
+:
+</PstlAdr>
+<Id>
+<PrvtId>
+<DtAndPlcOfBirth>
+:
+</DtAndPlcOfBirth>
+
+</CtgyPurp>
+</PmtTpInf>
+:
+<ChrgBr>DEBT</ChrgBr>
+<ChrgsInf>
+:
+</ChrgsInf>
+:
+<Dbtr>
+:
+</Dbtr>
+<DbtrAgt>
+
+</PrvtId>
+</Id>
+
+<FinInstnId>
+<BICFI>BBRUBEBBXXX</BICFI>
+</FinInstnId>
+</DbtrAgt>
+<CdtrAgt>
+<FinInstnId>
+<BICFI>BCMRMXMM</BICFI>
+</FinInstnId>
+</CdtrAgt>
+<Cdtr>
+:
+</Cdtr>
+<InstrForCdtrAgt>
+
+<Nm>Filemon Mortadello</Nm>
+<PstlAdr>
+<StrtNm>Circuito Balvanera</StrtNm>
+<BldgNb>2</BldgNb>
+<PstCd>76920</PstCd>
+<TwnNm>Quretaro</TwnNm>
+<Ctry>MX</Ctry>
+</PstlAdr>
+<Id>
+<PrvtId>
+<DtAndPlcOfBirth>
+:
+</DtAndPlcOfBirth>
+
+<Cd>HOLD</Cd>
+
+</PrvtId>
+<Othr>
+
+<InstrForCdtrAgt>
+<Purp>
+
+<Id>123456789XYZ</Id>
+<SchmeNm>
+<Cd>CCPT</Cd>
+</SchmeNm>
+<Issr>US Dept of
+
+<Cd>GIFT</Cd>
+</Purp>
+</CdtTrfTxInf>
+</FIToFICstmrCdtTrf>
+
+State</Issr>
+</Othr>
+</Id>
+
+PMPG - ISO 20022 Market Guidance
+
+15
+
+Use-Case Remittance Payments: 1d Account to Wallet
+Description of Use-Case
+
+Opportunities from Standardisation and Richer Data
+
+Industry Sectors involved: incl. primary ‘end users’
+
+Account to (Wallet) Account Payments
+• Both the debtor and ultimate creditor are persons and not
+legal entities
+• The creditor is the Fintec/Telekom company offering
+mobile payments as a service
+• The transfer takes place cross-border but the creditor does
+not have a bank account and uses a wallet from a fintech
+• The wallet can be denominated in the same currency or
+different currencies.
+
+Codewords (immutability)
+• Category Purpose Code indicating remittance transactions
+• Purpose Code to indicate a sub-type
+
+Workers Remittance, Private banking, Overseas banking,
+Non-resident banking
+
+Party Data
+• Structured address data
+• Additional party identification in structured form: DOB,
+Place of Birth, Passport Number, National ID Number etc.
+Fee and FX Rate Transparency
+Delivery confirmation (pacs.002)
+
+End User
+• Debtor: Individual with a bank account
+• Creditor: Individual that does not have a bank account
+
+Conclusions/ Recommendations
+Challenges in providing Guidance for the Use Case
+
+Target Benefits (from effective market guidance)
+
+Debtor Agent
+• Front Ends will need to be modified including systems in
+branches
+
+Debtor
+• Transparency of fees and rates
+• Traceability
+• Completion Alert
+• Low likelihood of misrouted payments (payment accuracy)
+
+Creditor Agent
+• Has to be able to pass the full party details to the creditor
+or funds cannot be applied correctly.
+
+Creditor
+• Clarity who the payment is from
+• Transparency of fees and rates before cash pick-up
+Agents
+• Reduced investigation costs
+• Improved product effectiveness will increase usage to
+compete with non-bank providers
+
+Examples of types of Payment Provider involved (bank &
+non-bank)
+
+PMPG - ISO 20022 Market Guidance
+
+The following data characteristics represent this use case
+• Category Purpose Code (CtgyPurp): GP2P
+• Purpose Code (Purp): GIFT
+• Creditor, Private Id identified by the Scheme Name (Cd):
+TELE to specify an ID as a phone number
+Should the payment be subsequently returned (pacs.004) the
+following Return Reason codes may be considered
+• Account Proxy Invalid (BE23)
+to communicate to the instructing agent or the tracker that
+the ID for the Ultimate Creditor is invalid.
+
+Banks
+• That are willing to support non-customers
+Non-Bank
+• Licensed Money Service Bureau
+
+16
+
+Example 1d Account to Wallet
+Archibald Haddock residing in Mons, Belgium, is sending a monetary gift to his friend Muhonja Onasio in Kenya.
+Muhonja has an Mpesa account at Safaricom.
+Element
+
+Key Sub-Elements
+
+Example
+
+Debtor
+
+Name
+Structured Address
+DtAndPlcOfBirth
+
+Capitaine Archibald
+Haddock
+
+Transaction
+
+Debtor Account
+
+Id
+
+Debtor Agent
+
+BICFI
+
+BBRUBEBBXXX
+
+Intermediary Agent 1
+
+BICFI
+
+SCBLUS33
+
+Intermediary Agent 2
+
+BICFI
+
+SCBLKENX
+
+EB Form
+Pacs.008
+Pacs.008
+Pacs.002
+
+Debtor
+Creditor Agent
+
+Name
+Structured Address
+
+Safaricom
+
+Creditor
+
+Name
+
+Muhonja Onasio
+Structured Address
+DtAndPlcOfBirth
+Mobile Number
+
+Purpose
+
+Code
+
+GIFT
+
+Debtor
+Agent
+
+Credit Confirm
+
+Mobile Notification
+
+Pacs.002
+
+Intermediary 1
+
+Intermediary 2
+
+Creditor
+Agent
+
+Creditor
+
+camt.053/054
+
+Optional pacs.002
+
+PMPG - ISO 20022 Market Guidance
+
+17
+
+Example of key data elements for 1d Account to Wallet
+<FIToFICstmrCdtTrf>
+:
+<CdtTrfTxInf>
+:
+
+<PmtTpInf>
+<CtgyPurp>
+<Cd>GP2P</Cd>
+</CtgyPurp>
+</PmtTpInf>
+:
+<ChrgBr>DEBT</ChrgBr>
+<ChrgsInf>
+:
+</ChrgsInf>
+:
+<Dbtr>
+:
+</Dbtr>
+<DbtrAgt>
+<FinInstnId>
+<BICFI>BBRUBEBBXXX</BICFI>
+</FinInstnId>
+</DbtrAgt>
+</IntrmyAgt1>
+<FinInstnId>
+<BICFI>SCBLKENX</BICFI>
+</FinInstnId>
+
+<Nm>Safaricom Limited</Nm>
+<PstlAdr>
+<StrtNm>Safaricom Way</StrtNm>
+<BldgNm>Safaricom House</BldgNm>
+<PstCd>008000</PstCd>
+<TwnNm>Nairobi</TwnNm>
+<Ctry>KE</Ctry>
+:
+</PstlAdr>
+
+<Nm>Muhonja Onasio</Nm>
+<PstlAdr>
+<StrtNm>Mama Ngina St</StrtNm>
+<BldgNb>256</BldgNb>
+<PstCd>001000</PstCd>
+<TwnNm>Nairobi</TwnNm>
+<Ctry>KE</Ctry>
+</PstlAdr>
+<Id>
+<PrvtId>
+<DtAndPlcOfBirth>
+:
+</DtAndPlcOfBirth>
+
+</IntrmyAgt1>
+<CdtrAgt>
+:
+</CdtrAgt>
+<Cdtr>
+:
+</Cdtr>
+<Purp>
+
+</PrvtId>
+<Othr>
+<Id>+25402022881234</Id>
+<SchmeNm>
+<Cd>TELE</Cd>
+</SchmeNm>
+<Issr>Safaricom</Issr>
+</Othr>
+
+<Cd>GIFT</Cd>
+</Purp>
+</CdtTrfTxInf>
+</FIToFICstmrCdtTrf>
+
+PMPG - ISO 20022 Market Guidance
+
+</Id>
+
+18
+
+Use-Case Remittance Payments: 1e Account to Card
+Description of Use-Case
+
+Opportunities from Standardisation and Richer Data
+
+Industry Sectors involved: incl. primary ‘end users’
+
+Account to (Card) Account Payments
+• Both the debtor and creditor are persons and not legal
+entities
+• The transfer takes place cross-border but the creditor has
+advised the debtor to direct the payment to a card
+account. This card number can be associated with a DDA
+account (e.g. debit card), a pre-paid card account or a
+credit card account.
+• The account can be in the currency of the payment or a
+different currency.
+
+Codewords (immutability)
+• Category Purpose Code indicating remittance transactions
+• Purpose Code to indicate a sub-type
+
+Workers Remittance, Private banking, Overseas banking,
+Non-resident banking
+
+Party Data
+• Structured address data
+• Additional party identification in structured form: DOB,
+Place of Birth
+Fee and FX Rate Transparency
+Confirmation that account has been credited
+
+End User
+• Debtor: Individual with a bank account
+• Creditor: Individual that has identified its bank relationship
+via a card number.
+
+Conclusions/ Recommendations
+Challenges in providing Guidance for the Use Case
+
+Target Benefits (from effective market guidance)
+Debtor
+• Transparency of fees and rates
+• Traceability
+• Completion Alert when the account has been credited
+• Low likelihood of misrouted payments (payment accuracy)
+Creditor
+• Clarity who the payment is from
+• Transparency of fees
+Agents
+• Reduced investigation costs
+• Improved product effectiveness will increase usage to
+compete with non-bank providers
+
+PMPG - ISO 20022 Market Guidance
+
+Debtor Agent
+• Front Ends will need to be modified including systems in
+branches
+• Needs to look up the bank id/clearing code based on the card
+number
+Intermediary Agent
+• Has to support the interface to the card networks
+• Translate the card network responses into a pacs.002
+
+Examples of types of Payment Provider involved (bank &
+non-bank)
+Banks
+• That are willing to support switching push payments to the
+card network.
+
+The following data characteristics represent this use case
+• Clearing Code (ClrSysId): new codes could be created to
+indicate card networks like MCNET, VCNET, AXNET
+Purpose: No ExternalClearingSystemIdentification1Code
+exits today to allow the specification of a card network in
+the clearing code element
+• Category Purpose Code (CtgyPurp): GP2P
+• Purpose Code (Purp): GIFT
+Should the payment be subsequently returned (pacs.004) the
+following Return Reason codes may be considered
+• Card number invalid (AC16) to communicate to the
+instructing agent or the tracker that the account proxy is
+invalid (no new code if acct id)
+CdtrAcct ID should be used for the card number
+
+19
+
+Example 1e Account to Card
+Archibald Haddock residing in Mons, Belgium, is sending a monetary gift to his friend Filemon Mortadelo in
+Mexico. Archie has a bank accounts but Filemon has only provided his card number
+Element
+
+Key Sub-Elements
+
+Example
+
+Debtor
+
+Name
+Structured Address
+DtAndPlcOfBirth
+
+Capitaine Archibald
+Haddock
+
+Transaction
+EB Form
+
+Debtor Account
+Creditor Account
+
+Id
+Card Number
+
+5576 0245 7383 1234
+
+Debtor Agent
+
+BICFI
+
+BBRUBEBBXXX
+
+Intermediary Agent
+
+BICFI
+
+PNBPUS3NNYC
+
+Creditor Agent
+
+BIN
+
+5576 02
+
+Creditor
+
+Name
+Structured Address
+DtAndPlcOfBirth
+
+Filemon Mortadelo
+
+Purpose
+
+Code
+
+GIFT
+
+Pacs.008
+Pacs.002
+
+ISO 8538
+ISO 8583
+
+Debtor
+
+Debtor
+Agent
+
+Credit Confirm
+
+Intermediary
+
+Creditor
+Agent
+
+Creditor
+
+Notification
+
+Optional pacs.002
+
+PMPG - ISO 20022 Market Guidance
+
+20
+
+Example of key data elements for 1e Account to Card
+<Nm>Capitaine Archibald Haddock</Nm>
+<PstlAdr>
+:
+:
+</PstlAdr>
+<Id>
+:
+</Id>
+
+<FIToFICstmrCdtTrf>
+<GrpHdr>
+:
+<GrpHdr>
+<CdtTrfTxInf>
+:
+<PmtTpInf>
+<SvcLvl>
+<Cd>G001</Cd>
+</SvcLvl>
+<CtgyPurp>
+<Cd>GP2P</Cd>
+</CtgyPurp>
+</PmtTpInf>
+:
+<ChrgBr>DEBT</ChrgBr>
+<ChrgsInf>
+:
+</ChrgsInf>
+:
+<Dbtr>
+:
+</Dbtr>
+<DbtrAgt>
+<FinInstnId>
+<BICFI>BBRUBEBBXXX</BICFI>
+</FinInstnId>
+
+<FinInstnId>
+<ClrSysMmbId>
+<ClrSysId>
+<Cd>MCNET</Cd>
+</ClrSysId>
+<MmbId>557602</MmbId>
+</ClrSysMmbId>
+</FinInstnId>
+<Nm>Banamex</Nm>
+
+</DbtrAgt>
+<CdtrAgt>
+
+<FinInstnId>
+:
+</FinInstnId>
+</CdtrAgt>
+<Cdtr>
+:
+</Cdtr>
+<Purp>
+
+<Nm>Filemon Mortadello</Nm>
+<PstlAdr>
+:
+:
+</PstlAdr>
+<Id>
+:
+</Id>
+
+<Cd>GIFT</Cd>
+</Purp>
+</CdtTrfTxInf>
+</FIToFICstmrCdtTrf>
+
+PMPG - ISO 20022 Market Guidance
+
+21
+
+Securities Settlement Payments
+
+PMPG - ISO 20022 Market Guidance
+
+22
+
+Introduction: Securities Settlement Payments
+As a Receiving Agent of a confirmed security purchase, a payment
+obligation concludes the transaction.
+Two common use cases exist for Securities Settlement-related
+payments, to address the payment obligation.
+• Versus Payment to a Central Security Depository (CSD) which either
+settles an individual security obligation or a consolidated number of
+security obligations.
+• Delivery-free – Payment to the Broker (Delivery Agent) for the
+individual security obligation, commonly referred to as ‘delivery free
+of payment’.
+The detail slides for each case set out
+• use-case description
+• example scenario
+• examples of key data elements
+
+PMPG - ISO 20022 Market Guidance
+
+23
+
+Summary: Versus Payments – to Central Security Depository (CSD)
+Description of Use-Case
+
+Call for Action
+
+Specific Recommendations for market Guidance
+
+Versus Payments to a Central Security Depository
+(CSD) which either settles an individual security
+obligation or a consolidated number of securities
+obligations.
+(see slides 6-8 for detail)
+
+Owner: Securities Market Infrastructures
+❑ Document payment message data requirements
+publicly, using tools such as MyStandards (C1)
+
+For this use case
+➢ PMPG recommends all parties use a pacs.009
+message type with the category purpose code
+SECU (R1)
+
+Opportunities / Current Issues
+ISO 20022 enables key data to be included in
+securities settlement-related payments in a structured,
+standardised way, and to meet various jurisdictional
+requirements
+• payment purpose
+• party identifications
+• reference data (e.g. ISIN)
+Current practice, in a number of cases, involves
+proprietary (non-standardised) codes or identifications
+
+❑ Drive awareness and usage of existing ISO 20022
+external Purpose Codes (C2)
+❑ Where required, define and register additional
+codes (C2a)
+❑ Register additional Party Identification Schemes
+with ISO 20022 (C3)
+
+Owner: Payments Market Infrastructures
+❑ Upgrade the usage guidance to capture the full set
+of data needs for a securities settlement-related
+payment (…as defined within the Security Market
+Infrastructure payment Usage Guideline) (C4)
+
+Payment settlement is not optimised to capture the
+data needs of securities payments
+There is insufficient awareness and availability of
+guidance for securities settlement-related payments
+
+PMPG - ISO 20022 Market Guidance
+
+24
+
+Summary: Delivery free – Payment to the Broker
+Description of Use-Case
+
+Call for Action
+
+Specific Recommendations for Market Guidance
+
+Delivery-free – Payment to the Broker (Delivery
+Agent) for the individual security obligation, commonly
+referred to as ‘delivery free of payment’.
+(see slides 9-12 for detail)
+
+Owner: Securities Market Infrastructures
+❑ Document payment message data requirements
+publicly, using tools such as My Standards (C1)
+
+For the pacs.008 or pacs.009 message:
+➢ Use Category Purpose: SECU, together with
+additional element Charge Bearer, defines a dedicated
+charge practice. (R2)
+
+Opportunities / Current Issues
+ISO 20022 enables key data to be included in securities
+settlement-related payments in a structured, standardised
+way, and to meet various jurisdictional requirements
+• payment purpose
+• party identifications
+• reference data (e.g. ISIN)
+The ‘purpose’ of payment may be required for certain
+jurisdictions. Although standardised ISO 20022 Purpose
+Codes exist, proprietary codes are often used, which may:
+• vary in format
+• be duplications in different use cases
+• may not be publicly available.
+Identification of the Creditor may have jurisdictional
+specificities.
+Reference information to accompany the payment is
+important in many cases. Often the International Securities
+Identification Number (ISIN) is needed.
+
+PMPG - ISO 20022 Market Guidance
+
+❑ Drive awareness and usage of existing ISO 20022
+external Purpose Codes (C2)
+❑ Where required, define and register additional
+codes (C2a)
+❑ Register additional Party Identification Schemes
+with ISO 20022 (C3)
+
+Owner: Payments Market Infrastructures
+❑ Upgrade the usage guidance to capture the full set
+of data needs for a securities settlement-related
+payment (…as defined within the Security Market
+Infrastructure payment Usage Guideline) (C4)
+
+For Purpose Code:
+➢ ISO 20022 external codes should be used. (R3)
+Where additional code are required, an ISO 20022
+external code list Change Request should be
+submitted.
+For Creditor Information
+➢ Creditor can be identified with a number of existing
+ISO 20022 data elements. Preference is to use BIC or
+LEI. (R4)
+➢ Jurisdictional forms of identification can be captured
+within the Other/Identification with the Scheme
+Name. Both should be registered with ISO 20022 as a
+Change Request so that the format of the identification
+and the scheme it belongs to are defined. (R5)
+For Remittance Information
+➢ The International Securities Identification Number
+(ISIN) can be captured in either unstructured format
+preceded by ‘ISIN’ and separated with a space; or as
+structured remittance information with the code ISIN
+in the Referred Document Information / Type / Code
+element. (R6)
+
+25
+
+Securities Settlement Payment: Versus Payments – to Central Security Depository (CSD)
+Description of Use-Case
+Versus Payment to a Central Security Depository (CSD)
+which either settles an individual security obligation or a
+consolidated number of securities obligations.
+
+Target Benefits (from effective market guidance)
+The securities industry, like many other users of payments,
+looks forward to experiencing;
+• greater payment predictability in relation to timely
+settlement and charges.
+• richer reference data and party identification (such as the
+Legal Entity Identifier),
+Both of which provide greater transparency and efficiency in
+areas such as reconciliation for the whole financial
+ecosystem.
+
+PMPG - ISO 20022 Market Guidance
+
+Opportunities from Standardisation and Richer Data for
+Securities Payment.
+• Existing securities payment often need to capture the
+purpose of payment, various party identifications and
+reference data such as the International Securities
+Identification Number (ISIN) to meet various jurisdictional
+requirements
+• ISO 20022 enable these to be captured in a standardised
+way.
+
+Industry Sectors involved: incl. primary ‘end users’
+Central Securities Depository.
+
+Challenges in providing Guidance for the Use Case
+
+Market Guidance: Recommendations
+
+•
+•
+•
+•
+
+Security Market Infrastructure
+• Document data requirements publicly in a Usage Guideline
+using tools such as MyStandards.
+• Utilise existing ISO 20022 external Purpose Codes; and where
+required, register additional codes.
+• Register additional Party Identification Schemes with ISO
+20022
+
+Documented data requirements publicly.
+Proprietary codes
+Proprietary Identification Schemes
+Interoperability in the payment settlement to capture the
+data needs of the Security payment.
+
+[see recommendations box (→ →), which directly address
+these 4 points]
+
+Types of Participant (type of FI / entity) involved:
+Custodian/Sub-custodian (Receiving Agent)
+Broker (Delivering Agent)
+
+Payment Market Infrastructure.
+• Ensure interoperability in the payment settlement to capture the
+data needs of the Security payment defined within the Security
+Market Infrastructure payment Usage Guideline.
+Recommendation: Use pacs.009 message with ‘SECU’ as category
+purpose
+•
+
+Message Type: pacs.009 – all parties to this use case are
+considered an Agent (regulated Financial Institutions)
+
+•
+
+Category Purpose: SECU – Identifies a Securities payment
+instruction
+
+26
+
+Use Case Example: Versus Payments – to Central Security Depository (CSD)
+pacs.009
+
+Element
+
+Key Nested
+Elements
+
+Example
+
+Payment Type Details
+
+Category Code
+
+SECU
+
+Debtor
+
+BICFI (commonly) and
+or LEI
+
+ABCDGB2S
+(Receiving agent BIC)
+
+Debtor Agent
+
+BICFI
+
+ABCDGB22
+(Debtor Agent BIC)
+
+Creditor Account
+
+Other
+
+12345678
+
+Creditor
+
+BICFI (commonly) and
+or LEI
+
+Central Security Depository
+or Security Settlement
+Account
+
+Sett Instruction
+
+Sett Instruction
+
++ reference
+
++ reference
+
+Receiving
+Agent
+
+Delivery
+Agent
+
+CSD
+Debtor
+Agent
+
+pacs.009
+
+pacs.009
+
+PMI
+Delivery versus Payment
+
+Note: settlement may occur for an individual security transaction, however
+commonly the payment may be due to settle a consolidated obligation or to meet a
+consolidated obligation ahead of a settlement cycle.
+
+pacs.002
+
+pacs.002
+confirmation
+
+CSD – Central Security Depository
+PMI – Payment Market Infrastructure
+
+PMPG - ISO 20022 Market Guidance
+
+27
+
+Example key data elements: Versus Payments – to Central Security Depository (CSD)
+<FICdtTrf>
+<GrpHdr>
+….
+<GrpHdr>
+<CdtTrfTxInf>
+….
+
+Option: BIC
+
+...
+<BICFI>ZYBADEFF</AnyBIC>
+...
+
+pacs.009
+Securities Payment
+<PmtTpInf>
+<CtgyPurp>
+<Cd>SECU</Cd>
+</CtgyPurp>
+</PmtTpInf>
+
+….
+<ChrgBr>DEBT</ChrgBr>
+….
+<Dbtr>
+<FinInstnId>
+
+<BICFI>ABCDGB2S</BICFI>
+</FinInstnId>
+
+Option: LEI, Name and Postal Address
+
+…
+<LEI>529900V49HHFDTKMRZ22</LEI>
+<Nm>Agent ABC Sett Account B</Nm>
+<PstlAdr>
+<TwnNm>Frankfurt</TwnNm>
+<Ctry>DE</Ctry>
+</PstlAdr>
+…
+
+</Dbtr>
+<DbtrAgt>
+<FinInstnId>
+<BICFI>ABCDGB22</BICFI>
+</FinInstnId>
+</DbtrAgt>
+<Cdtr>
+
+Option: Clearing System Id, Name and Postal Address
+
+<FinInstnId>
+…
+</FinInstnId>
+</Cdtr>
+
+</CdtTrfTxInf>
+</FICdtTrf>
+
+The Creditor typically represents either the Central
+Security Deposit or the participant account at the
+relevant central bank/authority for where the
+settlement will occur.
+
+PMPG - ISO 20022 Market Guidance
+
+…
+<ClrSysMmbId>12312300</ClrSysMmbId>
+<ClrSysId>
+
+<Cd>DEBLZ</Cd>
+<ClrSysId>
+<Nm>Agent ABC Sett Account B</Nm>
+<PstlAdr>
+<TwnNm>Frankfurt</TwnNm>
+<Ctry>DE</Ctry>
+</PstlAdr>
+…
+
+28
+
+Securities Settlement Payments: Delivery free – Payment to the Broker
+Description of Use-Case
+
+Delivery-free – Payment to the Broker (Delivery
+Agent) for the individual security obligation,
+commonly referred to as ‘delivery free of payment’.
+
+Target Benefits (from effective market guidance)
+The securities industry, like many other users of
+payments looks forward to experiencing;
+• greater payment predictability in relation to
+timely settlement and charges.
+• richer reference data and party identification
+(such as the Legal Entity Identifier),
+Both of which provide greater transparency and
+efficiency in areas such as reconciliation for the
+whole financial ecosystem.
+
+Opportunities from Standardisation and Richer
+Data for Securities Payment.
+•
+
+•
+
+Existing securities payment often need to
+capture the purpose of payment, various party
+identifications and reference data such as the
+International Securities Identification Number
+(ISIN) to meet various jurisdictional requirements
+ISO 20022 enable these to be captured in a
+standardised way.
+
+PMPG - ISO 20022 Market Guidance
+
+Challenges in providing Guidance for the Use Case
+
+Market Guidance: Recommendations
+
+•
+
+Purpose of payment may be required for certain
+jurisdictions. Although standardised ISO 20022
+Purpose Codes exist, proprietary codes are often used,
+which may:
+• vary in format
+• be duplications in different use cases
+• may not be publicly available.
+
+Security Market Infrastructure
+• Document data requirements publicly in a Usage Guideline using tools
+such as MyStandards.
+• Utilise existing ISO 20022 external Purpose Codes; and where
+required, register additional codes.
+• Register additional Party Identification Schemes with ISO 20022
+
+•
+
+Identification of the Creditor may have jurisdictional
+specificities. Where proprietary identification schemes
+are used to identify the creditor, the format is not
+publicly available.
+
+•
+
+Reference information: in may cases it’s important to
+accompany the payment, providing greater
+transparency. Often the International Securities
+Identification Number (ISIN) is needed.
+
+Industry Sectors involved: incl. primary ‘end users’
+Central Securities Depository.
+Types of Participant (type of FI / entity) involved:
+Custodian/Sub-custodian (Receiving Agent)
+Broker (Delivering Agent)
+
+Payment Market Infrastructure.
+• Ensure interoperability in the payment settlement to capture the data
+needs of the Security payment defined within the Security Market
+Infrastructure payment Usage Guideline.
+
+Message type: pacs.008 or pacs.009
+Category Purpose: SECU – together with Charge Bearer defines a
+dedicated charge practice.
+Purpose: Code
+• ISO 20022 external Codes should be used.
+• Where additional code are required, an ISO 20022 external code list
+Change Request should be submitted.
+Creditor Identification
+• Creditor can be identified with a number of existing ISO 20022 data
+elements. Preference is to use BIC or LEI.
+• Jurisdictional forms of identification can be captured within the
+Other/Identification with the Scheme Name. Both should be
+registered with ISO 20022 as a Change Request so that the format of
+the identification and the scheme it belongs to are defined.
+Remittance Information
+• The International Securities Identification Number (ISIN) can be
+captured in either unstructured format preceded by ‘ISIN’ and
+separated with a space; or as structured remittance* information with
+the code ISIN in the Referred Document Information / Type / Code
+element.
+* structured element is only available in the pacs.008
+
+29
+
+Use Case Example: Delivery free – Payment to the Broker
+pacs.008 or pacs.009*
+
+Element
+
+Key Nested
+Elements
+
+Example
+
+Payment Type Details
+
+Category Code
+
+SECU
+
+Charge Bearer
+
+DEBT
+
+Debtor
+
+BICFI (commonly) and
+or LEI
+
+ABCDGB2S
+(Receiving agent BIC)
+
+Debtor Agent
+
+BICFI
+
+ABCDGB22
+(Debtor Agent BIC)
+
+Creditor Account
+
+Other
+
+12345678
+
+Creditor
+
+BICAny or LEI or Other
+Identification and
+Scheme Name Code
+
+529900V49HHFDTKMRZ2
+2Broker (Delivery Agent)
+
+Purpose
+
+Code
+
+SECU
+
+Remittance Info
+
+Unstructured or
+Structured**
+
+ISIN BE0016790090
+
+Sett Instruction
+
++ reference
+
++ reference
+
+Receiving
+Agent
+
+Creditor
+Agent
+
+Debtor
+Agent
+Pain.001
+
+Pacs.008**
+
+or
+
+or
+
+Pacs.009*
+
+Pacs.009*
+
+PMI
+
+Pacs.008
+
+or
+
+camt..053
+
+Pacs.009*
+
+Pacs.002
+
+CSD – Central Security Depository
+PMI – Payment Market Infrastructure
+
+* both Debtor and Creditor in pacs.009 must be an Agent recognised as a Financial Institution
+** structured element is only available in the pacs.008
+
+PMPG - ISO 20022 Market Guidance
+
+Delivery
+Agent
+
+CSD
+
+Pacs.002
+
+Note: settlement typically occurs for an individual security transaction, where
+transparency can be achieved on the nature of the transaction and the related
+security being bought.
+
+Sett Instruction
+
+30
+
+Example key data elements: Delivery free – Payment to the Broker
+Option: BIC
+...
+<Id>
+
+pacs.008
+
+<FIToFICstmrCdtTrf>
+<GrpHdr>
+…
+<GrpHdr>
+<CdtTrfTxInf>
+…
+
+<OrgId>
+
+Securities Payment
+
+<AnyBIC>BROKNL2A</AnyBIC>
+</OrgId>
+<PmtTpInf>
+
+</Id>
+...
+
+<CtgyPurp>
+<Cd>SECU</Cd>
+
+Option: LEI, Name and Postal Address
+
+</CtgyPurp>
+
+</PmtTpInf>
+…
+<ChrgBr>DEBT</ChrgBr>
+...
+<Dbtr>
+<FinInstnId>
+<BICFI>ABCDGB2S</BICFI>
+</FinInstnId>
+</Dbtr>
+<DbtrAgt>
+
+…
+<Nm>Broker XYZ</Nm>
+<PstlAdr>
+<TwnNm>Amsterdam</TwnNm>
+<Ctry>NL</Ctry>
+</PstlAdr>
+<Id>
+<OrgId>
+
+<FinInstnId>
+
+<LEI>529900V49HHFDTKMRZ22</LEI>
+</OrgId>
+
+<BICFI>ABCDGB22</BICFI>
+</FinInstnId>
+
+</Id>
+…
+
+</DbtrAgt>
+<CdtrAgt>
+
+Option: Scheme Identification, Name and Postal Address
+
+<FinInstnId>
+<BICFI>CREDNL2A</BICFI>
+</FinInstnId>
+</CdtrAgt>
+<Cdtr>
+…..
+</Cdtr>
+<Purp>
+<Cd>SECU</Cd>
+</Purp>
+<RmtInf>
+
+Various possible codes from
+ExternalPurpose1Code
+
+…
+<Nm>Broker XYZ</Nm>
+<PstlAdr>
+<PstlAdr>
+<TwnNm>Amsterdam</TwnNm>
+<Ctry>NL</Ctry>
+</PstlAdr>
+<Id>
+<OrgId>
+
+<Ustrd>ISIN BE0016790090 </Ustrd>
+</RmtInf>
+</CdtTrfTxInf>
+</FIToFICstmrCdtTrf>
+
+<Othr>XYZ1234567</Othr>
+<SchmeNm>
+
+Reference to the Securities
+purchased from the Broker*
+
+<Cd>DUNS</Cd>
+</SchmeNm>
+</OrgId>
+
+*which may also be represented in the
+structured element
+
+PMPG - ISO 20022 Market Guidance
+
+</Id>
+…
+
+31
+
+Example key data elements: Delivery free – Payment to the Broker
+Option: BIC
+<FICdtTrf>
+<GrpHdr>
+…
+<GrpHdr>
+<CdtTrfTxInf>
+…
+
+pacs.009
+Securities Payment
+
+...
+<FinInstnId>
+<AnyBFI>KREDBEBB</AnyBIC>
+</FinInstnId>
+...
+
+<PmtTpInf>
+<CtgyPurp>
+<Cd>SECU</Cd>
+</CtgyPurp>
+
+<ChrgBr>DEBT</ChrgBr>
+
+<LEI>6B2PBRV1FCJDMR45RZ53</LEI>
+<Nm>KBC Bank</Nm>
+<PstlAdr>
+<TwnNm>Brussels</TwnNm>
+<Ctry>BE</Ctry>
+</PstlAdr>
+
+...
+<Dbtr>
+<FinInstnId>
+<BICFI>ABCDGB2S</BICFI>
+</FinInstnId>
+</Dbtr>
+<DbtrAgt>
+<FinInstnId>
+<BICFI>ABCDGB22</BICFI>
+
+</FinInstnId>
+…
+
+</FinInstnId>
+
+</DbtrAgt>
+<CdtrAgt>
+
+…
+<FinInstnId>
+
+<FinInstnId>
+
+<TwnNm>Brussels</TwnNm>
+<Ctry>BE</Ctry>
+<Cd>SECU</Cd>
+
+</Purp>
+<RmtInf>
+
+Option: Scheme Identification, Name and Postal Address
+<Nm>KBC Bank</Nm>
+<PstlAdr>
+<PstlAdr>
+
+<BICFI>CREDNL2A</BICFI>
+</FinInstnId>
+</CdtrAgt>
+<Cdtr>
+…..
+</Cdtr>
+<Purp>
+
+Option: LEI, Name and Postal Address
+
+…
+<FinInstnId>
+
+</PmtTpInf>
+…
+
+</PstlAdr>
+<Id>
+
+Various possible codes from
+ExternalPurpose1Code
+
+<OrgId>
+
+<Ustrd>ISIN BE0016790090</Ustrd>
+
+<Othr>FI1234567</Othr>
+
+</RmtInf>
+
+<SchmeNm>
+
+</CdtTrfTxInf>
+</FICdtTrf>
+
+<Cd>DUNS</Cd>
+
+Reference to the Securities
+purchased from the Broker
+
+</SchmeNm>
+</OrgId>
+</Id>
+
+PMPG - ISO 20022 Market Guidance
+
+</FinInstnId>
+…
+
+Central Counterparty (CCP)
+
+PMPG - ISO 20022 Market Guidance
+
+33
+
+Correspondent/Private Settlement Model for CCPs
+Notifications 2
+
+1. CCP Member submits contracts (proprietary or
+on behalf of customers) for settlement to the CCP
+(e.g. swaps, futures) and deposits cash and/or
+securities at the CCP upon request.
+2. CCP notifies the member the day before and/or
+CCP Member
+on value date if the member will be debited or
+credited for a margin call. The member will
+arrange the funding of the account.
+3. CCP debits the members account via MT204 or
+revers MT202 or credits the member via MT202.
+Member and CCP use the same account servicer
+and the payments settle as book transfers. Each
+type of margin call has a specific deadline set by
+the CCP (e.g. pay overnight call by 09:00 EST)
+Debit/Credit 4
+4. The PPS bank confirms the debits and credits via
+Notification
+MT900/910 which contain a unique reference
+number that the CCP uses to apply the margin
+payment to the members CCP account. (Note: the
+member will need to segregate proprietary funds
+from customer funds)
+5. The CCP will concentrate funds across PPS
+Banks into a concentration bank via MT202
+
+PMPG - ISO 20022 Market Guidance
+
+1
+
+Contracts
+Debit/Credit
+4 Notification
+
+5 Concentration
+
+CCP
+
+payment
+
+PPS Bank
+(Agent to Debtor and Creditor)
+
+CCP
+Member
+Account
+
+CCP
+Account
+Book Transfer
+3 Debit margin from member MT204)
+
+Return margin to member (MT202)
+
+34
+
+Direct Settlement Model for CCPs
+Notifications 2
+
+1. CCP Member submits contracts (proprietary or
+1 Contracts
+on behalf of customers) for settlement to the CCP
+(e.g. swaps, futures) and deposits cash and/or
+securities at the CCP upon request.
+2. CCP notifies the member the day before and/or
+CCP Member
+CCP
+3 Debit margin from member (MT204)
+on value date if the member will be debited or
+credited for a margin call. The member will
+arrange the funding of the account.
+Debit/Credit
+Debit/Credit
+3. CCP debits the members account via MT204 or
+4
+Notification
+Notification
+revers MT202 or credits the member via MT202.
+4
+Member and CCP use different banks and the
+payment settles via the RTGS. Each type of
+margin call has a specific deadline set by the
+Return margin
+HVPS
+CCP (e.g. pay overnight call by 09:00 EST)
+to member
+3
+MT202)
+4. The PPS bank confirms the debits and credits via
+MT900/910 which contain a unique reference
+Member’s Bank
+number that the CCP uses to apply the margin
+CCP’s Bank
+payment to the members CCP account. (Note: the
+member will need to segregate proprietary funds
+from customer funds)
+
+PMPG - ISO 20022 Market Guidance
+
+35
+
+Market Guidance: Use-Case FMI Settlements: 1.CCP Margin Payments via a Correspondent
+Description of Use-Case
+
+Opportunities from Standardisation and Richer Data
+
+Industry Sectors involved: incl. primary ‘end users’
+
+Margin Payments
+• Both the debtor and creditor are Fis and settle payments
+across a common agent (PPS bank) as book transfers
+• The CCP can play the role of the debtor or creditor.
+• The CCP is always the instructing agent for credits
+transfers and debit instructions
+• The transfer has certain target settlement times (e.g.
+before 8am EST)
+Special Use Case
+• The CCP concentrates funds at the end of day from the
+PPS banks
+
+Settlement Time Request
+
+Central counterparty settlements and margin payments
+
+•
+
+End User
+• Debtor: FI and participant in a CCP
+• Creditor: FI and participant in a CCP
+
+Target Benefits (from effective market guidance)
+
+Till Time
+
+Codewords (immutability)
+• Category Purpose Code indicating CCP margin
+transactions
+• Purpose Code to indicate a sub-type (various codes exit
+already: CCPC, CCPM, CCSM
+
+Priority Request
+• High
+Conclusions/ Recommendations
+Challenges in providing Guidance for the Use Case
+The correct message to instruct the debit is the pacs.010.
+Unfortunately, the CBPR+ version of the pacs.010 does not
+support the instruction priority and category purpose. These
+two elements will need to be made available
+
+CCP as Creditor
+• Timely execution of payment
+• Tracking
+• Apply payment automatically to the correct obligation
+CCP Member as Debtor
+• Not failing a margin call
+• Not comingling client and house obligations
+• tracking
+Agent
+• Easy identification of margin call in stress situations
+
+PMPG - ISO 20022 Market Guidance
+
+pacs.010 Payment Type element should be enabled
+New external codes needed
+• Category Purpose Code (CtgyPurp): CCPP
+Rational: Currently no ExternalCategoryPurpose1Code is
+available to indicate a central counterparty settlement
+• Purpose Code (Purp): CCPC, CCPM, CCSM
+Rational: Currently no ExternalCategoryPurpose1Code is
+available to indicate these types of central counterparty
+settlement
+
+Examples of types of Payment Provider involved (bank &
+non-bank)
+
+36
+
+Example 1a CCP Margin Payments via a Correspondent
+The CCP has debit authority of the member’s account (Debtor) and sends a pacs.010 to the Debtor Agent who is also the
+CCPs creditor agent. Debtor and Creditor receive a debit/credit notification from the agent.
+Element
+
+Key Sub-Elements
+
+Example
+
+Payment Type Details
+
+Transaction
+Debtor
+
+GLOBAL LOCAL
+SECURITIES
+
+GLLSUS33
+
+Debtor Account
+
+Account Number
+
+2000212345678
+
+Creditor
+
+ICE Clear Europe
+
+CEUGB2LA
+
+Creditor Account
+
+Account Number
+
+2000298765432
+
+Pacs.010
+Pacs.002
+
+Debtor
+
+Debtor/Creditor
+Agent
+
+Creditor
+camt.053
+
+camt.053
+
+Optional unless reject
+
+PMPG - ISO 20022 Market Guidance
+
+37
+
+Example of key data elements for CCP use case in a pacs.010
+<FIDrctDbt>
+<GrpHdr>
+:
+<GrpHdr>
+<CdtInstr>:
+<CdtId></CdtId>
+<InstgAgt>
+:
+</InstgAgt>
+<InstdAgt>
+:
+</InstdAgt>
+<Cdtr>
+:
+</Cdtr>
+<CdtrAcct>
+:
+</CdtrAcct>
+<DrctDbtTxInf>
+<PmtId>
+<EndToEndId>20210521MA40958</EndToEndId>
+<UETR>b5e98957-cfdb-407b-aeae-d623ee5a8647</UETR>
+</PmtId>
+<PmtTpInf>
+:
+</PmtTpInf>
+<IntrBkSttlmAmt Ccy=“USD">12300000</IntrBkSttlmAmt>
+<IntrBkSttlmDt>2021-05-24</IntrBkSttlmDt>
+<SttlmTmReq>
+<TillTm>09:00:00-05:00</TillTm>
+</SttlmTmReq>
+<Dbtr>
+:
+</Dbtr>
+<DbtrAcct>
+;
+</DbtrAcct>
+<Purp>
+<Cd>CCPM</Cd>
+</Purp>
+</DrctDbtTxInf>
+</CdtInstr>
+</FIDrctDbt>
+
+PMPG - ISO 20022 Market Guidance
+
+<FinInstnId>
+<BICFI>CEUGB2LA</BICFI>
+<LEI> </LEI>
+</FinInstnId>
+
+<FinInstnId>
+<BICFI>PNBPUS3NNYC</BICFI>
+<LEI> </LEI>
+</FinInstnId>
+
+<FinInstnId>
+<BICFI>CEUGB2LA</BICFI>
+<LEI> </LEI>
+</FinInstnId>
+
+<FinInstnId>
+<BICFI>GLLSUS33</BICFI>
+<LEI> </LEI>
+</FinInstnId>
+
+CatCode and InstrPrty should be added back
+
+38
+
+Example 1b
+The CCP sends a pacs.009 to the Debtor Agent who is also the CCPs Creditor Agent. Debtor and Creditor receive a
+debit/credit notification from the agent.
+Element
+
+Key Sub-Elements
+
+Example
+
+Payment Type Details
+
+Transaction
+Debtor
+
+ICE Clear Europe
+
+CEUGB2LA
+Pacs.009
+Pacs.002
+
+Debtor Account
+
+Account Number
+
+2000298765432
+
+Debtor/Creditor
+Agent/Instructed Agent
+
+Wells Fargo Bank, NA
+
+PNBPUS3NNYC
+
+Creditor
+
+GLOBAL LOCAL
+SECURITIES
+
+GLLSUS33
+
+Account Number
+
+2000212345678
+
+Creditor Account
+
+Debtor
+
+Debtor/Creditor
+Agent
+
+Creditor
+camt.053
+
+camt.053
+
+Optional unless reject
+
+PMPG - ISO 20022 Market Guidance
+
+39
+
+New Code CCPP
+
+Example of key data elements for CCP use case in a pacs.009
+<FICdtTrf>
+<GrpHdr>
+:
+<GrpHdr>
+<CdtTrfTxInf>
+:
+<PmtId>
+<EndToEndId>20210521MA30958</EndToEndId>
+<UETR>b5e98957-cfdb-407b-aeae-d623ee5a8648</UETR>
+</PmtId>
+<PmtTpInf>
+<CtgyPurp>
+<Cd>CCPP</Cd>
+</CtgyPurp>
+</PmtTpInf>
+<SttlmTmReq>
+<TillTm> … </TillTm>
+<SttlmTmReq>
+: :
+<InstgAgt>
+:
+</InstgAgt>
+<InstdAgt>
+:
+</InstdAgt>
+<Dbtr>
+:
+</Dbtr>
+<DbtrAcct>
+;
+</DbtrAcct>
+<Cdtr>
+:
+</Cdtr>
+<CdtrAcct>
+:
+</CdtrAcct>
+<Purp>
+<Cd>CCPM</Cd>
+</Purp>
+</CdtTrfTxInf>
+</<FICdtTrf>
+
+PMPG - ISO 20022 Market Guidance
+
+<FinInstnId>
+<BICFI>CEUGB2LA</BICFI>
+<LEI> </LEI>
+</FinInstnId>
+
+<FinInstnId>
+<BICFI>PNBPUS3NNYC</BICFI>
+<LEI> </LEI>
+</FinInstnId>
+
+<FinInstnId>
+<BICFI>CEUGB2LA</BICFI>
+<LEI> </LEI>
+</FinInstnId>
+
+<FinInstnId>
+<BICFI>GLLSUS33</BICFI>
+<LEI> </LEI>
+</FinInstnId>
+
+40
+
+Market Guidance: Use-Case FMI Settlements: 2. CCP Margin Payments via direct settlement
+Description of Use-Case
+
+Opportunities from Standardisation and Richer Data
+
+Industry Sectors involved: incl. primary ‘end users’
+
+Margin Payments
+• Both the debtor and creditor are Fis.
+• Settlement takes place via the HVPS
+• The CCP can play the role of the debtor or creditor.
+• The CCP is always the instructing agent for credits
+transfers and debit instructions
+• The transfer has certain target settlement times (e.g.
+before 8am EST)
+
+Settlement Time Request
+
+Central counterparty settlements and margin payments
+
+•
+
+End User
+• Debtor: FI and participant in a CCP
+• Creditor: FI and participant in a CCP
+
+Till Time
+
+Codewords (immutability)
+• Category Purpose Code indicating CCP margin
+transactions
+• Purpose Code to indicate a sub-type (various codes exit
+already: CCPC, CCPM, CCSM
+
+Priority Request
+• High
+Conclusions/ Recommendations
+
+Target Benefits (from effective market guidance)
+
+Challenges in providing Guidance for the Use Case
+The correct message to instruct the debit is the pacs.010.
+Unfortunately, the CBPR+ version of the pacs.010 does not
+support the instruction priority and category purpose. These
+two elements will need to be made available
+
+CCP as Creditor
+• Timely execution of payment
+• Tracking
+• Apply payment automatically to the correct obligation
+CCP Member as Debtor
+• Not failing a margin call
+• Not comingling client and house obligations
+• tracking
+Agent
+• Easy identification of margin call in stress situations
+
+PMPG - ISO 20022 Market Guidance
+
+Examples of types of Payment Provider involved (bank &
+non-bank)
+
+pacs.010 Payment Type element should be enabled
+New external codes needed
+• Category Purpose Code (CtgyPurp): CCPP
+Rational: Currently no ExternalCategoryPurpose1Code is
+available to indicate a central counterparty settlement
+• Purpose Code (Purp): CCPC, CCPM, CCSM
+Rational: Currently no ExternalCategoryPurpose1Code is
+available to indicate these types of central counterparty
+settlement
+
+41
+
+Example 2a CCP Margin Payments via direct settlement
+The CCP has debit authority of the member’s account (Debtor) and sends a pacs.009 to the Debtor Agent who is
+also the CCPs creditor agent. Debtor and Creditor receive a debit/credit notification from the agent.
+Element
+
+Key Sub-Elements
+
+Example
+
+Payment Type Details
+
+Transaction
+Debtor
+
+GLOBAL LOCAL
+SECURITIES
+
+GLLSUS33
+
+Debtor Account
+
+Account Number
+
+2000212345678
+
+Debtor Agent
+
+Wells Fargo Bank, NA
+
+PNBPUS3NNYC
+
+Creditor Agent
+
+Harris Bank
+
+HATRUS44XXX
+
+Creditor
+
+ICE Clear Europe
+
+CEUGB2LA
+
+Creditor Account
+
+Account Number
+
+2000298765432
+
+Pacs.010
+Pacs.002
+
+Pacs.009
+
+Debtor
+
+Debtor
+Agent
+camt.053
+
+HVPS
+Creditor
+Agent
+
+Creditor
+camt.053
+
+Optional unless reject
+
+PMPG - ISO 20022 Market Guidance
+
+42
+
+Example of key data elements for CCP use case in a pacs.010
+<FIDrctDbt>
+<GrpHdr>
+:
+<GrpHdr>
+<CdtInstr>:
+<CdtId> </CdtId>
+<InstgAgt>
+:
+</InstgAgt>
+<InstdAgt>
+:
+</InstdAgt>
+<Cdtr>
+:
+</Cdtr>
+<CdtrAcct>
+:
+</CdtrAcct>
+<DrctDbtTxInf>
+<PmtId>
+<EndToEndId>20210522MA40958</EndToEndId>
+<UETR>b5e98957-cfdb-407b-aeae-d623ee5a8640</UETR>
+</PmtId>
+<PmtTpInf>
+:
+</PmtTpInf>
+<IntrBkSttlmAmt Ccy=“USD">12300000</IntrBkSttlmAmt>
+<IntrBkSttlmDt> </IntrBkSttlmDt>
+<SttlmTmReq>
+<TillTm> </TillTm>
+</SttlmTmReq>
+<Dbtr>
+:
+</Dbtr>
+<DbtrAcct>
+;
+</DbtrAcct>
+<Purp>
+<Cd>CCPM</Cd>
+</Purp>
+</DrctDbtTxInf>
+</CdtInstr>
+</FIDrctDbt>
+
+PMPG - ISO 20022 Market Guidance
+
+<FinInstnId>
+<BICFI>CEUGB2LA</BICFI>
+<LEI> </LEI>
+</FinInstnId>
+
+<FinInstnId>
+<BICFI>PNBPUS3NNYC</BICFI>
+<LEI> </LEI>
+</FinInstnId>
+
+<FinInstnId>
+<BICFI>CEUGB2LA</BICFI>
+<LEI> </LEI>
+</FinInstnId>
+
+<FinInstnId>
+<BICFI>GLLSUS33</BICFI>
+<LEI> </LEI>
+</FinInstnId>
+
+CatCode and InstrPrty should be added back
+
+43
+
+
