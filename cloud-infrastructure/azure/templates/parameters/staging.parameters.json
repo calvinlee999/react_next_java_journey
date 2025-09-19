@@ -1,0 +1,129 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "environment": {
+      "value": "staging"
+    },
+    "location": {
+      "value": "eastus2"
+    },
+    "uniqueSuffix": {
+      "value": "stg001"
+    },
+    "adminUsername": {
+      "value": "paymentsadmin"
+    },
+    "adminPassword": {
+      "reference": {
+        "keyVault": {
+          "id": "/subscriptions/{subscription-id}/resourceGroups/rg-payments-shared/providers/Microsoft.KeyVault/vaults/kv-payments-shared"
+        },
+        "secretName": "admin-password"
+      }
+    },
+    "sshPublicKey": {
+      "value": ""
+    },
+    "vnetAddressPrefix": {
+      "value": "10.2.0.0/16"
+    },
+    "aksSubnetPrefix": {
+      "value": "10.2.1.0/24"
+    },
+    "apiSubnetPrefix": {
+      "value": "10.2.2.0/24"
+    },
+    "dataSubnetPrefix": {
+      "value": "10.2.3.0/24"
+    },
+    "messagingSubnetPrefix": {
+      "value": "10.2.4.0/24"
+    },
+    "gatewaySubnetPrefix": {
+      "value": "10.2.5.0/24"
+    },
+    "firewallSubnetPrefix": {
+      "value": "10.2.6.0/24"
+    },
+    "aksNodeCount": {
+      "value": 3
+    },
+    "aksNodeSize": {
+      "value": "Standard_D4s_v3"
+    },
+    "aksMaxNodes": {
+      "value": 10
+    },
+    "aksKubernetesVersion": {
+      "value": "1.28.0"
+    },
+    "apimTier": {
+      "value": "Standard"
+    },
+    "apimCapacity": {
+      "value": 1
+    },
+    "sqlDbTier": {
+      "value": "Standard"
+    },
+    "sqlDbSize": {
+      "value": "S2"
+    },
+    "sqlDbCapacity": {
+      "value": 50
+    },
+    "redisTier": {
+      "value": "Standard"
+    },
+    "redisCapacity": {
+      "value": 1
+    },
+    "eventHubsTier": {
+      "value": "Standard"
+    },
+    "eventHubsCapacity": {
+      "value": 2
+    },
+    "serviceBusTier": {
+      "value": "Standard"
+    },
+    "logRetentionDays": {
+      "value": 90
+    },
+    "enablePrivateEndpoints": {
+      "value": true
+    },
+    "enableEntraId": {
+      "value": true
+    },
+    "enableSqlAudit": {
+      "value": true
+    },
+    "enableApplicationInsights": {
+      "value": true
+    },
+    "alertingEnabled": {
+      "value": true
+    },
+    "enableBackup": {
+      "value": true
+    },
+    "backupRetentionDays": {
+      "value": 30
+    },
+    "tags": {
+      "value": {
+        "Environment": "staging",
+        "Application": "cross-border-payments",
+        "CostCenter": "fintech-staging",
+        "Owner": "payment-platform-team",
+        "Compliance": "pci-dss-level1",
+        "BusinessUnit": "payments",
+        "Project": "cross-border-modernization",
+        "CreatedBy": "azure-bicep-template",
+        "Purpose": "pre-production-testing"
+      }
+    }
+  }
+}

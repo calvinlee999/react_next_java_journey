@@ -1,0 +1,129 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "environment": {
+      "value": "dev"
+    },
+    "location": {
+      "value": "eastus2"
+    },
+    "uniqueSuffix": {
+      "value": "dev001"
+    },
+    "adminUsername": {
+      "value": "paymentsadmin"
+    },
+    "adminPassword": {
+      "reference": {
+        "keyVault": {
+          "id": "/subscriptions/{subscription-id}/resourceGroups/rg-payments-shared/providers/Microsoft.KeyVault/vaults/kv-payments-shared"
+        },
+        "secretName": "admin-password"
+      }
+    },
+    "sshPublicKey": {
+      "value": ""
+    },
+    "vnetAddressPrefix": {
+      "value": "10.1.0.0/16"
+    },
+    "aksSubnetPrefix": {
+      "value": "10.1.1.0/24"
+    },
+    "apiSubnetPrefix": {
+      "value": "10.1.2.0/24"
+    },
+    "dataSubnetPrefix": {
+      "value": "10.1.3.0/24"
+    },
+    "messagingSubnetPrefix": {
+      "value": "10.1.4.0/24"
+    },
+    "gatewaySubnetPrefix": {
+      "value": "10.1.5.0/24"
+    },
+    "firewallSubnetPrefix": {
+      "value": "10.1.6.0/24"
+    },
+    "aksNodeCount": {
+      "value": 2
+    },
+    "aksNodeSize": {
+      "value": "Standard_D2s_v3"
+    },
+    "aksMaxNodes": {
+      "value": 5
+    },
+    "aksKubernetesVersion": {
+      "value": "1.28.0"
+    },
+    "apimTier": {
+      "value": "Developer"
+    },
+    "apimCapacity": {
+      "value": 1
+    },
+    "sqlDbTier": {
+      "value": "Basic"
+    },
+    "sqlDbSize": {
+      "value": "Basic"
+    },
+    "sqlDbCapacity": {
+      "value": 5
+    },
+    "redisTier": {
+      "value": "Basic"
+    },
+    "redisCapacity": {
+      "value": 1
+    },
+    "eventHubsTier": {
+      "value": "Basic"
+    },
+    "eventHubsCapacity": {
+      "value": 1
+    },
+    "serviceBusTier": {
+      "value": "Basic"
+    },
+    "logRetentionDays": {
+      "value": 30
+    },
+    "enablePrivateEndpoints": {
+      "value": false
+    },
+    "enableEntraId": {
+      "value": true
+    },
+    "enableSqlAudit": {
+      "value": false
+    },
+    "enableApplicationInsights": {
+      "value": true
+    },
+    "alertingEnabled": {
+      "value": false
+    },
+    "enableBackup": {
+      "value": false
+    },
+    "backupRetentionDays": {
+      "value": 7
+    },
+    "tags": {
+      "value": {
+        "Environment": "dev",
+        "Application": "cross-border-payments",
+        "CostCenter": "fintech-development",
+        "Owner": "payment-platform-team",
+        "Compliance": "pci-dss-level1",
+        "BusinessUnit": "payments",
+        "Project": "cross-border-modernization",
+        "CreatedBy": "azure-bicep-template",
+        "Purpose": "development-testing"
+      }
+    }
+  }
+}
