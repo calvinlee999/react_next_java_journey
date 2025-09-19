@@ -1,82 +1,161 @@
-# Stage 4: Routing & Execution
-## Detailed Process Flow - Multi-hop Routing and Real-time Status Tracking
+# Stage 4: Payment Processor - Enhanced UETR Lifecycle
+## Detailed Process Flow with UETR State Management and Multi-Hop Routing
 
 ```mermaid
 sequenceDiagram
-    participant SWIFTNetwork as 🌐 SWIFT Network
-    participant CorrespondentA as 🏦 Correspondent Bank A
-    participant CorrespondentB as 🏦 Correspondent Bank B
-    participant BeneficiaryBank as 🏛️ Beneficiary Bank
-    participant gpiTracker as 📍 gpi Tracker
-    participant DataLake as 🏛️ Data Lake (Gold)
-    participant KafkaEvents as 📨 Kafka Events
-    participant StatusService as 📊 Status Tracking Service
+    participant SWIFTNetwork as 🌐 SWIFT Network<br/>gpi Tracker
+    participant IntermediaryAgent as 🏦 Intermediary Agent<br/>(Routing Bank)
+    participant CreditAgent as �️ Creditor Agent<br/>(Receiving Bank)
+    participant gpiIntegration as � gpi Integration<br/>(Status Tracking)
+    participant AuditService as � Audit Service
 
-    Note over SWIFTNetwork, StatusService: 🔗 STAGE 4: ROUTING & EXECUTION (Target: Traceability & Status Updates)
+    Note over SWIFTNetwork, AuditService: 🔗 STAGE 4: PAYMENT PROCESSOR - UETR Lifecycle Steps 4.1-4.4
 
-    %% Process Step 1: Network Routing
-    activate SWIFTNetwork
-    SWIFTNetwork->>SWIFTNetwork: Analyze Routing Path
-    Note right of SWIFTNetwork: Routing Analysis:<br/>• Correspondent relationships<br/>• Cost optimization<br/>• Speed vs. cost trade-off<br/>• Regulatory compliance path
+    rect rgb(255, 240, 255)
+        Note over SWIFTNetwork, IntermediaryAgent: 📋 Step 4.1: Multi-Hop Routing via Correspondent Banks
+        Note over IntermediaryAgent: 🔄 UETR State: In Transit
+        
+        SWIFTNetwork->>+IntermediaryAgent: Payment routed across intermediary/correspondent banks
+        Note over IntermediaryAgent: 📄 Message Types: MT103, pacs.008<br/>🔑 Multi-hop routing via correspondent network<br/>💾 UETR propagates through all intermediaries<br/>🎯 gpi Role: Routing Bank/Correspondent
+        
+        IntermediaryAgent->>IntermediaryAgent: Process routing decisions
+        Note right of IntermediaryAgent: 🌐 Correspondent Banking Operations<br/>• Routing path analysis and optimization<br/>• Currency conversion and FX management<br/>• Intermediary fee calculation and deduction<br/>• Correspondent relationship validation<br/>• Regulatory compliance for each jurisdiction<br/>• Account validation and balance checks<br/>• UETR state management throughout routing
+        
+        IntermediaryAgent-->>-SWIFTNetwork: Routing confirmation + next hop
+        Note over SWIFTNetwork: 📊 Multi-hop routing active<br/>🔍 gpi status: Payment in transit<br/>📈 Network optimization in progress
+    end
 
-    %% Process Step 2: First Hop - Correspondent A
-    SWIFTNetwork->>CorrespondentA: Route to Correspondent Bank A
-    activate CorrespondentA
-    CorrespondentA->>CorrespondentA: Process & Validate Message
-    Note right of CorrespondentA: Processing Steps:<br/>• Account validation<br/>• Sanctions screening<br/>• Balance verification<br/>• Fee deduction
+    rect rgb(248, 255, 255)
+        Note over IntermediaryAgent, gpiIntegration: 📋 Step 4.2: Intermediary Received & Forwarded
+        Note over IntermediaryAgent: 🔄 UETR State: Settled at Intermediary
+        
+        IntermediaryAgent->>IntermediaryAgent: Intermediary received & forwarded payment
+        Note right of IntermediaryAgent: 📄 Message Type: MT103<br/>🔑 Intermediary processing complete<br/>💾 Settlement at intermediary level<br/>🎯 gpi Role: Settling Agent
+        
+        IntermediaryAgent->>+gpiIntegration: Update gpi Tracker with settlement status
+        Note over gpiIntegration: 🔍 gpi Status Tracking<br/>• Real-time status update: Settled at Intermediary<br/>• get_payment_status API integration<br/>• Customer notification trigger<br/>• Investigation support data<br/>• Payment journey visualization update
+        gpiIntegration-->>-IntermediaryAgent: Status update confirmed
+        
+        IntermediaryAgent->>+CreditAgent: Forward to receiving/creditor bank
+        Note over CreditAgent: 📄 Message preparation for final recipient<br/>🔑 UETR maintained throughout transfer<br/>💾 Ready for final settlement process
+        CreditAgent-->>-IntermediaryAgent: Receipt confirmation
+    end
 
-    %% Process Step 3: gpi Status Update #1
-    CorrespondentA->>gpiTracker: Update gpi Status (In Transit)
-    activate gpiTracker
-    gpiTracker->>StatusService: Real-time Status Update
-    activate StatusService
-    StatusService->>KafkaEvents: Publish Status.Updated Event
-    KafkaEvents->>DataLake: Store Status Data (Gold Layer)
-    Note right of DataLake: ✅ TARGET ACHIEVED:<br/>Real-time Traceability
-    deactivate StatusService
+    alt ❌ Payment Rejected After Being Sent
+        rect rgb(255, 248, 248)
+            Note over IntermediaryAgent, AuditService: 📋 Step 4.3: Payment Rejected After SWIFT Transmission
+            Note over IntermediaryAgent: 🔄 UETR State: Rejected (After Sent)
+            
+            IntermediaryAgent-->>SWIFTNetwork: Payment rejected after SWIFT transmission
+            Note over IntermediaryAgent: 📄 Message Types: MT199 (:72), MT299<br/>🚫 Rejection after network transmission<br/>💾 Account closure, compliance issues<br/>🎯 gpi Role: Rejector
+            
+            IntermediaryAgent->>+gpiIntegration: Report rejection status to gpi
+            Note over gpiIntegration: 🚨 Rejection Status Management<br/>• Rejection reason code propagation<br/>• Customer notification with UETR<br/>• Investigation case creation<br/>• Refund process initiation<br/>• Complete rejection audit trail
+            gpiIntegration-->>-IntermediaryAgent: Rejection status recorded
+            
+            gpiIntegration->>+AuditService: Log rejection event with details
+            Note over AuditService: 📋 Rejection Audit Trail<br/>📊 Rejection reason analysis<br/>🔍 UETR state: Rejected (After Sent)<br/>📈 Operational improvement data<br/>🎯 Complete rejection lifecycle
+            AuditService-->>-gpiIntegration: Rejection audit complete
+        end
+    else ❌ Payment Returned After Settlement
+        rect rgb(255, 248, 248)
+            Note over CreditAgent, AuditService: 📋 Step 4.4: Payment Initially Accepted but Returned
+            Note over CreditAgent: 🔄 UETR State: Returned (After Settlement)
+            
+            CreditAgent-->>IntermediaryAgent: Payment initially accepted but returned
+            Note over CreditAgent: 📄 Message Type: MT202 Return<br/>🔄 Return after initial acceptance<br/>💾 Wrong account, beneficiary issues<br/>🎯 gpi Role: Return Sender
+            
+            IntermediaryAgent->>+SWIFTNetwork: Return processing through network
+            Note over SWIFTNetwork: 🔄 Return Journey Management<br/>• Reverse routing through network<br/>• Return reason propagation<br/>• UETR state: Returned (After Settlement)<br/>• Refund process coordination
+            SWIFTNetwork-->>-IntermediaryAgent: Return processing confirmed
+            
+            IntermediaryAgent->>+gpiIntegration: Update gpi with return status
+            Note over gpiIntegration: 🔄 Return Status Management<br/>• Return reason documentation<br/>• Customer notification with explanation<br/>• Refund timeline communication<br/>• Investigation support for resolution
+            gpiIntegration-->>-IntermediaryAgent: Return status updated
+            
+            gpiIntegration->>+AuditService: Log return event details
+            Note over AuditService: 📋 Return Audit Trail<br/>📊 Return reason analysis<br/>🔍 UETR state: Returned (After Settlement)<br/>📈 Process improvement insights<br/>🎯 Complete return lifecycle
+            AuditService-->>-gpiIntegration: Return audit complete
+        end
+    else ✅ Payment Successfully Forwarded
+        rect rgb(240, 255, 240)
+            Note over IntermediaryAgent, AuditService: 📋 Successful Payment Path
+            
+            IntermediaryAgent->>+CreditAgent: Forward to receiving bank (successful)
+            Note over CreditAgent: ✅ Payment received for final processing<br/>🔄 UETR State: Ready for final settlement<br/>📤 Prepared for Stage 5 (Final Integration)<br/>🎯 gpi Role: Receiving Bank
+            CreditAgent-->>-IntermediaryAgent: Receipt confirmation
+            
+            IntermediaryAgent->>+gpiIntegration: Confirm successful forwarding
+            Note over gpiIntegration: 🎯 Success Status Management<br/>• Progress update to customer<br/>• Timeline estimate for completion<br/>• Investigation support ready<br/>• Payment tracking dashboard update
+            gpiIntegration-->>-IntermediaryAgent: Success status recorded
+            
+            gpiIntegration->>+AuditService: Log successful forwarding
+            Note over AuditService: 📋 Success Audit Trail<br/>📊 Performance metrics capture<br/>🔍 UETR journey documentation<br/>📈 Operational excellence data<br/>🎯 Complete success lifecycle
+            AuditService-->>-gpiIntegration: Success audit complete
+        end
+    end
 
-    %% Process Step 4: Second Hop - Correspondent B
-    CorrespondentA->>CorrespondentB: Forward to Correspondent Bank B
-    deactivate CorrespondentA
-    activate CorrespondentB
-    CorrespondentB->>CorrespondentB: Intermediate Processing
-    Note right of CorrespondentB: Multi-hop Processing:<br/>• Currency conversion<br/>• Compliance checks<br/>• Network fee calculation<br/>• Route optimization
-
-    %% Process Step 5: gpi Status Update #2
-    CorrespondentB->>gpiTracker: Update gpi Status (Processing)
-    gpiTracker->>StatusService: Status Update (Processing)
-    activate StatusService
-    StatusService->>KafkaEvents: Publish Status.Processing Event
-    deactivate StatusService
-
-    %% Process Step 6: Final Hop - Beneficiary Bank
-    CorrespondentB->>BeneficiaryBank: Deliver to Beneficiary Bank
-    deactivate CorrespondentB
-    activate BeneficiaryBank
-    BeneficiaryBank->>BeneficiaryBank: Credit Beneficiary Account
-    Note right of BeneficiaryBank: Final Processing:<br/>• Account identification<br/>• Know Your Customer (KYC)<br/>• Account crediting<br/>• Local compliance
-
-    %% Process Step 7: Settlement Confirmation
-    BeneficiaryBank->>gpiTracker: Confirm Settlement
-    BeneficiaryBank->>BeneficiaryBank: Generate pacs.002 (Confirmation)
-    Note right of BeneficiaryBank: ISO 20022 Response:<br/>• pacs.002 Credit Transfer Report<br/>• Settlement confirmation<br/>• Fee details<br/>• Execution timestamp
-
-    %% Process Step 8: Final Status Update
-    gpiTracker->>StatusService: Final Status (Settled)
-    activate StatusService
-    StatusService->>KafkaEvents: Publish Payment.Settled Event
-    KafkaEvents->>DataLake: Complete Transaction Record (Gold)
-    Note right of DataLake: Gold Layer Complete:<br/>• End-to-end journey<br/>• All status updates<br/>• Performance metrics<br/>• Compliance audit trail
-    deactivate StatusService
-    deactivate BeneficiaryBank
-    deactivate gpiTracker
-    deactivate SWIFTNetwork
-
-    Note over SWIFTNetwork, StatusService: 📊 COMPLETE TRANSACTION AUDIT TRAIL AVAILABLE
+    Note over SWIFTNetwork, AuditService: 🎯 STAGE 4 TARGET BENEFITS ACHIEVED
+    Note over IntermediaryAgent: ✅ UETR Traceability: Multi-hop routing tracked
+    Note over gpiIntegration: ✅ Real-time Status: gpi integration active
+    Note over AuditService: ✅ Investigation Support: Complete audit trail
 
 ```
 
-## Stage 4 Process Steps Summary
+## Enhanced Stage 4 UETR State Management
+
+### UETR State Transitions in Stage 4
+
+| Step | UETR State | Description | MT Message | MX Message | Key Parties |
+|------|------------|-------------|------------|------------|-------------|
+| **4.1** | **In Transit** | Payment routing through network | MT103 | pacs.008 | Intermediary Agents, Routing Banks |
+| **4.2** | **Settled at Intermediary** | Intermediary received & forwarded | MT103 | - | Settling Agent, Intermediary Agent |
+| **4.3** | **Rejected (After Sent)** | Payment rejected after transmission | MT199/MT299 | - | Rejector, Intermediary Agent |
+| **4.4** | **Returned (After Settlement)** | Payment initially accepted but returned | MT202 Return | - | Return Sender, Creditor Agent |
+
+### Message Type Progression
+
+| Message Transition | Purpose | UETR State Change | Technical Details |
+|---------------------|---------|-------------------|-------------------|
+| **MT103 → MT103** | Multi-hop correspondent routing | → In Transit | Network propagation through correspondents |
+| **MT103 → Settled** | Intermediary processing complete | → Settled at Intermediary | Correspondent settlement confirmation |
+| **MT103 → MT199** | Post-transmission rejection | → Rejected (After Sent) | Account/compliance issues after network entry |
+| **Settled → MT202** | Return after acceptance | → Returned (After Settlement) | Beneficiary or account issues discovered |
+
+### Correspondent Banking Network
+
+| Routing Stage | Correspondent Type | UETR State | Processing Details |
+|---------------|-------------------|------------|-------------------|
+| **Primary Correspondent** | Direct relationship | In Transit | Optimal routing path |
+| **Secondary Correspondent** | Intermediary relationship | Settled at Intermediary | Multi-hop processing |
+| **Backup Correspondent** | Alternative relationship | In Transit | Resilience routing |
+
+### Party Role and gpi Integration
+
+| Party | gpi Role | UETR States | Key Responsibilities |
+|-------|----------|-------------|---------------------|
+| **SWIFT Network** | Network Provider | In Transit | UETR propagation and routing |
+| **Intermediary Agent** | Routing Bank/Settling Agent | In Transit → Settled at Intermediary | Multi-hop routing and settlement |
+| **Creditor Agent** | Receiving Bank | Settled → Ready for Final | Final processing preparation |
+| **gpi Integration** | Status Provider | All States | Real-time tracking and customer updates |
+
+### Exception Handling
+
+| Exception Type | UETR State | Recovery Action | Customer Impact |
+|----------------|------------|-----------------|-----------------|
+| **Account Closure** | Rejected (After Sent) | MT199 notification + refund | Clear rejection reason + timeline |
+| **Compliance Issue** | Rejected (After Sent) | Regulatory reporting + investigation | Compliance explanation + support |
+| **Wrong Account** | Returned (After Settlement) | MT202 return + correction | Account verification + resubmission |
+| **Beneficiary Issue** | Returned (After Settlement) | Return processing + resolution | Beneficiary correction + retry |
+
+## Stage 4 Process Steps Summary - Enhanced
+
+| Step | Process | System | UETR State | Target Benefit |
+|------|---------|--------|------------|----------------|
+| **4.1** | Multi-hop Routing | Intermediary Agents | In Transit | ✅ **UETR Traceability** |
+| **4.2** | Intermediary Settlement | Settling Agent | Settled at Intermediary | ✅ **Real-time Status** |
+| **4.3** | Post-SWIFT Rejection | Rejector | Rejected (After Sent) | ✅ **Investigation Support** |
+| **4.4** | Return Processing | Return Sender | Returned (After Settlement) | ✅ **Exception Handling** |
 
 | Step | Process | System | Target Benefit |
 |------|---------|--------|----------------|

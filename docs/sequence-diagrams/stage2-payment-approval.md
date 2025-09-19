@@ -1,82 +1,119 @@
-# Stage 2: Payment Approval
-## Detailed Process Flow - Dual Approval and Enhanced Fraud Screening
+# Stage 2: Payment Approval - Enhanced UETR Lifecycle
+## Detailed Process Flow with UETR State Management and Rejection Handling
 
 ```mermaid
 sequenceDiagram
-    participant WorkflowEngine as ⚙️ Workflow Engine (Camunda)
-    participant ComplianceEngine as 🛡️ Compliance Engine
-    participant FraudDetection as 🔍 Fraud Detection Service
-    participant ApprovalService as ✅ Approval Service
+    participant PaymentInitSvc as 💰 Payment Initiation Service
+    participant ApprovalEngine as ✅ Approval Engine<br/>(Maker-Checker)
+    participant ComplianceEngine as 🛡️ Compliance Engine<br/>(AML/OFAC)
+    participant DebtorAgent as 🏛️ Debtor Agent<br/>(Sender Bank)
+    participant AuditService as 📊 Audit Service
     participant NotificationSvc as 📧 Notification Service
-    participant DataLake as 🏛️ Data Lake (Silver)
-    participant KafkaEvents as 📨 Kafka Events
+    participant Debtor as 👤 Debtor
 
-    Note over WorkflowEngine, KafkaEvents: 📋 STAGE 2: PAYMENT APPROVAL (Target: Fraud Screening & Accuracy)
+    Note over PaymentInitSvc, Debtor: 📋 STAGE 2: PAYMENT APPROVAL - UETR Lifecycle Steps 2.1-2.2
 
-    %% Process Step 1: Enhanced Risk Assessment
-    activate WorkflowEngine
-    WorkflowEngine->>ComplianceEngine: Enhanced Risk Assessment Request
-    activate ComplianceEngine
-    ComplianceEngine->>ComplianceEngine: Deep AML/KYC Analysis
-    Note right of ComplianceEngine: • Transaction Pattern Analysis<br/>• Beneficiary Risk Scoring<br/>• Geographic Risk Assessment<br/>• Currency Risk Evaluation
-
-    %% Process Step 2: Fraud Detection Analysis
-    ComplianceEngine->>FraudDetection: ML-Based Fraud Screening
-    activate FraudDetection
-    FraudDetection->>FraudDetection: Real-time ML Model Analysis
-    Note right of FraudDetection: • Velocity Checks<br/>• Behavioral Analysis<br/>• Device Fingerprinting<br/>• Transaction Clustering
-
-    %% Process Step 3: Risk Score Calculation
-    FraudDetection->>FraudDetection: Calculate Composite Risk Score
-    FraudDetection-->>ComplianceEngine: Risk Score + Recommendations
-    Note left of FraudDetection: Risk Categories:<br/>• LOW (0-30): Auto-approve<br/>• MEDIUM (31-70): Manual review<br/>• HIGH (71-100): Block/investigate
-    deactivate FraudDetection
-
-    %% Process Step 4: Compliance Decision
-    ComplianceEngine->>ComplianceEngine: Final Compliance Assessment
-    ComplianceEngine-->>WorkflowEngine: Compliance Decision + Risk Score
-    deactivate ComplianceEngine
-    Note right of WorkflowEngine: ✅ TARGET ACHIEVED:<br/>Enhanced Fraud Screening
-
-    %% Process Step 5: Dual Approval Logic
-    alt Risk Score: LOW (Auto-approve)
-        WorkflowEngine->>WorkflowEngine: Auto-approve (Single Authorization)
-        Note right of WorkflowEngine: Low-risk transactions<br/>bypass manual approval
-    else Risk Score: MEDIUM/HIGH (Manual Approval)
-        WorkflowEngine->>ApprovalService: Request Dual Approval
-        activate ApprovalService
-        ApprovalService->>NotificationSvc: Send Approval Request to Makers
-        activate NotificationSvc
-        NotificationSvc-->>ApprovalService: Approval Notifications Sent
-
-        %% First Approval
-        ApprovalService->>ApprovalService: Wait for Maker Approval #1
-        Note right of ApprovalService: First Approver Decision
-        ApprovalService->>ApprovalService: Wait for Maker Approval #2
-        Note right of ApprovalService: Second Approver Decision
-
-        %% Final Approval Decision
-        ApprovalService->>ApprovalService: Validate Dual Approval Rules
-        ApprovalService-->>WorkflowEngine: Dual Approval Decision
-        deactivate ApprovalService
-        deactivate NotificationSvc
+    rect rgb(248, 255, 248)
+        Note over PaymentInitSvc, ApprovalEngine: 📋 Step 2.1: Payment Approval & Queue for Gateway
+        Note over ApprovalEngine: � UETR State: Ready for Release
+        
+        PaymentInitSvc->>+ApprovalEngine: Payment message formatted & queued for gateway
+        Note over ApprovalEngine: 📄 Message Type: MT103, pacs.008<br/>🔑 Dual approval workflow (Maker-Checker)<br/>💾 Payment ready for SWIFT transmission<br/>🎯 gpi Role: Sender
+        
+        ApprovalEngine->>+ComplianceEngine: Enhanced AML/OFAC screening
+        Note over ComplianceEngine: 🛡️ P2P-specific fraud screening<br/>🔍 Enhanced party validation<br/>📊 Risk scoring and assessment<br/>🎯 Pre-SWIFT compliance validation
+        
+        ComplianceEngine->>ComplianceEngine: Comprehensive screening process
+        Note right of ComplianceEngine: • Sanctions List Check (OFAC, UN, EU)<br/>• PEP (Politically Exposed Person) screening<br/>• High-Risk Country assessment<br/>• Transaction pattern analysis<br/>• Velocity and threshold checks<br/>• Enhanced due diligence for high-risk
+        
+        ComplianceEngine-->>-ApprovalEngine: Compliance clearance + risk score
+        Note over ApprovalEngine: 📊 Risk Assessment Complete<br/>🎯 Enhanced fraud screening achieved
+        
+        ApprovalEngine->>+DebtorAgent: Queue payment for SWIFT transmission
+        Note over DebtorAgent: 📄 Messages: MT103 (:52a), pacs.008<br/>🔑 Payment approved and ready for release<br/>💾 Staged for SWIFT gateway<br/>🎯 gpi Role: Sender Bank
+        
+        ApprovalEngine->>+AuditService: Log approval decision with UETR
+        Note over AuditService: 📋 Silver Layer: Enriched approval data<br/>🔍 Risk scores and compliance metadata<br/>🕒 Approval timestamps and decision trail<br/>👥 Approver identity and workflow steps
+        AuditService-->>-ApprovalEngine: Audit trail recorded
     end
 
-    %% Process Step 6: Data Enrichment (Silver Layer)
-    WorkflowEngine->>KafkaEvents: Publish Payment.Approved/Rejected Event
-    KafkaEvents->>DataLake: Store Enriched Data (Silver Layer)
-    Note right of DataLake: Silver: Enriched & validated<br/>• Risk scores<br/>• Approval decisions<br/>• Compliance metadata
+    alt ❌ Validation Failed - Pre-SWIFT Rejection
+        rect rgb(255, 248, 248)
+            Note over DebtorAgent, Debtor: 📋 Step 2.2: Pre-SWIFT Rejection Process
+            Note over DebtorAgent: 🔄 UETR State: Rejected (Pre-SWIFT)
+            
+            DebtorAgent-->>ApprovalEngine: Validation failed - payment rejection
+            Note over DebtorAgent: 📄 Message Type: MT199 (:72 optional notes)<br/>🚫 Rejection before SWIFT transmission<br/>💾 Rejection reasons documented<br/>🎯 gpi Role: Rejector
+            
+            ApprovalEngine->>+NotificationSvc: Send rejection notification
+            Note over NotificationSvc: 🚨 Rejection Notification Details<br/>• UETR reference for tracking<br/>• Specific rejection reason codes<br/>• Remediation instructions<br/>• Contact information for support
+            
+            NotificationSvc-->>+Debtor: Pre-SWIFT rejection notice with UETR
+            Note over Debtor: 🎯 Target Benefit: Clear rejection reasons<br/>📞 Support contact for resolution<br/>🔍 UETR for reference and tracking
+            
+            NotificationSvc->>+AuditService: Log rejection event
+            Note over AuditService: 📋 Silver Layer: Rejection audit trail<br/>🚫 Rejection reason codes and timestamps<br/>🔍 Complete UETR state transition history<br/>📊 Rejection analytics for improvement
+            AuditService-->>-NotificationSvc: Rejection logged
+            NotificationSvc-->>-Debtor: Notification delivery confirmed
+        end
+    else ✅ Payment Approved for Release
+        rect rgb(240, 255, 240)
+            Note over DebtorAgent, ApprovalEngine: 📋 Successful Approval Path
+            
+            DebtorAgent-->>-ApprovalEngine: Ready for SWIFT transmission
+            Note over DebtorAgent: ✅ Payment approved and validated<br/>🔄 UETR State: Ready for Release<br/>📤 Queued for Stage 3 (SWIFT Gateway)<br/>🎯 gpi Role: Approved Sender
+            
+            ApprovalEngine-->>PaymentInitSvc: Approval confirmation with UETR
+            Note over PaymentInitSvc: 🎯 Target Benefits Achieved<br/>✅ Payment Accuracy: Dual approval<br/>✅ Enhanced Fraud Screening: Complete<br/>✅ UETR Traceability: State updated
+        end
+    end
 
-    %% Process Step 7: Status Update
-    WorkflowEngine->>WorkflowEngine: Update Payment Status
-    Note right of WorkflowEngine: Status Options:<br/>• APPROVED: Ready for execution<br/>• REJECTED: Send notification<br/>• PENDING: Awaiting approval
-    deactivate WorkflowEngine
-
-    Note over WorkflowEngine, KafkaEvents: 📊 SILVER DATA CAPTURED: Enriched compliance and approval data
+    Note over PaymentInitSvc, Debtor: 🎯 STAGE 2 TARGET BENEFITS ACHIEVED
+    Note over ComplianceEngine: ✅ Enhanced Fraud Screening: P2P-specific patterns
+    Note over ApprovalEngine: ✅ Payment Accuracy: Dual approval workflow
+    Note over AuditService: ✅ Audit Trail: Complete decision history
 
 ```
 
-## Stage 2 Process Steps Summary
+## Enhanced Stage 2 UETR State Management
+
+### UETR State Transitions in Stage 2
+
+| Step | UETR State | Description | MT Message | MX Message | Key Parties |
+|------|------------|-------------|------------|------------|-------------|
+| **2.1** | **Ready for Release** | Payment approved and queued for SWIFT | MT103 | pacs.008 | Approval Engine, Sender, Debtor Agent |
+| **2.2** | **Rejected (Pre-SWIFT)** | Validation failed before SWIFT transmission | MT199 | - | Rejector, Debtor Agent |
+
+### Message Type Progression
+
+| Message Transition | Purpose | UETR State Change | Technical Details |
+|---------------------|---------|-------------------|-------------------|
+| **Staged → MT103** | SWIFT message preparation | → Ready for Release | ISO 20022 pacs.008 format with party validation |
+| **MT103 → MT199** | Pre-SWIFT rejection notification | → Rejected (Pre-SWIFT) | Rejection reason codes and remediation guidance |
+
+### Approval Workflow Integration
+
+| Approval Stage | Risk Level | Action Required | UETR State Impact |
+|----------------|------------|-----------------|-------------------|
+| **Low Risk (0-30)** | Automatic approval | Single authorization | → Ready for Release |
+| **Medium Risk (31-70)** | Manual review | Dual approval required | → Ready for Release (if approved) |
+| **High Risk (71-100)** | Enhanced review | Additional compliance checks | → Rejected (Pre-SWIFT) or → Ready for Release |
+
+### Party Role and gpi Integration
+
+| Party | gpi Role | UETR States | Key Responsibilities |
+|-------|----------|-------------|---------------------|
+| **Approval Engine** | Sender | Ready for Release | Dual approval workflow orchestration |
+| **Compliance Engine** | Screening Authority | Ready for Release | AML/OFAC and fraud screening |
+| **Debtor Agent** | Sender Bank | Ready → Rejected/Released | SWIFT transmission preparation |
+| **Notification Service** | Communicator | Rejected (Pre-SWIFT) | Rejection notification and remediation |
+
+## Stage 2 Process Steps Summary - Enhanced
+
+| Step | Process | System | UETR State | Target Benefit |
+|------|---------|--------|------------|----------------|
+| **2.1** | Payment Approval & Queue | Approval Engine + Compliance | Ready for Release | ✅ **Enhanced Fraud Screening** |
+| **2.2** | Pre-SWIFT Rejection | Debtor Agent + Notification | Rejected (Pre-SWIFT) | ✅ **Payment Accuracy** |
 
 | Step | Process | System | Target Benefit |
 |------|---------|--------|----------------|

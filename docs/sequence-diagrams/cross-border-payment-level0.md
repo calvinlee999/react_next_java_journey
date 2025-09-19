@@ -1,52 +1,165 @@
-# Cross-Border Payment Level 0 - Sequence Diagram
-## Enhanced for PMPG Use-Case 1a: Account to Account Remittances
-## 5-Stage, 14-Process-Step Lifecycle with BIAN Architecture
+# Cross-Border Payment Level 0 - Enhanced Sequence Diagram
+## UETR Lifecycle with 5 Stages, 13 Steps, MT/MX Message Mapping
+## Enhanced for PMPG Use-Case 1a: Account to Account Remittances with Complete UETR State Management
 
 ```mermaid
 sequenceDiagram
-    participant Individual as Individual (Debtor)
+    participant Debtor as Debtor<br/>(Initiating Party)
     participant MobileApp as Mobile/Web App
-    participant CorpPortal as Corporate Portal
+    participant CorpPortal as Corporate Portal<br/>(Originator System)
     participant APIGateway as API Gateway
     participant PaymentInitSvc as Payment Initiation Service
     participant FXGateway as FX Gateway
     participant PaymentDB as Payment DB/Kafka Ingestion
-    participant WorkflowEngine as Workflow Engine (Camunda)
-    participant ComplianceEngine as Compliance Engine (AML/OFAC)
-    participant AuditService as Audit Service + Kafka
-    participant PaymentFormatter as Payment Formatter Microservice
-    participant SWIFTGateway as SWIFT Gateway Integration
-    participant SWIFTNetwork as SWIFT Network
-    participant gpiIntegration as gpi Integration Microservice
-    participant BatchScheduler as Batch Job Scheduler + Retry Logic
-    participant AzureSQL as Azure SQL/PostgreSQL (ODS)
-    participant DataLake as Azure Data Lake/S3 + Databricks/Spark
-    participant SearchAPI as Search API/Dashboard
+    participant ApprovalEngine as Approval Engine<br/>(Maker-Checker)
+    participant ComplianceEngine as Compliance Engine<br/>(AML/OFAC)
+    participant PaymentSystem as Payment System<br/>(UETR Management)
+    participant DebtorAgent as Debtor Agent<br/>(Sender Bank)
+    participant SWIFTGateway as SWIFT Gateway<br/>(Instructing Agent)
+    participant SWIFTNetwork as SWIFT Network<br/>gpi Tracker
+    participant IntermediaryAgent as Intermediary Agent<br/>(Routing Bank)
+    participant CreditAgent as Creditor Agent<br/>(Receiving Bank)
+    participant UltimateCreditor as Ultimate Creditor<br/>(Final Beneficiary)
+    participant gpiIntegration as gpi Integration<br/>(Status Tracking)
+    participant NotificationSvc as Notification Service
 
-    Note over Individual, SearchAPI: 🏛️ BIAN Service Domain Architecture with Data Medallion Pattern
+    Note over Debtor, NotificationSvc: 🏛️ Enhanced UETR Lifecycle with Complete MT/MX Message Mapping
 
     rect rgb(240, 248, 255)
-        Note over Individual, PaymentDB: 📋 STAGE 1: PAYMENT INITIATION (Bronze Layer)
+        Note over Debtor, PaymentDB: 📋 STAGE 1: PAYMENT INITIATION (Steps 1.1-1.3)
         
-        Individual->>+MobileApp: 1. Initiate payment request (Web/API)
-        Note right of Individual: 🎯 GP2P remittance with structured party data
-        MobileApp->>+CorpPortal: Client initiates payment (MT101/pain.001 MX)
-        Note over CorpPortal: 🔑 UETR generation, client details, account validation
+        Note over Debtor: 🔄 UETR State: Created/Pending Submission
+        Debtor->>+MobileApp: 1.1 Initiate payment request
+        Note right of Debtor: • GP2P remittance with structured party data<br/>• DOB, POB, structured addresses<br/>• gpi Role: Originator System
         
-        CorpPortal->>+APIGateway: Submit payment via API Gateway
+        MobileApp->>+CorpPortal: Submit payment instruction
+        Note over CorpPortal: � Message: pain.001 (v9)<br/>🔑 Generate UETR (UUID v4-128 bits)<br/>💾 Not yet validated or formatted
+        
+        CorpPortal->>+APIGateway: Payment via API with UETR
         APIGateway->>+PaymentInitSvc: Create Payment Request
         
-        PaymentInitSvc->>+FXGateway: 2. Validate payment details and FX rate
-        Note over FXGateway: 🔍 FX checks, account coverage, duplicate prevention
-        FXGateway-->>-PaymentInitSvc: FX validation result + rates
+        Note over PaymentInitSvc: 🔄 UETR State: Validated/Authorized
+        PaymentInitSvc->>+FXGateway: 1.2 Internal validations (AML, OFAC, limit checks)
+        Note over FXGateway: • Account coverage validation<br/>• FX rate calculation<br/>• Duplicate prevention<br/>• gpi Role: Client/Originator
+        FXGateway-->>-PaymentInitSvc: Validation results + approvals
         
-        PaymentInitSvc->>+PaymentDB: 3. Persist request with UETR for audit trail
-        Note over PaymentDB: 💾 Immutable raw event record with UETR (Bronze)
-        PaymentDB-->>-PaymentInitSvc: Persistence confirmation
+        Note over PaymentSystem: 🔄 UETR State: Registered/Staged
+        PaymentInitSvc->>+PaymentSystem: 1.3 Stage message with UETR
+        Note over PaymentSystem: 📄 Messages: MT101/:50a, :52a<br/>💾 Message staged but not sent to SWIFT<br/>🔑 gpi Role: Initiating Bank
+        PaymentSystem->>+PaymentDB: Persist with immutable UETR audit trail
+        PaymentDB-->>-PaymentSystem: Persistence confirmation
+        PaymentSystem-->>-PaymentInitSvc: Staging confirmation
         
-        PaymentInitSvc-->>Individual: 💰 Display transparent fees & FX rates
-        Note over Individual: 🎯 Target Benefit: Transparency of fees, rates and timing
+        PaymentInitSvc-->>Debtor: 💰 Display transparent fees & FX rates
+        Note over Debtor: 🎯 Target Benefit: Transparency & UETR tracking
     end
+
+    rect rgb(248, 255, 248)
+        Note over ApprovalEngine, DebtorAgent: 📋 STAGE 2: PAYMENT APPROVAL (Step 2.1-2.2)
+        
+        Note over DebtorAgent: 🔄 UETR State: Ready for Release
+        PaymentInitSvc->>+ApprovalEngine: 2.1 Payment message formatted & queued for gateway
+        Note over ApprovalEngine: • Dual approval workflow (Maker-Checker)<br/>• gpi Role: Sender
+        ApprovalEngine->>+ComplianceEngine: Enhanced AML/OFAC screening
+        Note over ComplianceEngine: 🛡️ P2P-specific fraud screening<br/>🔍 Enhanced party validation
+        ComplianceEngine-->>-ApprovalEngine: Compliance clearance
+        
+        ApprovalEngine->>+DebtorAgent: Queue for SWIFT transmission
+        Note over DebtorAgent: 📄 Messages: MT103/:52a, pacs.008<br/>🔑 gpi Role: Sender
+        
+        alt ❌ Validation Failed - Rejected before SWIFT
+            Note over DebtorAgent: 🔄 UETR State: Rejected (Pre-SWIFT)
+            DebtorAgent-->>ApprovalEngine: 2.2 Validation failed - rejection
+            Note over DebtorAgent: 📄 Messages: MT199/:72 (optional notes)<br/>🔑 gpi Role: Rejector
+            ApprovalEngine-->>Debtor: 🚫 Pre-SWIFT rejection notice
+        else ✅ Payment Approved for Release
+            DebtorAgent-->>-ApprovalEngine: Ready for SWIFT transmission
+        end
+    end
+
+    alt ✅ Payment Released to SWIFT
+        rect rgb(255, 248, 240)
+            Note over SWIFTGateway, SWIFTNetwork: 📋 STAGE 3: PAYMENT GATEWAY (Step 3.1-3.2)
+            
+            Note over SWIFTGateway: 🔄 UETR State: Released/Sent
+            ApprovalEngine->>+SWIFTGateway: 3.1 Message released to SWIFT
+            Note over SWIFTGateway: • UETR enters gpi Tracker<br/>• gpi Role: Sender
+            SWIFTGateway->>+SWIFTNetwork: Send formatted message
+            Note over SWIFTNetwork: 📄 Messages: MT103/:53a, :54a, :55a<br/>🔑 UETR propagation begins
+            SWIFTNetwork-->>-SWIFTGateway: SWIFT transmission ACK
+            SWIFTGateway-->>-ApprovalEngine: Gateway confirmation
+            
+            Note over IntermediaryAgent: 🔄 UETR State: Intermediary Processing
+            SWIFTNetwork->>+IntermediaryAgent: 3.2 Route to intermediary/correspondent
+            Note over IntermediaryAgent: 📄 Messages: MT103/:56a<br/>🔑 gpi Role: Intermediary Agent
+            IntermediaryAgent-->>-SWIFTNetwork: Intermediary ACK
+        end
+
+        rect rgb(255, 240, 255)
+            Note over SWIFTNetwork, gpiIntegration: 📋 STAGE 4: PAYMENT PROCESSOR (Steps 4.1-4.4)
+            
+            Note over IntermediaryAgent: 🔄 UETR State: In Transit
+            SWIFTNetwork->>+IntermediaryAgent: 4.1 Payment routed across intermediary/correspondent banks
+            Note over IntermediaryAgent: • Multi-hop routing via correspondent banks<br/>• UETR propagates via MT/MX messages<br/>• gpi Role: Routing Bank
+            
+            Note over IntermediaryAgent: 🔄 UETR State: Settled at Intermediary
+            IntermediaryAgent->>IntermediaryAgent: 4.2 Intermediary received & forwarded payment
+            Note over IntermediaryAgent: 📄 Messages: MT103<br/>🔑 gpi Role: Settling Agent
+            
+            alt ❌ Payment Rejected After Being Sent
+                Note over IntermediaryAgent: 🔄 UETR State: Rejected (After Sent)
+                IntermediaryAgent-->>SWIFTNetwork: 4.3 Payment rejected after SWIFT transmission
+                Note over IntermediaryAgent: 📄 Messages: MT199/:72 or MT299<br/>🔑 Account closure, compliance issues<br/>🔑 gpi Role: Rejector
+                SWIFTNetwork-->>gpiIntegration: Rejection status update
+            else ❌ Payment Returned After Settlement
+                Note over CreditAgent: 🔄 UETR State: Returned (After Settlement)
+                CreditAgent-->>IntermediaryAgent: 4.4 Payment initially accepted but returned
+                Note over CreditAgent: 📄 Messages: MT202 Return<br/>🔑 Wrong account, beneficiary issues<br/>🔑 gpi Role: Return Sender
+                IntermediaryAgent-->>SWIFTNetwork: Return processing
+            else ✅ Payment Successfully Forwarded
+                IntermediaryAgent->>+CreditAgent: Forward to receiving bank
+                CreditAgent-->>-IntermediaryAgent: Receipt confirmation
+            end
+            
+            SWIFTNetwork->>+gpiIntegration: Real-time gpi status tracking
+            Note over gpiIntegration: 🔍 get_payment_status API every 4 hours<br/>� Real-time status updates via gpi Tracker
+            gpiIntegration-->>-SWIFTNetwork: Status tracking active
+        end
+
+        rect rgb(240, 255, 240)
+            Note over CreditAgent, UltimateCreditor: 📋 STAGE 5: PAYMENT INTEGRATION (Steps 5.1-5.3)
+            
+            Note over CreditAgent: 🔄 UETR State: Received by Creditor Bank
+            CreditAgent->>+CreditAgent: 5.1 Final receiving institution acknowledges payment
+            Note over CreditAgent: 📄 Messages: MT103/:57a<br/>🔑 gpi Role: Receiving Bank
+            
+            Note over CreditAgent: 🔄 UETR State: Confirmed/Settled
+            CreditAgent->>CreditAgent: 5.2 Payment confirmed settled, final credit done
+            Note over CreditAgent: 📄 Messages: MT910, camt.054<br/>🔑 gpi Role: Receiver
+            
+            Note over UltimateCreditor: 🔄 UETR State: Credited to Beneficiary
+            CreditAgent->>+UltimateCreditor: 5.3 Funds posted to end beneficiary
+            Note over UltimateCreditor: • Final credit to beneficiary account<br/>• gpi Role: Final Beneficiary
+            UltimateCreditor-->>-CreditAgent: Credit confirmation
+            
+            CreditAgent->>+gpiIntegration: Final status update to gpi Tracker
+            gpiIntegration->>+NotificationSvc: Trigger completion notifications
+            NotificationSvc-->>Debtor: 📱 Payment completion alert with UETR
+            Note over Debtor: 🎯 Target Benefits: Completion Alert & Traceability
+            NotificationSvc-->>-gpiIntegration: Notification sent
+            gpiIntegration-->>-CreditAgent: Status update complete
+        end
+    end
+
+    Note over Debtor, UltimateCreditor: 🎯 ENHANCED TARGET BENEFITS WITH UETR LIFECYCLE
+    Note over Debtor: ✅ Transparency: Real-time UETR state transitions
+    Note over SWIFTNetwork: ✅ Traceability: Complete UETR journey mapping
+    Note over NotificationSvc: ✅ Completion Alert: State-based notifications
+    Note over DebtorAgent: ✅ Payment Accuracy: Enhanced MT/MX message mapping
+    Note over UltimateCreditor: ✅ Sender Clarity: Structured party identification
+    Note over gpiIntegration: ✅ Reduced Investigations: Complete UETR audit trail
+    Note over ComplianceEngine: ✅ Fraud Screening: Pre and post-SWIFT validation
+    Note over CreditAgent: ✅ Product Effectiveness: End-to-end status visibility
 
     rect rgb(248, 255, 248)
         Note over WorkflowEngine, AuditService: 📋 STAGE 2: PAYMENT APPROVAL (Silver Layer)

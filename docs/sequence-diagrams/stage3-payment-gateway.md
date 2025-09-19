@@ -1,83 +1,114 @@
-# Stage 3: Payment Gateway
-## Detailed Process Flow - Message Formatting and SWIFT Transmission
+# Stage 3: Payment Gateway - Enhanced UETR Lifecycle
+## Detailed Process Flow with UETR State Management and SWIFT Network Integration
 
 ```mermaid
 sequenceDiagram
-    participant WorkflowEngine as ⚙️ Workflow Engine (Camunda)
-    participant PaymentFormatter as 🔧 Payment Formatter
-    participant SWIFTGateway as 🌐 SWIFT Gateway (gpi)
-    participant CoreBanking as 🏦 Core Banking / Nostro
-    participant ValidationSvc as ✓ Message Validation Service
-    participant DataLake as 🏛️ Data Lake (Silver/Gold)
-    participant KafkaEvents as 📨 Kafka Events
+    participant ApprovalEngine as ✅ Approval Engine
+    participant SWIFTGateway as 🌐 SWIFT Gateway<br/>(Instructing Agent)
+    participant SWIFTNetwork as 🌐 SWIFT Network<br/>gpi Tracker
+    participant IntermediaryAgent as 🏦 Intermediary Agent<br/>(Routing Bank)
+    participant gpiIntegration as 📊 gpi Integration<br/>(Status Tracking)
+    participant AuditService as � Audit Service
 
-    Note over WorkflowEngine, KafkaEvents: 🌐 STAGE 3: PAYMENT GATEWAY (Target: Payment Accuracy & Sender Clarity)
+    Note over ApprovalEngine, AuditService: 🌐 STAGE 3: PAYMENT GATEWAY - UETR Lifecycle Steps 3.1-3.2
 
-    %% Process Step 1: Message Formatting
-    activate WorkflowEngine
-    WorkflowEngine->>PaymentFormatter: Format Payment Message
-    activate PaymentFormatter
-    PaymentFormatter->>PaymentFormatter: Select Message Type
-    Note right of PaymentFormatter: ISO 20022 Priority:<br/>• pacs.008 (FI Credit Transfer)<br/>• MT103 (Single Customer Transfer)<br/>• pacs.009 (Financial Institution Transfer)
+    rect rgb(255, 248, 240)
+        Note over ApprovalEngine, SWIFTGateway: 📋 Step 3.1: Message Released to SWIFT
+        Note over SWIFTGateway: 🔄 UETR State: Released/Sent
+        
+        ApprovalEngine->>+SWIFTGateway: Message released to SWIFT with UETR
+        Note over SWIFTGateway: 📄 Message Types: MT103 (:53a, :54a, :55a), pacs.008<br/>🔑 UETR enters gpi Tracker system<br/>💾 Message authentication and routing<br/>🎯 gpi Role: Instructing Agent/Sender
+        
+        SWIFTGateway->>SWIFTGateway: Enhance message with SWIFT headers
+        Note right of SWIFTGateway: 🛡️ SWIFT Message Enhancement<br/>• BIC routing codes and validation<br/>• Message authentication (MAC)<br/>• Sequence numbering and priority<br/>• UETR propagation validation<br/>• Structured party identification<br/>• Category purpose (GP2P) embedding
+        
+        SWIFTGateway->>+SWIFTNetwork: Send formatted message to SWIFT
+        Note over SWIFTNetwork: 📄 Messages: MT103 with structured party data<br/>🔑 UETR propagation begins across network<br/>💾 gpi Tracker registration and monitoring<br/>🎯 Real-time status tracking initiated
+        
+        SWIFTNetwork-->>-SWIFTGateway: SWIFT transmission acknowledgment
+        Note over SWIFTGateway: ✅ Message sent confirmation<br/>📊 Transmission timestamp recorded<br/>🔍 gpi tracking reference established
+        
+        SWIFTGateway-->>-ApprovalEngine: Gateway transmission confirmed
+        Note over ApprovalEngine: 🎯 Target Benefits Achieved<br/>✅ Sender Clarity: Structured party data<br/>✅ UETR Traceability: Network propagation
+    end
 
-    %% Process Step 2: ISO 20022 Message Assembly
-    PaymentFormatter->>PaymentFormatter: Assemble ISO 20022 Message
-    Note right of PaymentFormatter: Key Message Elements:<br/>• UETR (End-to-End Reference)<br/>• Structured Address Data<br/>• Category Purpose (GP2P)<br/>• Regulatory Information<br/>• Fee Details
+    rect rgb(240, 248, 255)
+        Note over SWIFTNetwork, IntermediaryAgent: 📋 Step 3.2: Route to Intermediary/Correspondent
+        Note over IntermediaryAgent: 🔄 UETR State: Intermediary Processing
+        
+        SWIFTNetwork->>+IntermediaryAgent: Route to intermediary/correspondent bank
+        Note over IntermediaryAgent: 📄 Message Types: MT103 (:56a), pacs.008<br/>🔑 Intermediary routing and processing<br/>💾 Correspondent banking network utilization<br/>🎯 gpi Role: Intermediary Agent/Routing Bank
+        
+        IntermediaryAgent->>IntermediaryAgent: Process routing decision
+        Note right of IntermediaryAgent: 🌐 Correspondent Banking Operations<br/>• Route analysis and optimization<br/>• Intermediary fee calculation<br/>• Next-hop correspondent selection<br/>• UETR state transition management<br/>• Account validation and processing<br/>• Compliance and regulatory checks
+        
+        IntermediaryAgent-->>-SWIFTNetwork: Intermediary acknowledgment + routing
+        Note over SWIFTNetwork: 📊 Routing confirmation received<br/>🔍 gpi status update: In Transit<br/>📈 Network propagation continues
+        
+        SWIFTNetwork->>+gpiIntegration: Update gpi Tracker with routing status
+        Note over gpiIntegration: 🔍 gpi Status Tracking Integration<br/>• Real-time status updates via gpi API<br/>• get_payment_status every 4 hours<br/>• Payment journey visualization<br/>• Customer-facing status dashboard<br/>• Investigation and inquiry support
+        gpiIntegration-->>-SWIFTNetwork: Status tracking active
+        
+        gpiIntegration->>+AuditService: Log gateway and routing events
+        Note over AuditService: 📋 Silver/Gold Layer Processing<br/>📊 Gateway transmission audit trail<br/>🔍 UETR state transition history<br/>📈 Network routing analytics<br/>🎯 Complete journey documentation
+        AuditService-->>-gpiIntegration: Audit trail updated
+    end
 
-    %% Process Step 3: Message Validation
-    PaymentFormatter->>ValidationSvc: Validate Message Format
-    activate ValidationSvc
-    ValidationSvc->>ValidationSvc: Schema Validation (XML/JSON)
-    ValidationSvc->>ValidationSvc: Business Rule Validation
-    Note right of ValidationSvc: Validation Checks:<br/>• Field presence & format<br/>• Country-specific rules<br/>• Currency restrictions<br/>• Amount limits
-    ValidationSvc-->>PaymentFormatter: Validation Result
-    deactivate ValidationSvc
-
-    %% Process Step 4: Core Banking Integration
-    PaymentFormatter->>CoreBanking: Check Account Balance & Authorizations
-    activate CoreBanking
-    CoreBanking->>CoreBanking: Validate Nostro Account
-    CoreBanking->>CoreBanking: Check Available Balance
-    CoreBanking-->>PaymentFormatter: Account Validation Confirmed
-    Note left of CoreBanking: ✅ TARGET ACHIEVED:<br/>Payment Accuracy
-    deactivate CoreBanking
-
-    %% Process Step 5: SWIFT Message Transmission
-    PaymentFormatter-->>WorkflowEngine: Message Ready for Transmission
-    deactivate PaymentFormatter
-    WorkflowEngine->>SWIFTGateway: Transmit Payment Message
-    activate SWIFTGateway
-    SWIFTGateway->>SWIFTGateway: Add SWIFT Headers & Security
-    Note right of SWIFTGateway: SWIFT Message Enhancement:<br/>• BIC routing codes<br/>• Message authentication<br/>• Sequence numbering<br/>• Priority assignment
-
-    %% Process Step 6: Network Transmission
-    SWIFTGateway->>SWIFTGateway: Send via SWIFT Network
-    Note right of SWIFTGateway: ✅ TARGET ACHIEVED:<br/>Sender Clarity via<br/>Structured Message Format
-
-    %% Process Step 7: Transmission Confirmation
-    SWIFTGateway->>SWIFTGateway: Receive Transmission Acknowledgment
-    SWIFTGateway-->>WorkflowEngine: Transmission Confirmed
-    deactivate SWIFTGateway
-
-    %% Process Step 8: Data Pipeline Update
-    WorkflowEngine->>KafkaEvents: Publish Payment.Transmitted Event
-    KafkaEvents->>DataLake: Update Silver & Gold Layers
-    Note right of DataLake: Silver: Message metadata<br/>Gold: Analytics-ready data<br/>for operational dashboards
-    deactivate WorkflowEngine
-
-    Note over WorkflowEngine, KafkaEvents: 📊 GOLD DATA READY: Message transmission analytics available
+    Note over ApprovalEngine, AuditService: 🎯 STAGE 3 TARGET BENEFITS ACHIEVED
+    Note over SWIFTGateway: ✅ Sender Clarity: Structured party identification
+    Note over SWIFTNetwork: ✅ UETR Traceability: Network propagation active
+    Note over gpiIntegration: ✅ Real-time Tracking: gpi integration complete
 
 ```
 
-## Stage 3 Process Steps Summary
+## Enhanced Stage 3 UETR State Management
 
-| Step | Process | System | Target Benefit |
-|------|---------|--------|----------------|
-| **3.1** | Message Formatting | Payment Formatter | Message Structure |
-| **3.2** | ISO 20022 Assembly | Payment Formatter | Standards Compliance |
-| **3.3** | Message Validation | Validation Service | ✅ **Payment Accuracy** |
-| **3.4** | Core Banking Integration | Core Banking / Nostro | Account Validation |
-| **3.5** | SWIFT Transmission | SWIFT Gateway | Message Delivery |
+### UETR State Transitions in Stage 3
+
+| Step | UETR State | Description | MT Message | MX Message | Key Parties |
+|------|------------|-------------|------------|------------|-------------|
+| **3.1** | **Released/Sent** | Payment sent to SWIFT network | MT103 | pacs.008 | SWIFT Gateway, Instructing Agent |
+| **3.2** | **Intermediary Processing** | Route to intermediary/correspondent | MT103 | pacs.008 | Intermediary Agent, Routing Bank |
+
+### Message Type Progression
+
+| Message Transition | Purpose | UETR State Change | Technical Details |
+|---------------------|---------|-------------------|-------------------|
+| **Approved → MT103** | SWIFT network transmission | → Released/Sent | Enhanced with structured party data and gpi tracking |
+| **MT103 → MT103** | Intermediary routing | → Intermediary Processing | Correspondent banking network routing |
+
+### SWIFT Message Enhancement
+
+| Message Component | Purpose | UETR Integration | Party Clarity |
+|------------------|---------|------------------|---------------|
+| **:53a (Sender's Correspondent)** | Correspondent bank identification | UETR propagation | Clear sender bank chain |
+| **:54a (Receiver's Correspondent)** | Receiving correspondent details | UETR tracking continuation | Structured receiver data |
+| **:55a (Third Reimbursement Institution)** | Additional routing information | Complete UETR journey | Enhanced routing clarity |
+| **:56a (Intermediary)** | Intermediary bank details | Intermediary state management | Clear routing path |
+
+### Party Role and gpi Integration
+
+| Party | gpi Role | UETR States | Key Responsibilities |
+|-------|----------|-------------|---------------------|
+| **SWIFT Gateway** | Instructing Agent | Released/Sent | Message authentication and network entry |
+| **SWIFT Network** | Network Provider | Released/Sent → In Transit | UETR propagation and gpi tracking |
+| **Intermediary Agent** | Routing Bank | Intermediary Processing | Correspondent banking and routing |
+| **gpi Integration** | Status Provider | All States | Real-time tracking and status updates |
+
+### Network Routing and Correspondent Banking
+
+| Routing Stage | Correspondent Role | UETR State Impact | Processing Details |
+|---------------|-------------------|-------------------|-------------------|
+| **Primary Route** | Direct correspondent | Released/Sent | Optimal routing path |
+| **Secondary Route** | Intermediary correspondent | Intermediary Processing | Multi-hop routing |
+| **Backup Route** | Alternative correspondent | Intermediary Processing | Resilience and redundancy |
+
+## Stage 3 Process Steps Summary - Enhanced
+
+| Step | Process | System | UETR State | Target Benefit |
+|------|---------|--------|------------|----------------|
+| **3.1** | Message Released to SWIFT | SWIFT Gateway + Network | Released/Sent | ✅ **Sender Clarity** |
+| **3.2** | Route to Intermediary | Intermediary Agent + gpi | Intermediary Processing | ✅ **UETR Traceability** |
 | **3.6** | Network Transmission | SWIFT Network | Global Reach |
 | **3.7** | Transmission Confirmation | SWIFT Gateway | Delivery Assurance |
 | **3.8** | Data Pipeline Update | Kafka + Data Lake | Analytics Preparation |
