@@ -1,259 +1,167 @@
-# Documentation Index
 
-Welcome to the React + Java + Azure Journey documentation. This comprehensive guide covers all aspects of our enterprise-grade financial technology application with integrated **Modern Big Data Platform**.
+# FinTech Payment Evolution - Documentation Index
 
-## 📊 **NEW: Modern Big Data Platform**
+## 📋 Overview
 
-### Core Platform Documentation
-- **[Big Data Platform Architecture](./big-data-platform-architecture.md)** - Complete unified event-driven architecture with Apache Kafka backbone
-- **[AI-Powered Data Governance](./ai-governance-framework.md)** - Automated classification, PII detection, and compliance framework
-- **[Data Quality Framework](./data-quality-framework.md)** - Real-time quality validation with Apache Spark and business rules engine
-- **[Data Lineage & Tracking](./data-lineage-tracking.md)** - Exactly-once processing with complete audit trails and provenance
-- **[Azure Databricks Integration](./azure-databricks-integration.md)** - Unified processing platform with MLflow model management
+This repository contains enterprise-grade cross-border payment architecture documentation, sequence diagrams, and implementation guidance based on PMPG (Payments Market Practice Group) standards and BIAN (Banking Industry Architecture Network) service domains.
 
-## 🌐 **NEW: Data Mesh Architecture**
+## 📚 Key Documents
 
-### Organizational Transformation Documentation
-- **[Data Mesh Architecture](./data-mesh-architecture.md)** - Four foundational principles and strategic organizational transformation
-- **[Data Platform Architecture Diagrams](./data-platform-architecture-diagrams.md)** - Visual architecture evolution from centralized to Data Mesh
-- **[Data Mesh Sequence Diagrams](./data-mesh-sequence-diagrams.md)** - Operational workflows and inter-domain communication patterns
+### 🎯 Implementation Documentation
 
-### Data Mesh Implementation Features
-- **🏢 Domain-Oriented Ownership**: Decentralized data ownership with domain expertise
-- **📦 Data as a Product**: First-class data products with APIs, SLAs, and contracts
-- **🛠️ Self-Service Platform**: Automated provisioning and infrastructure management
-- **⚖️ Federated Governance**: Distributed governance with global policy compliance
-- **🌊 Cross-Domain Integration**: Seamless data product discovery and consumption
-- **📊 Strategic Roadmap**: 3-phase transformation with measurable milestones
+| Document | Description | Status |
+|----------|-------------|---------|
+| [Level 0 Cross-Border Architecture](level0-cross-border-architecture.md) | High-level system architecture for cross-border payments | ✅ Complete |
+| [Cross-Border Payment Sequence Diagram](sequence-diagrams/cross-border-payment-level0.md) | Detailed 5-stage, 14-step payment lifecycle with BIAN mapping | ✅ Complete |
+| [Remittances Use-Case 1a Summary](remittances-use-case-1a-summary.md) | PMPG Use-Case 1a implementation guide (Account to Account) | ✅ Complete |
 
-### Platform Capabilities
-- **🌊 Event-Driven Backbone**: Apache Kafka with exactly-once semantics and immutable log storage
-- **📊 Unified Analytics**: Azure Databricks for real-time, near-time, and batch processing
-- **🔍 AI Governance**: Automated data classification with PII detection and compliance tagging
-- **⚡ Quality Engine**: 4-dimensional quality validation with real-time anomaly detection
-- **🔍 Complete Lineage**: End-to-end data traceability with cryptographic checksums
-- **🤖 ML Integration**: MLflow model lifecycle management with automated deployment
+### ☁️ Cloud Infrastructure Implementation
 
-### Live Platform Demos
-- **[Big Data Platform Dashboard](/big-data-dashboard)** - Real-time monitoring and metrics
-- **[Data Governance Console](/governance-console)** - AI-powered classification and compliance
-- **[Quality Monitoring Dashboard](/quality-dashboard)** - Live quality metrics and alerts
-- **[Lineage Visualization](/lineage-explorer)** - Interactive data lineage graphs
+| Platform | Documentation | Status |
+|----------|---------------|---------|
+| **Azure** | [Azure Cross-Border Payment Architecture](../cloud-infrastructure/azure/docs/azure-cross-border-payment-architecture.md) | ✅ Complete |
+| **Azure** | [Azure Bicep Templates](../cloud-infrastructure/azure/templates/) | ✅ Complete |
+| **Azure** | [Azure Deployment Scripts](../cloud-infrastructure/azure/scripts/) | ✅ Complete |
+| **AWS** | AWS Implementation (Planned) | 🚧 Future |
+| **GCP** | GCP Implementation (Planned) | 🚧 Future |
 
-## 🧠 AI Inference System
+### 📊 Sequence Diagrams Collection
 
-### Core Documentation
-- **[AI Inference Architecture](./ai-inference-architecture.md)** - Complete system architecture for real-time, near-real-time, and batch AI inference
-- **[AI Inference Sequence Diagrams](./ai-inference-sequence-diagrams.md)** - Detailed request/response flows and timing diagrams
-- **[AI SDK Architecture](./AI_SDK_ARCHITECTURE.md)** - Legacy AI SDK integration patterns
+| Diagram | Focus Area | Target Benefits |
+|---------|------------|-----------------|
+| [L0 Overview - 5 Stages](sequence-diagrams/l0-overview-5-stages.md) | High-level stage transitions with key actors | Complete enterprise overview |
+| [Stage 1: Payment Initiation](sequence-diagrams/stage1-payment-initiation.md) | Customer experience and initial validation | Fee Transparency |
+| [Stage 2: Payment Approval](sequence-diagrams/stage2-payment-approval.md) | Dual approval and fraud screening | Enhanced Fraud Screening |
+| [Stage 3: Payment Gateway](sequence-diagrams/stage3-payment-gateway.md) | Message formatting and SWIFT transmission | Payment Accuracy & Sender Clarity |
+| [Stage 4: Routing & Execution](sequence-diagrams/stage4-routing-execution.md) | Multi-hop routing and real-time tracking | Traceability & Status Updates |
+| [Stage 5: Payment Integration](sequence-diagrams/stage5-payment-integration.md) | Data integration and customer notifications | Completion Alert & Investigation Reduction |
 
-### Interactive Demo
-- **[Live AI Inference Demo](/ai-inference-demo)** - Interactive comparison of all three inference modes with live metrics
+### 📖 Reference Standards
 
-## 🏗️ Architecture Documentation
+| Document | Source | Description |
+|----------|---------|-------------|
+| [PMPG Market Guidance v2.0](references/20250115_pmpg-market-guidance_0.pdf) | PMPG | ISO 20022 Market Practice and Implementation Guidelines (January 2025) |
+| [ISO 20022 Messaging Workflows on AWS](references/iso-20022-messaging-workflows-on-aws.pdf) | AWS | Cloud implementation patterns for ISO 20022 |
+| [JPMorgan ISO 20022: First 120 Days Live](references/jpmorgan-iso-20022-first-120-days-live-ebook.pdf) | JPMorgan | Practical implementation experience and lessons learned from live ISO 20022 deployment |
+| [JPMorgan ISO 20022 Mapping Guide](references/jpmorgan-iso20022-mapping-guide.pdf) | JPMorgan | Comprehensive field-by-field mapping guide for ISO 20022 message conversion (3.9MB) |
+| [Citibank ISO 20022 FAQs](references/citibank-iso-20022-faqs.pdf) | Citibank | Frequently asked questions and practical guidance for ISO 20022 migration |
 
-### System Architecture
-- **[Dual Purpose Data Platform](./DUAL_PURPOSE_DATA_PLATFORM.md)** - Unified platform for real-time and batch processing
-- **[Event-Driven Architecture Comparison](./event-driven-architecture-comparison.md)** - Comparison of different event processing patterns
+## 🏗️ Architecture Overview
 
-### Azure Integration
-- **[Azure API Management Implementation](./AZURE_API_MANAGEMENT_IMPLEMENTATION.md)** - API gateway and management configuration
-- **[Azure Batch Deployment](./AZURE_BATCH_DEPLOYMENT.md)** - Large-scale batch processing setup
-- **[Confluent Cloud Implementation](./CONFLUENT_CLOUD_IMPLEMENTATION_SUMMARY.md)** - Kafka streaming platform integration
+### BIAN Service Domains Implementation
+- **Payment Initiation**: Client onboarding, instruction capture, UETR generation
+- **Payment Execution**: SWIFT network integration, correspondent banking
+- **Party Authentication**: Enhanced validation with structured data (DOB, POB)
+- **Fraud Detection**: P2P-specific AML/OFAC screening patterns
+- **Customer Case Management**: Investigation reduction through data quality
+- **Product Deployment**: Competitive positioning vs non-bank providers
 
-## 📊 Infrastructure & Deployment
+### Data Medallion Architecture
+- **🥉 Bronze Layer**: Raw event ingestion with immutable UETR audit trail
+- **🥈 Silver Layer**: Validated, enriched data with compliance screening results  
+- **🥇 Gold Layer**: Analytics-ready data for operational dashboards and BI
 
-### Azure Services
-- **[Azure Documentation](./azure/)** - Complete Azure service configurations
-- **[Architecture Diagrams](./architecture/)** - Visual system architecture documentation
-- **[Sequence Diagrams](./sequence-diagrams/)** - Detailed interaction flows
+## 🎯 Target Benefits Achieved
 
-### Frontend Enhancement
-- **[Frontend Enhancement Summary](./frontend-enhancement-summary.md)** - UI/UX improvements and React optimizations
+| Benefit | Implementation | Process Steps |
+|---------|----------------|---------------|
+| **✅ Transparency** | Real-time FX rates, fee breakdown, operational dashboards | Steps 1-2, 12 |
+| **✅ Traceability** | End-to-end UETR tracking via gpi APIs | Steps 3, 9-11 |
+| **✅ Completion Alert** | Real-time notifications, proactive updates | Steps 10, 14 |
+| **✅ Payment Accuracy** | Structured data, dual approval, MT-MX mapping | Steps 4, 7-8 |
+| **✅ Sender Clarity** | Enhanced party identification with DOB/POB | Step 8 |
+| **✅ Reduced Investigations** | Rich audit trails, data lake analytics | Steps 6, 13 |
+| **✅ Fraud Screening** | P2P-specific AML/OFAC patterns | Step 5 |
+| **✅ Product Effectiveness** | Superior UX, reduced latency | Steps 11-14 |
 
-## 🚀 Quick Start Guides
+## 📡 SWIFT Integration
 
-### Big Data Platform Processing Modes
+### Message Types Supported
+- **MT101/pain.001**: Initial payment instruction capture (Bronze layer)
+- **pacs.008**: Formatted payment message with GP2P category (Silver layer)
+- **MT103**: Legacy fallback format if required (Silver layer)
+- **pacs.002**: Status confirmations and updates (Gold layer)
 
-#### Real-Time Processing (Sub-second)
-- **Use Cases**: Live fraud detection, instant personalization, real-time alerts
-- **Technology**: Kafka Streams + Structured Streaming
-- **Performance**: 1M+ events/sec, exactly-once semantics
-- **Demo**: [Try Real-Time Processing](/big-data-dashboard)
+### API Integration Points
+- `get_payment_status`: Real-time status retrieval every 4 hours
+- `track_payment`: Enhanced tracking for P2P remittances
+- Search API: UETR-based status queries with gpi fallback triggers
 
-#### Near-Time Processing (1-5 minutes)
-- **Use Cases**: Risk assessment, compliance monitoring, behavioral analytics
-- **Technology**: Spark micro-batching with sliding windows
-- **Performance**: 10M+ records/hour, advanced analytics
-- **Demo**: [Try Near-Time Analytics](/big-data-dashboard)
+## 🔄 5-Stage Payment Lifecycle
 
-#### Batch Processing (Scheduled)
-- **Use Cases**: ETL pipelines, ML model training, large-scale aggregations
-- **Technology**: Apache Spark + Azure Databricks + Delta Lake
-- **Performance**: 1B+ records/hour, cost-optimized
-- **Demo**: [Try Batch Processing](/big-data-dashboard)
+1. **Payment Initiation** (Bronze Layer)
+   - Client payment request via web/mobile
+   - FX rate validation and fee calculation
+   - UETR generation and audit trail persistence
 
-### AI Inference Modes
+2. **Payment Approval** (Silver Layer)
+   - Dual approval workflow (Maker-Checker)
+   - Enhanced AML/OFAC screening for P2P patterns
+   - Status change and audit logging
 
-#### Real-Time Inference (25-100ms)
-- **Use Cases**: Interactive chat, live recommendations, instant personalization
-- **Technology**: Direct API calls with Redis caching
-- **Performance**: 10K+ req/s, 99.9% availability
-- **Demo**: [Try Real-Time Demo](/ai-inference-demo)
+3. **Payment Gateway** (Silver Layer)
+   - Message formatting for legacy or ISO 20022
+   - SWIFT network transmission with encryption
 
-#### Near-Real-Time Inference (500ms-1s)
-- **Use Cases**: Fraud detection, content moderation, streaming analytics
-- **Technology**: Kafka + Spark Streaming micro-batches
-- **Performance**: 50K+ events/s, 99.95% availability
-- **Demo**: [Try Near-Real-Time Demo](/ai-inference-demo)
+4. **Routing & Execution** (Network Layer)
+   - Correspondent bank routing via SWIFT
+   - Real-time gpi status tracking
+   - Retry logic for status updates
 
-#### Batch Processing (5min-1hr)
-- **Use Cases**: ETL pipelines, model training, bulk processing
-- **Technology**: Apache Spark + Azure Databricks
-- **Performance**: 1M+ records/hr, 99.5% availability
-- **Demo**: [Try Batch Demo](/ai-inference-demo)
+5. **Payment Integration** (Gold Layer)
+   - Operational Data Store (ODS) updates
+   - Data Lake enrichment for analytics
+   - Customer-facing status queries and notifications
 
-## 📈 Performance & Monitoring
+## 🛠️ Technical Stack
 
-### Big Data Platform Metrics
-- **Data Quality Score**: Real-time quality metrics across all pipelines
-- **Lineage Completeness**: End-to-end data traceability coverage
-- **Governance Compliance**: Automated policy adherence monitoring
-- **Processing Performance**: Throughput and latency across all processing modes
+### Microservices Architecture
+- **Payment Initiation Service**: Core payment processing
+- **FX Gateway**: Real-time rate calculation
+- **Workflow Engine**: Camunda-based approval orchestration
+- **Compliance Engine**: AML/OFAC screening
+- **Payment Formatter**: MT-MX message conversion
+- **SWIFT Gateway**: Network integration
+- **gpi Integration**: Real-time tracking
+- **Notification Service**: Customer alerts
 
-### AI Inference Metrics
-- **Application Insights**: Real-time telemetry and performance tracking
-- **Azure Monitor**: Infrastructure health and resource utilization
-- **Custom Dashboards**: Business KPIs and AI inference metrics
+### Data Infrastructure
+- **Event Streaming**: Kafka for real-time events
+- **Operational Storage**: Azure SQL/PostgreSQL for ODS
+- **Analytics Platform**: Azure Data Lake + Databricks/Spark
+- **Search & Discovery**: Elasticsearch-based APIs
 
-### Performance Targets
+## 📈 Use Cases Supported
 
-#### Big Data Platform Performance
-| Processing Mode | Latency | Throughput | Quality Gates | Availability |
-|----------------|---------|------------|---------------|-------------|
-| Real-Time | Sub-second | 1M+ events/sec | 4-dimensional | 99.99% |
-| Near-Time | 1-5 minutes | 10M+ records/hour | Advanced analytics | 99.95% |
-| Batch | Scheduled | 1B+ records/hour | ML-ready | 99.9% |
+### PMPG Use-Case 1a: Account to Account Remittances
+- **Category Purpose Code**: GP2P (General Person to Person)
+- **Purpose Codes**: GIFT (monetary gift), INTP (intra-company payment)
+- **Party Requirements**: Natural persons only with structured data
+- **Enhanced Features**: Mobile-first UX, fee transparency, completion alerts
 
-#### AI Inference Performance
-| Mode | Latency (P95) | Throughput | Cost/Request | Availability |
-|------|---------------|------------|--------------|-------------|
-| Real-Time | 25-100ms | 10K req/s | $0.008-0.010 | 99.9% |
-| Near-Real-Time | 500ms-1s | 50K events/s | $0.003-0.004 | 99.95% |
-| Batch | 5min-1hr | 1M+ rec/hr | $0.0005-0.001 | 99.5% |
+### Industry Sectors
+- Workers Remittance (migrant transfers)
+- Private Banking (high-value individual transfers)
+- Overseas Banking (cross-border personal banking)
+- Non-Resident Banking (non-resident account transfers)
 
-## 🔧 Development Workflow
+## 🚀 Getting Started
 
-### Local Development
-1. **Setup Environment**: Follow [setup instructions](../README.md#development-setup)
-2. **Start Services**: Use VS Code tasks or Docker Compose
-3. **Access Big Data Dashboard**: Navigate to `/big-data-dashboard` for platform monitoring
-4. **Access AI Demo**: Navigate to `/ai-inference-demo` for live testing
+1. **Review Architecture**: Start with [Level 0 Architecture](level0-cross-border-architecture.md)
+2. **Understand Flows**: Examine [Sequence Diagrams](sequence-diagrams/)
+3. **Implementation Guide**: Follow [Use-Case 1a Summary](remittances-use-case-1a-summary.md)
+4. **Reference Standards**: Consult [PMPG Guidance](references/20250115_pmpg-market-guidance_0.pdf)
 
-### Big Data Platform Development
-1. **Governance Testing**: Use `/governance-console` for data classification testing
-2. **Quality Validation**: Monitor `/quality-dashboard` for real-time quality metrics
-3. **Lineage Exploration**: Use `/lineage-explorer` for data flow visualization
-4. **Apache Kafka**: Local Kafka cluster for event-driven development
+## 📝 Documentation Standards
 
-### Deployment Pipeline
-1. **Development**: Local testing with Kafka and Spark simulators
-2. **Staging**: Azure staging with Confluent Cloud and reduced Databricks capacity
-3. **Production**: Full Azure deployment with auto-scaling and enterprise monitoring
-
-## 🔒 Security & Compliance
-
-### Big Data Platform Security
-- **Data Governance**: AI-powered classification with automatic PII detection
-- **Compliance Automation**: SOX, FINRA, GDPR compliance tagging
-- **Encryption**: End-to-end encryption with Azure Key Vault integration
-- **Audit Trails**: Complete data lineage with cryptographic checksums
-
-### Authentication & Authorization
-- **Azure AD Integration**: Single sign-on and identity management
-- **JWT Tokens**: Secure API authentication
-- **RBAC**: Role-based access control for different processing modes
-- **Fine-grained Permissions**: Data-level access control with governance policies
-
-### Data Protection
-- **Encryption**: TLS 1.3 in transit, AES-256 at rest
-- **Privacy**: GDPR-compliant data handling with automated detection
-- **Audit**: Complete request/response logging with lineage tracking
-
-## 🎯 Best Practices
-
-### Big Data Platform Optimization
-1. **Event-Driven Design**: Use Apache Kafka for all data movement
-2. **Quality Gates**: Implement quality checks at every processing stage
-3. **Governance First**: Apply AI-powered classification before processing
-4. **Lineage Tracking**: Ensure complete data provenance for all transformations
-5. **Delta Lake Optimization**: Use auto-optimization and Z-ordering
-
-### AI Inference Optimization
-1. **Caching Strategy**: Multi-level caching for optimal performance
-2. **Load Balancing**: Intelligent routing based on request type
-3. **Auto-scaling**: Dynamic resource allocation based on demand
-4. **Error Handling**: Graceful degradation and retry mechanisms
-
-### Development Guidelines
-1. **TypeScript First**: All new code must be type-safe
-2. **Component Testing**: Unit tests for all React components
-3. **API Documentation**: OpenAPI specs for all endpoints
-4. **Performance Testing**: Load testing for all processing modes
-5. **Data Quality Testing**: Validate quality rules with test datasets
-
-## 📚 Learning Resources
-
-### Big Data Platform
-- **[Apache Kafka Documentation](https://kafka.apache.org/documentation/)** - Core event streaming platform
-- **[Apache Spark Guide](https://spark.apache.org/docs/latest/)** - Unified analytics engine
-- **[Azure Databricks](https://docs.databricks.com/)** - Unified analytics platform
-- **[Delta Lake](https://docs.delta.io/)** - Storage layer for reliable data lakes
-
-### Getting Started
-- **[README](../README.md)** - Project overview and quick start
-- **[Contributing Guidelines](../.github/CONTRIBUTING.md)** - Development workflow
-- **[Copilot Instructions](../.github/copilot-instructions.md)** - AI-assisted development setup
-
-### Advanced Topics
-- **Machine Learning**: Model deployment and optimization strategies
-- **Microservices**: Service decomposition and communication patterns
-- **Cloud Architecture**: Azure best practices and cost optimization
-
-## 🔄 Version History
-
-### v2.0.0 - AI Inference Platform (Current)
-- ✅ Three-tier AI inference system
-- ✅ Interactive demo interface
-- ✅ Comprehensive performance monitoring
-- ✅ Auto-scaling and load balancing
-
-### v1.0.0 - Foundation (Previous)
-- ✅ React + Java + Azure foundation
-- ✅ Basic AI SDK integration
-- ✅ Development environment setup
-
-## 🤝 Contributing
-
-We welcome contributions to improve our AI inference platform! Please see our [contributing guidelines](../.github/CONTRIBUTING.md) for details on:
-
-- Code standards and review process
-- Testing requirements
-- Documentation updates
-- Performance benchmarking
-
-## 📞 Support
-
-### Internal Support
-- **Engineering Team**: Slack #ai-inference-platform
-- **Architecture Review**: Weekly architecture sync meetings
-- **Performance Issues**: On-call rotation for critical issues
-
-### External Resources
-- **Azure Support**: Enterprise support plan
-- **OpenAI API**: Direct partner support channel
-- **Community**: Stack Overflow and GitHub discussions
+All documentation follows:
+- BIAN Service Domain architecture principles
+- ISO 20022 message standards and PMPG market guidance
+- Data medallion pattern (Bronze → Silver → Gold)
+- Enterprise security and compliance best practices
 
 ---
 
-*This documentation is continuously updated to reflect the latest system capabilities and best practices. Last updated: [Current Date]*
+*Last Updated: September 18, 2025*  
+*Repository: [FinTech_Payment_Evolution](https://github.com/calvinlee999/FinTech_Payment_Evolution)*
+>>>>>>> fintech-payment/main
